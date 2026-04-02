@@ -193,6 +193,7 @@ body {
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  scroll-margin-top: 85px;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   will-change: transform, box-shadow;
 }
@@ -483,13 +484,13 @@ body {
    RESPONSIVE
 ═══════════════════════════════════════ */
 @media (max-width: 840px) {
-  .products-grid { grid-template-columns: 1fr; gap: 18px; }
+  .products-grid { grid-template-columns: 1fr; gap: 26px; }
   .prod-nav { display: none; }
   .masthead-title { font-size: 12px; }
 }
 
 @media (max-width: 500px) {
-  .page-wrap { padding: 14px 10px 36px; }
+  .page-wrap { padding: 20px 24px 40px; }
   .card-header { padding: 8px 12px 7px; }
   .card-prod-name { font-size: 16px; }
   .card-top-row { flex-direction: column; }
@@ -915,7 +916,7 @@ html[data-scheme="dark"] .sec-head { filter: brightness(1.2); }
   <div class="intro-card">
     <button class="intro-close-x" onclick="closeIntro()">✕</button>
     <div class="intro-mono">
-      <span class="mono-top">Triumph</span>
+      <span class="mono-top">TRIUMPH</span>
       <span class="mono-bot">Luxury</span>
     </div>
     <p class="intro-lbl">Diversey Clax · دليل المنتجات</p>
@@ -947,15 +948,10 @@ html[data-scheme="dark"] .sec-head { filter: brightness(1.2); }
 
 <header class="masthead">
   <div class="masthead-brand">
-    <div class="logo-pill">
-      <svg class="logo-leaf" viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg">
-        <path d="M14 18 Q5 11 8 2 Q14 8 14 18Z" fill="#6abf3a"/>
-        <path d="M14 18 Q23 11 20 2 Q14 8 14 18Z" fill="#4da820"/>
-        <path d="M14 18 Q14 9 14 1" stroke="#3a9010" stroke-width="0.9" fill="none"/>
-      </svg>
-      <span class="logo-name">Diversey</span><span class="logo-tm">TM</span>
+    <div class="logo-pill" style="background: linear-gradient(135deg, var(--gold), #f0d080, var(--gold)); color: #0f1e42; padding: 4px 14px; border-radius: 30px; font-family: 'Outfit', sans-serif; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+      <span style="font-size: 15px; letter-spacing: 1px;">TRIUMPH</span>
     </div>
-    <span class="masthead-title">دليل منتجات Clax للغسيل الصناعي</span>
+    <span class="masthead-title" style="font-size: 13px; font-weight: 700; opacity: 0.85;">LAUNDRY DEPARTMENT</span>
   </div>
   <nav class="prod-nav">
     <a href="#hypo"       class="nav-theme" data-theme="gold">CLAX Hypo</a>
