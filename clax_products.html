@@ -579,7 +579,7 @@ body {
 }
 .intro-name {
   font-family: 'Outfit', Arial, sans-serif;
-  font-size: 34px; font-weight: 900; color: #fff; line-height: 1.1;
+  font-size: 15px; font-weight: 500; color: #c5a05a; line-height: 1.1;
   animation: iFadeUp 0.6s ease 0.48s both;
 }
 .intro-name .intro-prefix { color: #c5a05a; }
@@ -591,6 +591,22 @@ body {
 .intro-role {
   font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 32px;
   animation: iFadeUp 0.6s ease 0.62s both;
+}
+.intro-team {
+  display: flex; flex-direction: column; gap: 14px; margin: 20px 0;
+}
+.team-member {
+  display: flex; flex-direction: column; gap: 3px;
+  animation: iFadeUp 0.6s ease both;
+}
+.team-role {
+  font-size: 10.5px; font-weight: 700; color: rgba(255,255,255,0.45);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.team-name {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 17px; font-weight: 700; color: #c5a05a;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
 @keyframes iFadeUp {
   from { opacity:0; transform: translateY(10px); }
@@ -605,7 +621,7 @@ body {
   height: 100%; width: 100%;
   background: linear-gradient(90deg, #c5a05a, #f0d080);
   transform-origin: left;
-  animation: iShrink 4s linear 1s forwards;
+  animation: iShrink 29s linear 1s forwards;
 }
 @keyframes iShrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 .intro-skip {
@@ -920,7 +936,20 @@ html[data-scheme="dark"] .sec-head { filter: brightness(1.2); }
       <span class="mono-bot">Luxury</span>
     </div>
     <p class="intro-lbl">Diversey Clax · دليل المنتجات</p>
-    <h1 class="intro-name"><span class="intro-prefix">MR /</span> Mahmoud Hanfy <h5 class="intro-role"> FROM (LAUNDRY DEPARTMENT) </h5> </h1>
+    <div class="intro-team">
+      <div class="team-member" style="animation-delay: 0.44s;">
+        <span class="team-role">Director Manager</span>
+        <span class="team-name">Ahmed Dabaka</span>
+      </div>
+      <div class="team-member" style="animation-delay: 0.48s;">
+        <span class="team-role">Assistant Manager</span>
+        <span class="team-name">Ahmed Hassan</span>
+      </div>
+      <div class="team-member" style="animation-delay: 0.52s;">
+        <span class="team-role">Shift Leader Ironer</span>
+        <span class="team-name">Mahmoud Hanfy</span>
+      </div>
+    </div>
     <div class="intro-divider"></div>
     <p class="intro-role">LAUNDRY DEPARTMENT</p>
     <div class="intro-prog-wrap"><div class="intro-prog-bar"></div></div>
@@ -937,7 +966,7 @@ html[data-scheme="dark"] .sec-head { filter: brightness(1.2); }
     el.classList.add('hiding');
     setTimeout(function(){ el.style.display='none'; }, 680);
   };
-  t = setTimeout(window.closeIntro, 5100);
+  t = setTimeout(window.closeIntro, 30000);
 })();
 </script>
 <!-- ═══ END SPLASH ═══ -->
