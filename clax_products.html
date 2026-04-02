@@ -3,11 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="دليل منتجات Diversey Clax للغسيل الصناعي. يضم المنتجات، وطرق الاستخدام، والجرعات لمختلف المغاسل والمستشفيات.">
-<title>Diversey Clax - دليل المنتجات</title>
+<meta name="description" content="TRIUMPH HOTEL - LAUNDRY DEPARTMENT / Product Guide">
+<title>Triumph Luxury Hotel - Product Guide</title>
+<link rel="icon" href="logo.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script>
+  let theme = localStorage.getItem('clax_theme');
+  if (!theme) {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.setAttribute('data-scheme', theme);
+</script>
 <style>
 /* ═══════════════════════════════════════
    RESET & BASE
@@ -458,6 +466,20 @@ body {
 }
 
 /* ═══════════════════════════════════════
+   BUBBLE CANVAS
+═══════════════════════════════════════ */
+#bubble-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.masthead { position: sticky; z-index: 100; }
+.page-wrap { position: relative; z-index: 1; }
+.site-footer { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════ */
 @media (max-width: 840px) {
@@ -491,82 +513,386 @@ body {
 }
 
 /* ═══════════════════════════════════════
+   INTRO SPLASH
+═══════════════════════════════════════ */
+#intro-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, #0d1f4e 0%, #1a3370 45%, #2b52a8 100%);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+#intro-overlay.hiding { opacity: 0; pointer-events: none; transform: scale(1.04); }
+.intro-bg-circle {
+  position: absolute; border-radius: 50%; background: #fff; opacity: 0.06;
+  animation: iFloat 7s ease-in-out infinite alternate;
+}
+.intro-bg-circle:nth-child(1) { width: 340px; height: 340px; top: -90px; left: -90px; animation-delay: 0s; }
+.intro-bg-circle:nth-child(2) { width: 220px; height: 220px; bottom: -50px; right: -50px; animation-delay: 2s; }
+.intro-bg-circle:nth-child(3) { width: 130px; height: 130px; top: 38%; right: 14%; animation-delay: 4s; }
+@keyframes iFloat {
+  from { transform: translate(0,0) scale(1); }
+  to   { transform: translate(10px,-14px) scale(1.06); }
+}
+.intro-card {
+  position: relative; z-index: 2;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 24px; padding: 52px 56px 44px;
+  text-align: center; max-width: 420px; width: 90%;
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.06);
+  animation: iCardIn 0.75s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes iCardIn {
+  from { opacity:0; transform: translateY(30px) scale(0.96); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+.intro-mono {
+  width: 180px; height: 78px; border-radius: 50px;
+  background: linear-gradient(135deg, #c5a05a, #f0d080, #c5a05a);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 1px;
+  margin: 0 auto 22px;
+  box-shadow: 0 0 0 7px rgba(197,160,90,0.16), 0 10px 32px rgba(197,160,90,0.4);
+  animation: iMonoPop 0.85s cubic-bezier(0.34,1.56,0.64,1) 0.2s both;
+  padding: 10px 20px;
+}
+@keyframes iMonoPop {
+  from { opacity:0; transform: scale(0.4); }
+  to   { opacity:1; transform: scale(1); }
+}
+.intro-mono .mono-top {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 13px; font-weight: 700; color: #1a3370;
+  letter-spacing: 3px; text-transform: uppercase; line-height: 1;
+}
+.intro-mono .mono-bot {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 22px; font-weight: 900; color: #1a3370;
+  letter-spacing: 0px; line-height: 1;
+}
+.intro-lbl {
+  font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.45);
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px;
+  animation: iFadeUp 0.6s ease 0.38s both;
+}
+.intro-name {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 34px; font-weight: 900; color: #fff; line-height: 1.1;
+  animation: iFadeUp 0.6s ease 0.48s both;
+}
+.intro-name .intro-prefix { color: #c5a05a; }
+.intro-divider {
+  width: 50px; height: 2px; margin: 16px auto;
+  background: linear-gradient(90deg, transparent, #c5a05a, transparent);
+  animation: iFadeUp 0.6s ease 0.56s both;
+}
+.intro-role {
+  font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 32px;
+  animation: iFadeUp 0.6s ease 0.62s both;
+}
+@keyframes iFadeUp {
+  from { opacity:0; transform: translateY(10px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.intro-prog-wrap {
+  background: rgba(255,255,255,0.1); border-radius: 4px;
+  height: 3px; margin-bottom: 20px; overflow: hidden;
+  animation: iFadeUp 0.6s ease 0.66s both;
+}
+.intro-prog-bar {
+  height: 100%; width: 100%;
+  background: linear-gradient(90deg, #c5a05a, #f0d080);
+  transform-origin: left;
+  animation: iShrink 4s linear 1s forwards;
+}
+@keyframes iShrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+.intro-skip {
+  font-size: 13px; color: rgba(255,255,255,0.5);
+  background: transparent; border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 30px; padding: 8px 26px; cursor: pointer;
+  transition: all 0.2s; animation: iFadeUp 0.6s ease 0.72s both;
+  font-family: 'Noto Sans Arabic', sans-serif;
+}
+.intro-skip:hover { background: rgba(255,255,255,0.09); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.28); }
+.intro-close-x {
+  position: absolute; top: 14px; left: 14px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.4); font-size: 15px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; animation: iFadeUp 0.5s ease 0.8s both;
+  font-family: Arial, sans-serif;
+}
+.intro-close-x:hover { background: rgba(255,255,255,0.14); color: #fff; }
+
+/* ═══════════════════════════════════════
+   HERO BANNER
+═══════════════════════════════════════ */
+.page-hero {
+  background: linear-gradient(100deg, #1a3370 0%, #2b52a8 60%, #3a6ac8 100%);
+  padding: 26px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px;
+}
+.hero-text-block { flex: 1; min-width: 200px; }
+.hero-title {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 21px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 6px;
+}
+.hero-title span { color: #c5a05a; }
+.hero-sub { font-size: 12.5px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.hero-badge {
+  font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
+  border: 1.5px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.82);
+  background: rgba(255,255,255,0.08); white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+.site-footer {
+  background: #0f1e42;
+  padding: 28px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-brand { display: flex; align-items: center; gap: 14px; }
+.footer-mono {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, #c5a05a, #f0d080);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.footer-mono span {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 16px; font-weight: 900; color: #0f1e42;
+}
+.footer-name {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 17px; font-weight: 800; color: #fff;
+}
+.footer-name .fp { color: #c5a05a; }
+.footer-role { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+.footer-copy { font-size: 11px; color: rgba(255,255,255,0.3); text-align: left; line-height: 1.7; }
+
+/* ═══════════════════════════════════════
+   MOBILE NAV DRAWER — REDESIGNED
+═══════════════════════════════════════ */
+
+/* Hamburger button */
+.mob-toggle {
+  display: none;
+  background: rgba(43,82,168,0.08);
+  border: 1.5px solid rgba(43,82,168,0.18);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 7px 8px;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+.mob-toggle:hover { background: rgba(43,82,168,0.15); border-color: rgba(43,82,168,0.35); }
+.mob-toggle span {
+  display: block; width: 20px; height: 2px;
+  background: var(--blue); border-radius: 2px; margin: 4px auto;
+  transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
+  transform-origin: center;
+}
+.mob-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.mob-toggle.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.mob-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* Backdrop */
+.mob-backdrop {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(10,20,50,0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.mob-backdrop.open   { display: block; }
+.mob-backdrop.visible{ opacity: 1; }
+
+/* Slide-in drawer panel */
+.mob-nav-drawer {
+  position: fixed;
+  top: 0; left: 0;
+  height: 100dvh; width: 300px;
+  max-width: 88vw;
+  background: #fff;
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-105%);
+  transition: transform 0.38s cubic-bezier(0.23,1,0.32,1);
+  box-shadow: 6px 0 40px rgba(0,0,0,0.22);
+  overflow-y: auto;
+}
+.mob-nav-drawer.open { transform: translateX(0); }
+
+/* Drawer header */
+.mob-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(43,82,168,0.12);
+  background: linear-gradient(100deg, #1a3370 0%, #2b52a8 100%);
+  flex-shrink: 0;
+}
+.mob-drawer-title {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 15px; font-weight: 800; color: #fff;
+  letter-spacing: 0.2px;
+}
+.mob-drawer-title span { color: #c5a05a; }
+.mob-drawer-close {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  color: #fff; font-size: 18px;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.2s;
+  font-family: Arial, sans-serif;
+  flex-shrink: 0;
+}
+.mob-drawer-close:hover { background: rgba(255,255,255,0.22); }
+
+/* Nav link items */
+.mob-nav-drawer a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: background 0.18s, padding-right 0.18s;
+  position: relative;
+}
+.mob-nav-drawer a::before {
+  content: '';
+  display: block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--thm, #2b52a8);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+}
+.mob-nav-drawer a::after {
+  content: '›';
+  position: absolute;
+  left: 20px;
+  font-size: 18px;
+  color: rgba(0,0,0,0.18);
+  transition: left 0.18s, color 0.18s;
+}
+.mob-nav-drawer a:hover {
+  background: var(--thm-lt, #eaf0fb);
+  padding-right: 26px;
+}
+.mob-nav-drawer a:hover::after { left: 16px; color: var(--thm, #2b52a8); }
+.mob-nav-drawer a:last-child { border-bottom: none; }
+
+/* Drawer footer brand */
+.mob-drawer-foot {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(0,0,0,0.07);
+  background: #f8fafc;
+  font-size: 11px;
+  color: #94a3b8;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 840px) {
+  .mob-toggle { display: flex; }
+  .prod-nav { display: none; }
+  .site-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .footer-copy { text-align: right; }
+}
+
+/* ═══════════════════════════════════════
+   THEME TOGGLE
+═══════════════════════════════════════ */
+.theme-btn {
+  background: transparent; border: 1.5px solid var(--border);
+  color: var(--text-sm); width: 38px; height: 38px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; position: relative; transition: all 0.25s;
+  margin-right: auto; margin-left: 10px;
+}
+.theme-btn:hover { background: rgba(0,0,0,0.05); color: var(--blue); border-color: var(--blue); }
+.theme-btn svg { position: absolute; width: 18px; height: 18px; transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1); }
+
+/* Light Mode */
+html[data-scheme="light"] .sun-icon { opacity: 0; transform: rotate(90deg) scale(0); }
+html[data-scheme="light"] .moon-icon { opacity: 1; transform: rotate(0) scale(1); }
+
+/* Dark Mode */
+html[data-scheme="dark"] .theme-btn { border-color: rgba(255,255,255,0.15); color: #cbd5e1; }
+html[data-scheme="dark"] .theme-btn:hover { background: rgba(255,255,255,0.1); color: #fcd34d; border-color: rgba(255,255,255,0.3); }
+html[data-scheme="dark"] .sun-icon { opacity: 1; transform: rotate(0) scale(1); }
+html[data-scheme="dark"] .moon-icon { opacity: 0; transform: rotate(-90deg) scale(0); }
+
+/* ═══════════════════════════════════════
    DARK MODE
 ═══════════════════════════════════════ */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-page: #0f172a;
-    --text: #f8fafc;
-    --text-sm: #cbd5e1;
-    --border: #334155;
-    
-    /* Dark equivalents for light backgrounds */
-    --gold-lt: #2a2211;
-    --pink-lt: #2c1223;
-    --blue-lt: #121c32;
-    --green-lt: #102410;
-    --red-lt: #2c100a;
-    
-    /* Vibrant text variants for tags on dark bg */
-    --gold-dk: #fcd34d;
-    --pink-dk: #f472b6;
-    --blue-dk: #60a5fa;
-    --green-dk: #4ade80;
-    --red-dk: #f87171;
-  }
+html[data-scheme="dark"] {
+  --bg-page: #0f172a;
+  --text: #f8fafc;
+  --text-sm: #cbd5e1;
+  --border: #334155;
   
-  .masthead {
-    background: #1e293b;
-    border-bottom: 2px solid #0f172a;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  }
-  
-  .product-card {
-    background: #1e293b;
-    border-color: #334155;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15);
-  }
-  
-  .card-icon-box {
-    background: #0f172a;
-    border-color: #334155;
-  }
-  
-  .clax-box {
-    background: #1e293b;
-  }
-  
-  .clax-divider {
-    border-top-color: #1e293b;
-  }
-  
-  .dose-table tbody tr:nth-child(odd),
-  .tech-table-enhanced tbody tr:nth-child(odd) td {
-    background: rgba(255,255,255,0.03);
-  }
-  
-  .dose-table tbody tr td,
-  .tech-table-enhanced tbody td.lbl {
-    border-color: rgba(255,255,255,0.05);
-  }
-  
-  .tech-table-enhanced tbody td.val {
-    color: #e2e8f0;
-  }
-  
-  .dose-table thead tr th, 
-  .tech-table-enhanced thead th {
-    color: #0f172a;
-  }
-  
-  .card-safe-head {
-    color: #0f172a;
-  }
-  
-  .sec-head {
-    filter: brightness(1.2);
-  }
+  --gold-lt: #2a2211; --pink-lt: #2c1223; --blue-lt: #121c32; --green-lt: #102410; --red-lt: #2c100a;
+  --gold-dk: #fcd34d; --pink-dk: #f472b6; --blue-dk: #60a5fa; --green-dk: #4ade80; --red-dk: #f87171;
 }
+
+html[data-scheme="dark"] .mob-nav-drawer { background: #1e293b; }
+html[data-scheme="dark"] .mob-nav-drawer a { color: #f1f5f9; border-color: rgba(255,255,255,0.06); }
+html[data-scheme="dark"] .mob-drawer-foot { background: #0f172a; color: #64748b; }
+html[data-scheme="dark"] .site-footer { background: #070f24; }
+
+html[data-scheme="dark"] .masthead {
+  background: #1e293b;
+  border-bottom: 2px solid #0f172a;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+html[data-scheme="dark"] .product-card {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15);
+}
+
+html[data-scheme="dark"] .card-icon-box { background: #0f172a; border-color: #334155; }
+html[data-scheme="dark"] .clax-box { background: #1e293b; }
+html[data-scheme="dark"] .clax-divider { border-top-color: #1e293b; }
+
+html[data-scheme="dark"] .dose-table tbody tr:nth-child(odd),
+html[data-scheme="dark"] .tech-table-enhanced tbody tr:nth-child(odd) td {
+  background: rgba(255,255,255,0.03);
+}
+
+html[data-scheme="dark"] .dose-table tbody tr td,
+html[data-scheme="dark"] .tech-table-enhanced tbody td.lbl {
+  border-color: rgba(255,255,255,0.05);
+}
+
+html[data-scheme="dark"] .tech-table-enhanced tbody td.val { color: #e2e8f0; }
+
+html[data-scheme="dark"] .dose-table thead tr th, 
+html[data-scheme="dark"] .tech-table-enhanced thead th {
+  color: #0f172a;
+}
+html[data-scheme="dark"] .card-safe-head { color: #0f172a; }
+html[data-scheme="dark"] .sec-head { filter: brightness(1.2); }
 </style>
 </head>
 <body>
@@ -581,7 +907,44 @@ body {
 </svg>
 
 
-<!-- ══════════════════════════ MASTHEAD ══════════════════════════ -->
+<!-- ═══ INTRO SPLASH SCREEN ═══ -->
+<div id="intro-overlay">
+  <div class="intro-bg-circle"></div>
+  <div class="intro-bg-circle"></div>
+  <div class="intro-bg-circle"></div>
+  <div class="intro-card">
+    <button class="intro-close-x" onclick="closeIntro()">✕</button>
+    <div class="intro-mono">
+      <span class="mono-top">Triumph</span>
+      <span class="mono-bot">Luxury</span>
+    </div>
+    <p class="intro-lbl">Diversey Clax · دليل المنتجات</p>
+    <h1 class="intro-name"><span class="intro-prefix">MR /</span> Mahmoud Hanfy <h5 class="intro-role"> FROM (LAUNDRY DEPARTMENT) </h5> </h1>
+    <div class="intro-divider"></div>
+    <p class="intro-role">LAUNDRY DEPARTMENT</p>
+    <div class="intro-prog-wrap"><div class="intro-prog-bar"></div></div>
+    <button class="intro-skip" onclick="closeIntro()">تخطي ›</button>
+  </div>
+</div>
+<script>
+(function(){
+  var t;
+  window.closeIntro = function(){
+    clearTimeout(t);
+    var el = document.getElementById('intro-overlay');
+    if(!el) return;
+    el.classList.add('hiding');
+    setTimeout(function(){ el.style.display='none'; }, 680);
+  };
+  t = setTimeout(window.closeIntro, 5100);
+})();
+</script>
+<!-- ═══ END SPLASH ═══ -->
+
+<!-- ═══ BUBBLE CANVAS ═══ -->
+<canvas id="bubble-canvas"></canvas>
+<!-- ═══ END BUBBLE CANVAS ═══ -->
+
 <header class="masthead">
   <div class="masthead-brand">
     <div class="logo-pill">
@@ -604,7 +967,74 @@ body {
     <a href="#clax200"    class="nav-theme" data-theme="green">CLAX 200</a>
     <a href="#clax100"    class="nav-theme" data-theme="green">CLAX 100 Color</a>
   </nav>
+
+  <button class="theme-btn" id="theme-btn" aria-label="Toggle Dark Mode" onclick="toggleTheme()">
+    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+
+  <button class="mob-toggle" id="mob-toggle" aria-label="قائمة المنتجات" onclick="toggleMobMenu()">
+    <span></span><span></span><span></span>
+  </button>
 </header>
+
+<!-- Mobile backdrop -->
+<div class="mob-backdrop" id="mob-backdrop" onclick="closeMobMenu()"></div>
+
+<!-- Mobile slide-in drawer -->
+<div class="mob-nav-drawer" id="mob-drawer">
+  <div class="mob-drawer-head">
+    <div class="mob-drawer-title">دليل منتجات <span>Clax</span></div>
+    <button class="mob-drawer-close" onclick="closeMobMenu()">✕</button>
+  </div>
+
+  <a href="#hypo"       data-theme="gold"  onclick="closeMobMenu()">CLAX Hypo</a>
+  <a href="#soft"       data-theme="pink"  onclick="closeMobMenu()">Soft Extra</a>
+  <a href="#buildlite"  data-theme="blue"  onclick="closeMobMenu()">Build Lite</a>
+  <a href="#sonril"     data-theme="gold"  onclick="closeMobMenu()">Sonril Ultra</a>
+  <a href="#neutrapur"  data-theme="red"   onclick="closeMobMenu()">Neutrapur</a>
+  <a href="#neutra3in1" data-theme="red"   onclick="closeMobMenu()">Neutra 3in1</a>
+  <a href="#clax200"    data-theme="green" onclick="closeMobMenu()">CLAX 200</a>
+  <a href="#clax100"    data-theme="green" onclick="closeMobMenu()">CLAX 100 Color</a>
+
+  <div class="mob-drawer-foot">Diversey Clax · دليل المنتجات</div>
+</div>
+
+<script>
+function toggleMobMenu() {
+  var drawer   = document.getElementById('mob-drawer');
+  var backdrop = document.getElementById('mob-backdrop');
+  var toggle   = document.getElementById('mob-toggle');
+  var isOpen   = drawer.classList.contains('open');
+  if (isOpen) { closeMobMenu(); } else {
+    backdrop.classList.add('open');
+    requestAnimationFrame(function(){
+      backdrop.classList.add('visible');
+      drawer.classList.add('open');
+      toggle.classList.add('active');
+    });
+    document.body.style.overflow = 'hidden';
+  }
+}
+function closeMobMenu() {
+  var drawer   = document.getElementById('mob-drawer');
+  var backdrop = document.getElementById('mob-backdrop');
+  var toggle   = document.getElementById('mob-toggle');
+  backdrop.classList.remove('visible');
+  drawer.classList.remove('open');
+  toggle.classList.remove('active');
+  document.body.style.overflow = '';
+  setTimeout(function(){ backdrop.classList.remove('open'); }, 380);
+}
+
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-scheme');
+  var next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-scheme', next);
+  localStorage.setItem('clax_theme', next);
+}
+</script>
 
 <div class="page-wrap">
 <div class="products-grid">
@@ -735,7 +1165,8 @@ body {
           <li>مكوناته قابلة للتحلل وصديقة للبيئة</li>
         </ul>
 
-        <p class="btext" style="margin-top:6px;">بيلتصق بخيوط القماش فيخليه ناعم ومريح. في التجفيف بيمنع تشابك الخيوط وتراكم الكهرباء الساكنة. يصلح بصفة خاصة للقطع التقيلة زي المناشف.</p>
+        <div class="sec-head head-theme">إزاي بيشتغل؟</div>
+        <p class="btext">بيلتصق بخيوط القماش فيخليه ناعم ومريح. في التجفيف بيمنع تشابك الخيوط وتراكم الكهرباء الساكنة. يصلح بصفة خاصة للقطع التقيلة زي المناشف.</p>
       </div>
 
       <div class="card-icon-box">
@@ -1313,6 +1744,145 @@ body {
 
 </div><!-- /products-grid -->
 </div><!-- /page-wrap -->
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="site-footer">
+  <div class="footer-brand">
+    <div class="footer-mono"><span>MH</span></div>
+    <div>
+      <div class="footer-name"><span class="fp">Triumph</span> LUXURY </div>
+      <div class="footer-role"LAUNDRY DEPARTMENT</div>
+    </div>
+  </div>
+  <div class="footer-copy">
+    دليل منتجات Diversey Clax للغسيل الصناعي<br>
+  </div>
+</footer>
+<!-- ═══ END FOOTER ═══ -->
+
+<script>
+/* ═══ INTERACTIVE BUBBLE ANIMATION ═══ */
+(function () {
+  var canvas = document.getElementById('bubble-canvas');
+  var ctx = canvas.getContext('2d');
+  var mouse = { x: -9999, y: -9999 };
+  var bubbles = [];
+  var COUNT = 55;
+  var W, H;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* Track mouse and touch */
+  document.addEventListener('mousemove', function (e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  document.addEventListener('touchmove', function (e) {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener('mouseleave', function () {
+    mouse.x = -9999; mouse.y = -9999;
+  });
+
+  /* Colour palette matching the design */
+  var COLORS = [
+    '197,160,90',   /* gold */
+    '43,82,168',    /* blue */
+    '255,255,255',  /* white */
+    '197,160,90',   /* gold (weighted) */
+    '43,82,168'     /* blue (weighted) */
+  ];
+
+  function randomBubble(spreadY) {
+    var r = Math.random() * 28 + 5;
+    return {
+      x     : Math.random() * W,
+      y     : spreadY ? Math.random() * H : H + r + 10,
+      r     : r,
+      vx    : (Math.random() - 0.5) * 0.8,
+      vy    : -(Math.random() * 0.2 + 0.08),   /* upward, slow */
+      alpha : Math.random() * 0.25 + 0.04,
+      color : COLORS[Math.floor(Math.random() * COLORS.length)]
+    };
+  }
+
+  for (var i = 0; i < COUNT; i++) {
+    bubbles.push(randomBubble(true));
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (var i = 0; i < bubbles.length; i++) {
+      var b = bubbles[i];
+
+      /* Mouse repulsion */
+      var dx   = b.x - mouse.x;
+      var dy   = b.y - mouse.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 150 && dist > 0) {
+        var force = (150 - dist) / 150 * 4.5;
+        b.vx += (dx / dist) * force * 0.12;
+        b.vy += (dy / dist) * force * 0.12;
+      }
+
+      /* Drift damping so they don't rocket off */
+      b.vx *= 0.97;
+      b.vy  = b.vy * 0.985 - (Math.random() * 0.003 + 0.07);  /* keep rising very slowly */
+
+      b.x += b.vx;
+      b.y += b.vy;
+
+      /* Wrap horizontally */
+      if (b.x < -b.r)       b.x = W + b.r;
+      if (b.x > W + b.r)    b.x = -b.r;
+
+      /* Recycle when off top */
+      if (b.y < -b.r * 3) {
+        bubbles[i] = randomBubble(false);
+        continue;
+      }
+
+      /* Draw bubble ring */
+      var grad = ctx.createRadialGradient(
+        b.x - b.r * 0.3, b.y - b.r * 0.35, b.r * 0.05,
+        b.x, b.y, b.r
+      );
+      grad.addColorStop(0, 'rgba(' + b.color + ',' + (b.alpha * 1.8) + ')');
+      grad.addColorStop(0.7, 'rgba(' + b.color + ',' + (b.alpha * 0.5) + ')');
+      grad.addColorStop(1, 'rgba(' + b.color + ',0)');
+
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      /* Glint */
+      ctx.beginPath();
+      ctx.arc(b.x - b.r * 0.32, b.y - b.r * 0.32, b.r * 0.18, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,' + (b.alpha * 3.5) + ')';
+      ctx.fill();
+
+      /* Ring outline */
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(' + b.color + ',' + (b.alpha * 2.2) + ')';
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+</script>
 
 </body>
 </html>
