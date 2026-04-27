@@ -16,1986 +16,7 @@
   }
   document.documentElement.setAttribute('data-scheme', theme);
 </script>
-<style>
-/* ═══════════════════════════════════════
-   RESET & BASE
-═══════════════════════════════════════ */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --gold:    #c5a05a;
-  --gold-dk: #8b6914;
-  --gold-lt: #fdf6e8;
-  --pink:    #d63c96;
-  --pink-dk: #8c1060;
-  --pink-lt: #fdf0f8;
-  --blue:    #2b52a8;
-  --blue-dk: #1a3370;
-  --blue-lt: #eaf0fb;
-  --green:   #2a7a2a;
-  --green-dk:#154814;
-  --green-lt:#edfaed;
-  --red:     #cc2200;
-  --red-dk:  #8c1400;
-  --red-lt:  #fff3f0;
-  --text:    #1a1a1a;
-  --text-sm: #444;
-  --border:  #d8d8d8;
-  --bg-page: #e8e8e8;
-  --shadow:  0 4px 20px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.08);
-  --radius:  10px;
-}
-
-[data-theme="gold"] {
-  --thm: var(--gold); --thm-dk: var(--gold-dk); --thm-lt: var(--gold-lt);
-  --thm-bd: #e8d4a0;
-  --thm-gr: linear-gradient(90deg, #c5a05a 0%, #b8924a 40%, #926828 100%);
-}
-[data-theme="pink"] {
-  --thm: var(--pink); --thm-dk: var(--pink-dk); --thm-lt: var(--pink-lt);
-  --thm-bd: #f0c0dc;
-  --thm-gr: linear-gradient(90deg, #d63c96 0%, #c22882 40%, #ac1870 100%);
-}
-[data-theme="blue"] {
-  --thm: var(--blue); --thm-dk: var(--blue-dk); --thm-lt: var(--blue-lt);
-  --thm-bd: #c0d0f0;
-  --thm-gr: linear-gradient(90deg, #2b52a8 0%, #1e3e8a 60%, #162e70 100%);
-}
-[data-theme="green"] {
-  --thm: var(--green); --thm-dk: var(--green-dk); --thm-lt: var(--green-lt);
-  --thm-bd: #b0e0b0;
-  --thm-gr: linear-gradient(90deg, #2a7a2a 0%, #1e6020 60%, #154814 100%);
-}
-[data-theme="red"] {
-  --thm: var(--red); --thm-dk: var(--red-dk); --thm-lt: var(--red-lt);
-  --thm-bd: #f0c0b8;
-  --thm-gr: linear-gradient(90deg, #cc2200 0%, #b01c00 60%, #8c1400 100%);
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Noto Sans Arabic', 'Outfit', Arial, sans-serif;
-  background: var(--bg-page);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 0;
-  transition: background-color 0.4s ease, color 0.4s ease;
-}
-
-/* ═══════════════════════════════════════
-   STICKY MASTHEAD
-═══════════════════════════════════════ */
-.masthead {
-  background: #fff;
-  border-bottom: 2px solid var(--border);
-  padding: 10px 20px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.masthead-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.logo-pill {
-  background: var(--blue);
-  border-radius: 50px;
-  padding: 5px 22px 5px 14px;
-  display: inline-flex;
-  align-items: center;
-  position: relative;
-}
-.logo-leaf {
-  position: absolute;
-  top: -6px;
-  right: 10px;
-  width: 22px;
-  height: 16px;
-}
-.logo-name {
-  color: #fff;
-  font-size: 18px;
-  font-weight: 800;
-  font-style: italic;
-  font-family: 'Outfit', Arial, sans-serif;
-}
-.logo-tm {
-  color: #fff;
-  font-size: 7px;
-  vertical-align: super;
-  font-family: Arial, sans-serif;
-}
-
-.masthead-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-sm);
-  letter-spacing: 0.3px;
-}
-
-/* Product nav pills */
-.prod-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: flex-end;
-}
-.prod-nav a {
-  text-decoration: none;
-  font-size: 10.5px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: 20px;
-  border: 1.5px solid transparent;
-  transition: all 0.15s;
-  white-space: nowrap;
-}
-.prod-nav a:hover { opacity: 0.8; }
-.nav-theme { background: var(--thm-lt); color: var(--thm-dk); border-color: var(--thm); }
-
-/* ═══════════════════════════════════════
-   PAGE WRAPPER
-═══════════════════════════════════════ */
-.page-wrap {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 24px 16px 48px;
-}
-
-/* ═══════════════════════════════════════
-   PRODUCT GRID
-═══════════════════════════════════════ */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 22px;
-  align-items: start;
-}
-
-/* ═══════════════════════════════════════
-   PRODUCT CARD
-═══════════════════════════════════════ */
-.product-card {
-  background: #fff;
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  scroll-margin-top: 85px;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  will-change: transform, box-shadow;
-}
-.product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.08);
-}
-
-/* ── Card Header ── */
-.card-header {
-  padding: 10px 14px 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.clax-badge-wrap {
-  display: flex;
-  align-items: center;
-}
-.clax-box {
-  background: #fff;
-  padding: 2px 7px;
-  display: inline-block;
-  line-height: 1;
-  border-radius: 2px;
-}
-.clax-box span {
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--blue);
-  font-style: italic;
-  font-family: Arial, sans-serif;
-  line-height: 1.1;
-}
-.clax-divider {
-  width: 0; height: 0;
-  border-top: 30px solid #fff;
-  border-right: 10px solid transparent;
-  display: inline-block;
-  vertical-align: top;
-  margin-left: -1px;
-}
-.card-prod-name {
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  margin-right: 8px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
-  line-height: 1.2;
-}
-.card-prod-code {
-  color: rgba(255,255,255,0.92);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  font-family: Arial, sans-serif;
-  background: rgba(0,0,0,0.15);
-  padding: 2px 8px;
-  border-radius: 4px;
-}
-
-.hd-theme { background: var(--thm-gr); }
-
-/* ── Product Type Badge ── */
-.prod-type-tag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
-  margin: 10px 14px 0;
-  letter-spacing: 0.2px;
-}
-.tag-theme { background: var(--thm-lt); color: var(--thm-dk); border: 1px solid var(--thm-bd); }
-
-/* ── Card Body ── */
-.card-body {
-  padding: 10px 14px 0;
-  flex: 1;
-}
-
-/* Top row: icon + content */
-.card-top-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-.card-icon-box {
-  flex-shrink: 0;
-  width: 78px;
-  height: 68px;
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid var(--border);
-  background: #fafafa;
-  margin-top: 2px;
-}
-.card-icon-box svg { width: 76px; height: 66px; }
-
-.card-content { flex: 1; min-width: 0; }
-
-/* Section headers */
-.sec-head {
-  font-size: 10px;
-  font-weight: 800;
-  margin-top: 8px;
-  margin-bottom: 3px;
-  letter-spacing: 0.1px;
-  padding-bottom: 2px;
-  border-bottom: 1.5px solid currentColor;
-  display: inline-block;
-  text-underline-offset: 2px;
-}
-.sec-head:first-child { margin-top: 0; }
-
-.head-theme { color: var(--thm-dk); border-color: var(--thm); }
-
-/* Body text */
-.btext {
-  font-size: 11px;
-  color: var(--text);
-  line-height: 1.6;
-  text-align: justify;
-}
-
-/* Bullet list */
-.blist {
-  list-style: none;
-  margin: 3px 0 0;
-  padding: 0;
-}
-.blist li {
-  font-size: 11px;
-  color: var(--text);
-  line-height: 1.6;
-  padding-right: 13px;
-  position: relative;
-  margin-bottom: 1px;
-  text-align: justify;
-}
-.blist li::before {
-  content: "▸";
-  position: absolute;
-  right: 0;
-  top: 0;
-  font-size: 9px;
-  line-height: 1.7;
-  color: var(--text-sm);
-}
-
-/* Warning / note head */
-.note-head {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text);
-  margin-top: 4px;
-  margin-bottom: 2px;
-}
-
-/* Dosage lines */
-.dosage-line {
-  font-size: 11px;
-  color: var(--text);
-  line-height: 1.6;
-  margin-bottom: 1px;
-}
-
-/* ── Dosage Table ── */
-.dose-table {
-  width: 100%;
-  max-width: 260px;
-  border-collapse: collapse;
-  font-size: 9.5px;
-  margin-top: 4px;
-  border-radius: 6px;
-  overflow: hidden;
-}
-.dose-table thead tr th {
-  padding: 4px 8px;
-  font-weight: 700;
-  color: #fff;
-  text-align: right;
-}
-.dose-table thead tr th:last-child { text-align: left; direction: ltr; }
-.dose-table tbody tr td {
-  padding: 3px 8px;
-  text-align: right;
-  color: var(--text);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-.dose-table tbody tr td:last-child { text-align: left; direction: ltr; }
-.dose-table tbody tr:nth-child(odd)  { background: rgba(0,0,0,0.03); }
-.dose-table tbody tr:last-child td   { border-bottom: none; }
-
-.th-theme thead { background: var(--thm-dk); }
-
-/* ── Technical Data Table ── */
-.tech-section {
-  margin-top: 10px;
-  padding: 0 14px;
-}
-.tech-table-enhanced {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 9.5px;
-  border-radius: 6px;
-  overflow: hidden;
-}
-.tech-table-enhanced thead th {
-  padding: 5px 8px;
-  color: #fff;
-  font-weight: 700;
-  text-align: right;
-}
-.tech-table-enhanced tbody td {
-  padding: 4px 8px;
-  color: var(--text);
-  vertical-align: top;
-}
-.tech-table-enhanced tbody td.lbl {
-  font-weight: 600;
-  text-align: right;
-  width: 36%;
-  border-left: 3px solid rgba(0,0,0,0.06);
-}
-.tech-table-enhanced tbody td.val {
-  text-align: left;
-  direction: ltr;
-  width: 14%;
-  font-family: 'Courier New', monospace;
-  font-size: 9px;
-}
-.tech-table-enhanced tbody tr:nth-child(odd) td { background: rgba(0,0,0,0.025); }
-
-.tt-theme thead { background: var(--thm-dk); }
-
-.tech-note {
-  font-size: 8.5px;
-  color: var(--text-sm);
-  font-style: italic;
-  padding: 3px 0 0;
-  line-height: 1.4;
-}
-
-/* ── Safe Handling Footer ── */
-.card-safe {
-  margin-top: 10px;
-  padding: 6px 14px 7px;
-}
-.card-safe-head {
-  font-size: 9.5px;
-  font-weight: 800;
-  color: #fff;
-  padding: 4px 14px;
-  margin: 0 -14px;
-  display: block;
-}
-.safe-theme { background: var(--thm-dk); }
-.safe-body-theme { background: var(--thm-lt); }
-
-.card-safe-text {
-  font-size: 9px;
-  color: var(--text);
-  line-height: 1.55;
-  text-align: justify;
-  padding: 5px 0 0;
-}
-
-/* ═══════════════════════════════════════
-   BUBBLE CANVAS
-═══════════════════════════════════════ */
-#bubble-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  z-index: 0;
-}
-.masthead { position: sticky; z-index: 100; }
-.page-wrap { position: relative; z-index: 1; }
-.site-footer { position: relative; z-index: 1; }
-
-/* ═══════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════ */
-@media (max-width: 840px) {
-  .products-grid { grid-template-columns: 1fr; gap: 26px; }
-  .prod-nav { display: none; }
-  .masthead-title { font-size: 12px; }
-}
-
-@media (max-width: 500px) {
-  .page-wrap { padding: 20px 24px 40px; }
-  .card-header { padding: 8px 12px 7px; }
-  .card-prod-name { font-size: 16px; }
-  .card-top-row { flex-direction: column; }
-  .card-icon-box { width: 100%; height: 80px; }
-  .card-icon-box svg { width: 90px; height: 78px; }
-  .btext, .blist li, .dosage-line, .note-head { font-size: 12px; }
-  .sec-head { font-size: 12px; }
-  .dose-table { max-width: 100%; }
-  .dose-table thead tr th,
-  .dose-table tbody tr td { font-size: 10.5px; padding: 5px 8px; }
-  .tech-table-enhanced thead th,
-  .tech-table-enhanced tbody td { font-size: 10.5px; padding: 5px 8px; }
-  .card-safe-text { font-size: 10px; }
-  
-}
-
-@media print {
-  .masthead, .prod-nav { display: none; }
-  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .product-card { box-shadow: none; border: 1px solid #ccc; }
-  body { background: #fff; }
-}
-
-/* ═══════════════════════════════════════
-   INTRO SPLASH — ENHANCED
-═══════════════════════════════════════ */
-#intro-overlay {
-  position: fixed; inset: 0; z-index: 9999;
-  background: radial-gradient(ellipse 90% 70% at 35% 45%, #0d2060 0%, #060e23 55%, #08091a 100%);
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.75s cubic-bezier(0.4,0,0.2,1), transform 0.75s cubic-bezier(0.4,0,0.2,1);
-  overflow: hidden;
-}
-#intro-overlay::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    radial-gradient(circle at 18% 78%, rgba(197,160,90,0.10) 0%, transparent 42%),
-    radial-gradient(circle at 82% 18%, rgba(43,82,168,0.14) 0%, transparent 42%);
-  pointer-events: none;
-}
-#intro-overlay.hiding { opacity: 0; pointer-events: none; transform: scale(1.03); }
-
-/* Prevent page scrolling while intro is visible */
-html.intro-lock,
-body.intro-lock {
-  overflow: hidden;
-}
-body.intro-lock {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-}
-
-/* Ambient blur orbs */
-.intro-orb {
-  position: absolute; border-radius: 50%; pointer-events: none; filter: blur(70px);
-}
-.intro-orb:nth-child(1) {
-  width: 500px; height: 500px; top: -180px; left: -150px;
-  background: radial-gradient(circle, rgba(43,82,168,0.28) 0%, transparent 70%);
-  animation: orbDrift 10s ease-in-out infinite alternate;
-}
-.intro-orb:nth-child(2) {
-  width: 340px; height: 340px; bottom: -100px; right: -80px;
-  background: radial-gradient(circle, rgba(197,160,90,0.18) 0%, transparent 70%);
-  animation: orbDrift 13s ease-in-out infinite alternate-reverse;
-}
-.intro-orb:nth-child(3) {
-  width: 200px; height: 200px; top: 42%; right: 8%;
-  background: radial-gradient(circle, rgba(43,82,168,0.12) 0%, transparent 70%);
-  animation: orbDrift 8s ease-in-out infinite alternate; animation-delay: 1.5s;
-}
-@keyframes orbDrift {
-  from { transform: translate(0,0) scale(1); }
-  to   { transform: translate(18px,-22px) scale(1.1); }
-}
-
-/* Frame corner accents */
-.intro-corner {
-  position: absolute; width: 56px; height: 56px; pointer-events: none; opacity: 0.4;
-  animation: iFadeUp 0.8s ease 0.9s both;
-}
-.intro-corner-tl { top: 24px; left: 24px; border-top: 1.5px solid #c5a05a; border-left: 1.5px solid #c5a05a; border-radius: 3px 0 0 0; }
-.intro-corner-tr { top: 24px; right: 24px; border-top: 1.5px solid #c5a05a; border-right: 1.5px solid #c5a05a; border-radius: 0 3px 0 0; }
-.intro-corner-bl { bottom: 24px; left: 24px; border-bottom: 1.5px solid #c5a05a; border-left: 1.5px solid #c5a05a; border-radius: 0 0 0 3px; }
-.intro-corner-br { bottom: 24px; right: 24px; border-bottom: 1.5px solid #c5a05a; border-right: 1.5px solid #c5a05a; border-radius: 0 0 3px 0; }
-
-/* Main card */
-.intro-card {
-  position: relative; z-index: 2;
-  background: rgba(6, 14, 40, 0.78);
-  border: 1px solid rgba(197,160,90,0.22);
-  border-radius: 20px; padding: 44px 48px 38px;
-  text-align: center; max-width: 460px; width: 92%;
-  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
-  box-shadow: 0 36px 90px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.03) inset;
-  animation: iCardIn 0.85s cubic-bezier(0.22,1,0.36,1) both;
-}
-/* Gold shimmer line at top of card */
-.intro-card::before {
-  content: '';
-  position: absolute; top: 0; left: 12%; right: 12%; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(197,160,90,0.6), #f0d080, rgba(197,160,90,0.6), transparent);
-}
-@keyframes iCardIn {
-  from { opacity: 0; transform: translateY(38px) scale(0.94); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* Crest emblem */
-.intro-crest {
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  margin: 0 auto 22px;
-  animation: iMonoPop 1s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
-}
-.intro-crest-ring {
-  width: 88px; height: 88px; border-radius: 50%;
-  background: linear-gradient(148deg, #d4af6a 0%, #f0d080 45%, #a87c30 100%);
-  display: flex; align-items: center; justify-content: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow:
-    0 0 0 6px rgba(197,160,90,0.13),
-    0 0 0 13px rgba(197,160,90,0.06),
-    0 14px 40px rgba(197,160,90,0.45),
-    0 4px 16px rgba(0,0,0,0.45);
-}
-.intro-crest-ring::before {
-  content: ''; position: absolute; inset: 6px;
-  border-radius: 50%; border: 1px solid rgba(255,255,255,0.22);
-}
-.intro-crest-logo {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  position: relative; z-index: 2;
-  border-radius: 50%;
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));
-  animation: logoPulse 4s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
-}
-@keyframes logoPulse {
-  from { filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3)) brightness(1); transform: scale(1) translateY(0); }
-  to   { filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5)) brightness(1.12); transform: scale(1.06) translateY(-2px); }
-}
-.intro-crest-hotel {
-  font-family: 'Outfit', Arial, sans-serif;
-  font-size: 20px; font-weight: 900; color: #fff;
-  letter-spacing: 6px; text-transform: uppercase; line-height: 1;
-}
-.intro-crest-luxury {
-  font-size: 10px; font-weight: 500; color: rgba(197,160,90,0.75);
-  letter-spacing: 3px; text-transform: uppercase; margin-top: 2px;
-}
-
-@keyframes iMonoPop {
-  from { opacity: 0; transform: scale(0.5) translateY(8px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-/* Department pill */
-.intro-dept {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1px solid rgba(197,160,90,0.24);
-  border-radius: 30px; padding: 5px 18px;
-  margin-bottom: 18px;
-  background: rgba(197,160,90,0.05);
-  animation: iFadeUp 0.6s ease 0.44s both;
-}
-.intro-dept-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: #c5a05a; flex-shrink: 0;
-  box-shadow: 0 0 7px rgba(197,160,90,0.65);
-}
-.intro-dept-text {
-  font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.5);
-  letter-spacing: 3.5px; text-transform: uppercase;
-}
-
-/* Guide title block */
-.intro-guide-label {
-  font-family: 'Outfit', Arial, sans-serif;
-  font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.92);
-  margin-bottom: 5px; letter-spacing: 0.3px;
-  animation: iFadeUp 0.6s ease 0.50s both;
-}
-.intro-guide-sub {
-  font-size: 11px; color: rgba(197,160,90,0.7);
-  margin-bottom: 20px; letter-spacing: 0.5px;
-  animation: iFadeUp 0.6s ease 0.55s both;
-}
-
-/* Diamond divider */
-.intro-divider {
-  display: flex; align-items: center; gap: 9px;
-  margin: 0 0 20px;
-  animation: iFadeUp 0.6s ease 0.58s both;
-}
-.intro-divider-line {
-  flex: 1; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(197,160,90,0.38));
-}
-.intro-divider-line:last-child {
-  background: linear-gradient(270deg, transparent, rgba(197,160,90,0.38));
-}
-.intro-divider-diamond {
-  width: 6px; height: 6px; background: #c5a05a;
-  transform: rotate(45deg); flex-shrink: 0;
-  box-shadow: 0 0 9px rgba(197,160,90,0.55);
-}
-
-/* Team grid */
-.intro-team {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 10px; margin: 0 0 22px;
-}
-.team-member {
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-  padding: 13px 8px;
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 12px;
-  animation: iFadeUp 0.6s ease both;
-  transition: background 0.2s, border-color 0.2s;
-}
-.team-member:hover { background: rgba(197,160,90,0.07); border-color: rgba(197,160,90,0.2); }
-.team-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: linear-gradient(135deg, rgba(197,160,90,0.25), rgba(43,82,168,0.3));
-  border: 1.5px solid rgba(197,160,90,0.32);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Outfit', sans-serif;
-  font-size: 11px; font-weight: 900; color: #d4af6a;
-}
-.team-role {
-  font-size: 7.5px; font-weight: 700; color: rgba(255,255,255,0.32);
-  letter-spacing: 0.8px; text-transform: uppercase;
-  line-height: 1.35; text-align: center;
-}
-.team-name {
-  font-family: 'Outfit', Arial, sans-serif;
-  font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.88);
-  text-align: center; line-height: 1.2;
-}
-
-@keyframes iFadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Progress bar */
-.intro-prog-wrap {
-  background: rgba(255,255,255,0.07); border-radius: 6px;
-  height: 2px; margin-bottom: 20px; overflow: hidden;
-  animation: iFadeUp 0.6s ease 0.66s both;
-}
-.intro-prog-bar {
-  height: 100%; width: 100%;
-  background: linear-gradient(90deg, #7a5c0a, #c5a05a, #f0d080, #c5a05a, #7a5c0a);
-  background-size: 300% 100%;
-  transform-origin: left;
-  animation: iShrink 29s linear 1s forwards, shimmerProg 2.5s linear infinite;
-}
-@keyframes iShrink { from { transform: scaleX(1); } to { transform: scaleX(0); } }
-@keyframes shimmerProg { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
-
-/* Skip button */
-.intro-skip {
-  font-size: 12.5px; font-weight: 700;
-  color: rgba(197,160,90,0.75);
-  background: transparent;
-  border: 1px solid rgba(197,160,90,0.24);
-  border-radius: 30px; padding: 9px 30px; cursor: pointer;
-  transition: all 0.25s ease;
-  animation: iFadeUp 0.6s ease 0.72s both;
-  font-family: 'Noto Sans Arabic', sans-serif;
-  letter-spacing: 0.5px;
-}
-.intro-skip:hover {
-  background: rgba(197,160,90,0.09);
-  color: #f0d080;
-  border-color: rgba(197,160,90,0.5);
-  box-shadow: 0 0 20px rgba(197,160,90,0.14);
-}
-
-/* Close X */
-.intro-close-x {
-  position: absolute; top: 15px; left: 15px;
-  width: 29px; height: 29px; border-radius: 50%;
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
-  color: rgba(255,255,255,0.3); font-size: 13px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; animation: iFadeUp 0.5s ease 0.88s both;
-  font-family: Arial, sans-serif;
-}
-.intro-close-x:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.25); }
-
-@media (max-width: 640px) {
-  #intro-overlay {
-    padding: 12px;
-  }
-
-  .intro-orb:nth-child(1) {
-    width: 320px;
-    height: 320px;
-    top: -130px;
-    left: -110px;
-  }
-
-  .intro-orb:nth-child(2) {
-    width: 240px;
-    height: 240px;
-    bottom: -80px;
-    right: -70px;
-  }
-
-  .intro-orb:nth-child(3) {
-    width: 150px;
-    height: 150px;
-    top: 58%;
-    right: 5%;
-  }
-
-  .intro-corner {
-    display: none;
-  }
-
-  .intro-card {
-    width: 100%;
-    max-width: 390px;
-    max-height: calc(100dvh - 24px);
-    overflow-y: auto;
-    padding: 30px 18px 18px;
-    border-radius: 16px;
-  }
-
-  .intro-crest {
-    margin-bottom: 14px;
-    gap: 8px;
-  }
-
-  .intro-crest-ring {
-    width: 68px;
-    height: 68px;
-  }
-
-  .intro-crest-hotel {
-    font-size: 16px;
-    letter-spacing: 4px;
-  }
-
-  .intro-crest-luxury {
-    font-size: 8px;
-    letter-spacing: 2px;
-  }
-
-  .intro-dept {
-    margin-bottom: 12px;
-    padding: 4px 12px;
-    gap: 6px;
-  }
-
-  .intro-dept-text {
-    font-size: 8px;
-    letter-spacing: 2px;
-  }
-
-  .intro-guide-label {
-    font-size: 13px;
-    margin-bottom: 4px;
-  }
-
-  .intro-guide-sub {
-    font-size: 10px;
-    margin-bottom: 14px;
-  }
-
-  .intro-divider {
-    margin-bottom: 14px;
-  }
-
-  .intro-team {
-    grid-template-columns: 1fr;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-
-  .team-member {
-    padding: 9px 8px;
-  }
-
-  .team-avatar {
-    width: 30px;
-    height: 30px;
-    font-size: 10px;
-  }
-
-  .team-role {
-    font-size: 7px;
-  }
-
-  .team-name {
-    font-size: 11px;
-  }
-
-  .intro-prog-wrap {
-    margin-bottom: 12px;
-  }
-
-  .intro-skip {
-    width: 100%;
-    padding: 8px 12px;
-    font-size: 12px;
-  }
-
-  .intro-close-x {
-    top: 10px;
-    left: 10px;
-    width: 26px;
-    height: 26px;
-    font-size: 12px;
-  }
-}
-
-/* ═══════════════════════════════════════
-   HERO BANNER
-═══════════════════════════════════════ */
-.page-hero {
-  background: linear-gradient(100deg, #1a3370 0%, #2b52a8 60%, #3a6ac8 100%);
-  padding: 26px 24px;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 14px;
-}
-.hero-text-block { flex: 1; min-width: 200px; }
-.hero-title {
-  font-family: 'Outfit', Arial, sans-serif;
-  font-size: 21px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 6px;
-}
-.hero-title span { color: #c5a05a; }
-.hero-sub { font-size: 12.5px; color: rgba(255,255,255,0.6); line-height: 1.6; }
-.hero-badges { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
-.hero-badge {
-  font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;
-  border: 1.5px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.82);
-  background: rgba(255,255,255,0.08); white-space: nowrap;
-}
-
-/* ═══════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════ */
-.site-footer {
-  background: #0f1e42;
-  padding: 28px 24px;
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 16px;
-}
-.footer-brand { display: flex; align-items: center; gap: 14px; }
-.footer-mono {
-  width: 48px; height: 48px; border-radius: 50%;
-  background: linear-gradient(135deg, #c5a05a, #f0d080);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.footer-mono span {
-  font-family: 'Outfit', Arial, sans-serif;
-  font-size: 16px; font-weight: 900; color: #0f1e42;
-}
-.footer-name {
-  font-family: 'Outfit', Arial, sans-serif;
-  font-size: 17px; font-weight: 800; color: #fff;
-}
-.footer-name .fp { color: #c5a05a; }
-.footer-role { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 3px; }
-.footer-copy { font-size: 11px; color: rgba(255,255,255,0.3); text-align: left; line-height: 1.7; }
-
-/* ═══════════════════════════════════════
-   MOBILE NAV DRAWER — REDESIGNED
-═══════════════════════════════════════ */
-
-/* Hamburger button */
-.mob-toggle {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 4px;
-  background: rgba(43,82,168,0.08);
-  border: 1.5px solid rgba(43,82,168,0.18);
-  border-radius: 10px;
-  cursor: pointer;
-  padding: 7px 8px;
-  flex-shrink: 0;
-  transition: background 0.2s, border-color 0.2s;
-}
-.mob-toggle:hover { background: rgba(43,82,168,0.15); border-color: rgba(43,82,168,0.35); }
-.mob-toggle span {
-  display: block;
-  width: 20px;
-  height: 2px;
-  background: var(--blue);
-  border-radius: 2px;
-  margin: 0;
-  transition: all 0.35s cubic-bezier(0.23,1,0.32,1);
-  transform-origin: center;
-}
-.mob-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-.mob-toggle.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-.mob-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-
-/* Backdrop */
-.mob-backdrop {
-  display: none;
-  position: fixed; inset: 0; z-index: 200;
-  background: rgba(10,20,50,0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-.mob-backdrop.open   { display: block; }
-.mob-backdrop.visible{ opacity: 1; }
-
-/* Slide-in drawer panel */
-.mob-nav-drawer {
-  position: fixed;
-  top: 0; left: 0;
-  height: 100dvh; width: 300px;
-  max-width: 88vw;
-  background: #fff;
-  z-index: 201;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(-105%);
-  transition: transform 0.38s cubic-bezier(0.23,1,0.32,1);
-  box-shadow: 6px 0 40px rgba(0,0,0,0.22);
-  overflow-y: auto;
-}
-.mob-nav-drawer.open { transform: translateX(0); }
-
-/* Drawer header */
-.mob-drawer-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 20px 14px;
-  border-bottom: 1px solid rgba(43,82,168,0.12);
-  background: linear-gradient(100deg, #1a3370 0%, #2b52a8 100%);
-  flex-shrink: 0;
-}
-.mob-drawer-title {
-  font-family: 'Outfit', Arial, sans-serif;
-  font-size: 15px; font-weight: 800; color: #fff;
-  letter-spacing: 0.2px;
-}
-.mob-drawer-title span { color: #c5a05a; }
-.mob-drawer-close {
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 8px;
-  color: #fff; font-size: 18px;
-  width: 34px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: background 0.2s;
-  font-family: Arial, sans-serif;
-  flex-shrink: 0;
-}
-.mob-drawer-close:hover { background: rgba(255,255,255,0.22); }
-
-/* Nav link items */
-.mob-nav-drawer a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
-  text-decoration: none;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--text);
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-  transition: background 0.18s, padding-right 0.18s;
-  position: relative;
-}
-.mob-nav-drawer a::before {
-  content: '';
-  display: block;
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: var(--thm, #2b52a8);
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
-}
-.mob-nav-drawer a::after {
-  content: '›';
-  position: absolute;
-  left: 20px;
-  font-size: 18px;
-  color: rgba(0,0,0,0.18);
-  transition: left 0.18s, color 0.18s;
-}
-.mob-nav-drawer a:hover {
-  background: var(--thm-lt, #eaf0fb);
-  padding-right: 26px;
-}
-.mob-nav-drawer a:hover::after { left: 16px; color: var(--thm, #2b52a8); }
-.mob-nav-drawer a:last-child { border-bottom: none; }
-
-/* Drawer footer brand */
-.mob-drawer-foot {
-  margin-top: auto;
-  padding: 16px 20px;
-  border-top: 1px solid rgba(0,0,0,0.07);
-  background: #f8fafc;
-  font-size: 11px;
-  color: #94a3b8;
-  text-align: center;
-  flex-shrink: 0;
-}
-
-@media (max-width: 840px) {
-  .mob-toggle { display: flex; }
-  .prod-nav { display: none; }
-  .site-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .footer-copy { text-align: right; }
-}
-
-/* ═══════════════════════════════════════
-   THEME TOGGLE
-═══════════════════════════════════════ */
-.theme-btn {
-  background: transparent; border: 1.5px solid var(--border);
-  color: var(--text-sm); width: 38px; height: 38px;
-  border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; position: relative; transition: all 0.25s;
-  margin-right: auto; margin-left: 10px;
-}
-.theme-btn:hover { background: rgba(0,0,0,0.05); color: var(--blue); border-color: var(--blue); }
-.theme-btn svg { position: absolute; width: 18px; height: 18px; transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1); }
-
-/* Light Mode */
-html[data-scheme="light"] .sun-icon { opacity: 0; transform: rotate(90deg) scale(0); }
-html[data-scheme="light"] .moon-icon { opacity: 1; transform: rotate(0) scale(1); }
-
-/* Dark Mode */
-html[data-scheme="dark"] .theme-btn { border-color: rgba(255,255,255,0.15); color: #cbd5e1; }
-html[data-scheme="dark"] .theme-btn:hover { background: rgba(255,255,255,0.1); color: #fcd34d; border-color: rgba(255,255,255,0.3); }
-html[data-scheme="dark"] .sun-icon { opacity: 1; transform: rotate(0) scale(1); }
-html[data-scheme="dark"] .moon-icon { opacity: 0; transform: rotate(-90deg) scale(0); }
-
-/* ═══════════════════════════════════════
-   DARK MODE
-═══════════════════════════════════════ */
-html[data-scheme="dark"] {
-  --bg-page: #0f172a;
-  --text: #f8fafc;
-  --text-sm: #cbd5e1;
-  --border: #334155;
-  
-  --gold-lt: #2a2211; --pink-lt: #2c1223; --blue-lt: #121c32; --green-lt: #102410; --red-lt: #2c100a;
-  --gold-dk: #fcd34d; --pink-dk: #f472b6; --blue-dk: #60a5fa; --green-dk: #4ade80; --red-dk: #f87171;
-}
-
-html[data-scheme="dark"] .mob-nav-drawer { background: #1e293b; }
-html[data-scheme="dark"] .mob-nav-drawer a { color: #f1f5f9; border-color: rgba(255,255,255,0.06); }
-html[data-scheme="dark"] .mob-drawer-foot { background: #0f172a; color: #64748b; }
-html[data-scheme="dark"] .site-footer { background: #070f24; }
-
-html[data-scheme="dark"] .masthead {
-  background: #1e293b;
-  border-bottom: 2px solid #0f172a;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-html[data-scheme="dark"] .product-card {
-  background: #1e293b;
-  border-color: #334155;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15);
-}
-
-html[data-scheme="dark"] .card-icon-box { background: #0f172a; border-color: #334155; }
-html[data-scheme="dark"] .clax-box { background: #1e293b; }
-html[data-scheme="dark"] .clax-divider { border-top-color: #1e293b; }
-
-html[data-scheme="dark"] .dose-table tbody tr:nth-child(odd),
-html[data-scheme="dark"] .tech-table-enhanced tbody tr:nth-child(odd) td {
-  background: rgba(255,255,255,0.03);
-}
-
-html[data-scheme="dark"] .dose-table tbody tr td,
-html[data-scheme="dark"] .tech-table-enhanced tbody td.lbl {
-  border-color: rgba(255,255,255,0.05);
-}
-
-html[data-scheme="dark"] .tech-table-enhanced tbody td.val { color: #e2e8f0; }
-
-html[data-scheme="dark"] .dose-table thead tr th, 
-html[data-scheme="dark"] .tech-table-enhanced thead th {
-  color: #0f172a;
-}
-html[data-scheme="dark"] .card-safe-head { color: #0f172a; }
-html[data-scheme="dark"] .sec-head { filter: brightness(1.2); }
-
-/* Premium UX layer */
-body {
-  background:
-    radial-gradient(circle at top right, rgba(197,160,90,0.18), transparent 28%),
-    radial-gradient(circle at top left, rgba(43,82,168,0.16), transparent 24%),
-    linear-gradient(180deg, #eef3fb 0%, #f7f5ef 42%, #edf1f7 100%);
-}
-
-.masthead {
-  width: min(1240px, calc(100% - 24px));
-  margin: 14px auto 0;
-  padding: 14px 18px;
-  border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 24px;
-  background: rgba(255,255,255,0.82);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-}
-
-.prod-nav {
-  flex: 1;
-  justify-content: center;
-  gap: 8px;
-}
-
-.prod-nav a {
-  font-size: 11.5px;
-  padding: 8px 12px;
-  border-width: 1px;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
-}
-
-.prod-nav a:hover,
-.prod-nav a:focus-visible {
-  opacity: 1;
-  transform: translateY(-1px);
-  outline: none;
-}
-
-.page-wrap {
-  max-width: 1240px;
-  padding-top: 18px;
-}
-
-.site-hero {
-  position: relative;
-  z-index: 1;
-  margin: 26px auto 18px;
-}
-
-.hero-shell {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.95fr);
-  gap: 18px;
-  padding: 28px;
-  border-radius: 32px;
-  background:
-    linear-gradient(135deg, rgba(15,30,66,0.96), rgba(24,53,115,0.94) 56%, rgba(197,160,90,0.92) 140%);
-  color: #fff;
-  box-shadow: 0 30px 70px rgba(15,30,66,0.2);
-}
-
-.hero-shell::before,
-.hero-shell::after {
-  content: "";
-  position: absolute;
-  border-radius: 999px;
-  pointer-events: none;
-}
-
-.hero-shell::before {
-  inset: auto auto -110px -50px;
-  width: 260px;
-  height: 260px;
-  background: rgba(255,255,255,0.08);
-}
-
-.hero-shell::after {
-  inset: 18px -80px auto auto;
-  width: 220px;
-  height: 220px;
-  background: rgba(255,255,255,0.1);
-}
-
-.hero-copy,
-.hero-panel {
-  position: relative;
-  z-index: 1;
-}
-
-.hero-eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.88);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-
-.hero-title {
-  margin-top: 16px;
-  font-size: clamp(32px, 4vw, 52px);
-  line-height: 1.06;
-  font-weight: 900;
-}
-
-.hero-text {
-  max-width: 700px;
-  margin-top: 14px;
-  color: rgba(255,255,255,0.84);
-  font-size: 15px;
-  line-height: 1.9;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.hero-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  padding: 0 18px;
-  border-radius: 16px;
-  text-decoration: none;
-  font-weight: 800;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-}
-
-.hero-btn-primary {
-  background: #fff;
-  color: #16336f;
-  box-shadow: 0 14px 28px rgba(0,0,0,0.16);
-}
-
-.hero-btn-secondary {
-  border: 1px solid rgba(255,255,255,0.2);
-  color: #fff;
-  background: rgba(255,255,255,0.08);
-}
-
-.hero-btn:hover,
-.hero-btn:focus-visible {
-  transform: translateY(-2px);
-  outline: none;
-}
-
-.hero-panel {
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.hero-card {
-  padding: 18px;
-  border-radius: 24px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
-}
-
-.hero-card-title {
-  font-size: 13px;
-  font-weight: 800;
-  color: rgba(255,255,255,0.76);
-  margin-bottom: 10px;
-}
-
-.hero-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 54px;
-  padding: 0 14px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.9);
-}
-
-.hero-search input {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  color: #102144;
-  outline: none;
-}
-
-.hero-search svg {
-  width: 18px;
-  height: 18px;
-  color: #4666b3;
-  flex: 0 0 auto;
-}
-
-.hero-filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.hero-filter {
-  min-height: 38px;
-  padding: 0 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  font: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-}
-
-.hero-filter.active,
-.hero-filter:hover,
-.hero-filter:focus-visible {
-  background: #fff;
-  color: #16336f;
-  border-color: #fff;
-  transform: translateY(-1px);
-  outline: none;
-}
-
-.hero-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.hero-stat {
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(255,255,255,0.1);
-}
-
-.hero-stat strong {
-  display: block;
-  font-size: 24px;
-  line-height: 1;
-}
-
-.hero-stat span {
-  display: block;
-  margin-top: 6px;
-  font-size: 12px;
-  color: rgba(255,255,255,0.72);
-}
-
-.catalog-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin: 0 0 18px;
-  padding: 0 6px;
-}
-
-.catalog-title {
-  font-size: 20px;
-  font-weight: 900;
-  color: #132958;
-}
-
-.catalog-sub {
-  margin-top: 4px;
-  color: #4e5d78;
-  font-size: 13px;
-}
-
-.catalog-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 108px;
-  min-height: 44px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.78);
-  border: 1px solid rgba(19,41,88,0.08);
-  font-weight: 800;
-  color: #16336f;
-  box-shadow: 0 12px 28px rgba(12,24,48,0.08);
-}
-
-.product-card {
-  position: relative;
-  border-radius: 22px;
-  box-shadow: 0 18px 44px rgba(15,30,66,0.09), 0 2px 10px rgba(15,30,66,0.06);
-}
-
-.product-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(197,160,90,0.14));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-.card-body,
-.tech-section,
-.card-safe {
-  position: relative;
-  z-index: 1;
-}
-
-.card-header {
-  padding: 16px 18px 14px;
-}
-
-.prod-type-tag {
-  margin: 14px 18px 0;
-  padding: 6px 12px;
-  border-radius: 999px;
-}
-
-.card-body {
-  padding: 18px;
-}
-
-.card-top-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 130px;
-  gap: 18px;
-  align-items: start;
-}
-
-.card-icon-box {
-  justify-self: center;
-  width: 130px;
-  min-height: 126px;
-  border-radius: 24px;
-  background: linear-gradient(180deg, #ffffff, #f2f5fb);
-  border: 1px solid rgba(19,41,88,0.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
-}
-
-.sec-head {
-  display: inline-flex;
-  align-items: center;
-  max-width: max-content;
-  padding: 0 0 4px;
-  border: 0;
-  border-bottom: 1.5px solid currentColor;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.dose-table,
-.tech-table-enhanced {
-  overflow: hidden;
-  border-radius: 16px;
-}
-
-.site-footer {
-  width: min(1240px, calc(100% - 24px));
-  margin: 18px auto 22px;
-  border-radius: 26px;
-  background: linear-gradient(135deg, #0f1e42, #183572);
-  box-shadow: 0 24px 50px rgba(15,30,66,0.14);
-}
-
-.site-footer::before {
-  content: "";
-  position: absolute;
-  inset: auto -20px -40px auto;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle, rgba(197,160,90,0.26), transparent 65%);
-  pointer-events: none;
-}
-
-.product-card.is-hidden {
-  display: none;
-}
-
-html[data-scheme="dark"] body {
-  background:
-    radial-gradient(circle at top right, rgba(197,160,90,0.16), transparent 22%),
-    radial-gradient(circle at top left, rgba(59,130,246,0.14), transparent 20%),
-    linear-gradient(180deg, #081121 0%, #0f172a 55%, #111827 100%);
-}
-
-html[data-scheme="dark"] .masthead,
-html[data-scheme="dark"] .catalog-count {
-  background: rgba(15,23,42,0.82);
-  border-color: rgba(148,163,184,0.18);
-}
-
-html[data-scheme="dark"] .catalog-title {
-  color: #f8fafc;
-}
-
-html[data-scheme="dark"] .catalog-sub {
-  color: #94a3b8;
-}
-
-html[data-scheme="dark"] .hero-search {
-  background: rgba(15,23,42,0.88);
-}
-
-html[data-scheme="dark"] .hero-search input {
-  color: #f8fafc;
-}
-
-html[data-scheme="dark"] .hero-search svg {
-  color: #93c5fd;
-}
-
-html[data-scheme="dark"] .product-card::before {
-  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(96,165,250,0.08));
-}
-
-html[data-scheme="dark"] .card-icon-box {
-  background: linear-gradient(180deg, #0f172a, #162033);
-  border-color: rgba(148,163,184,0.14);
-}
-
-@media (max-width: 980px) {
-  .hero-shell {
-    grid-template-columns: 1fr;
-    padding: 24px;
-  }
-
-  .prod-nav {
-    order: 3;
-    flex: 1 1 100%;
-    justify-content: flex-start;
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    padding-bottom: 4px;
-    scrollbar-width: thin;
-  }
-
-  .catalog-bar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 840px) {
-  .masthead {
-    width: calc(100% - 18px);
-    margin-top: 10px;
-    padding: 12px 14px;
-    border-radius: 20px;
-  }
-
-  .page-wrap {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
-
-  .site-hero {
-    margin-top: 18px;
-  }
-
-  .hero-shell {
-    border-radius: 26px;
-    padding: 20px;
-  }
-
-  .hero-title {
-    font-size: clamp(28px, 8vw, 38px);
-  }
-
-  .hero-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-panel {
-    display: none;
-  }
-
-  .products-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .card-top-row {
-    grid-template-columns: 1fr;
-  }
-
-  .card-icon-box {
-    width: 100%;
-    max-width: 180px;
-  }
-
-  .site-footer {
-    width: calc(100% - 18px);
-  }
-}
-
-@media (max-width: 500px) {
-  .hero-actions {
-    flex-direction: column;
-  }
-
-  .hero-btn,
-  .catalog-count {
-    width: 100%;
-  }
-
-  .hero-filter-row {
-    gap: 6px;
-  }
-}
-
-.quick-jumps {
-  display: none;
-  gap: 8px;
-  margin: 0 0 16px;
-  padding: 2px 2px 6px;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
-}
-
-.quick-jumps a {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 36px;
-  padding: 0 12px;
-  border-radius: 999px;
-  white-space: nowrap;
-  text-decoration: none;
-  font-size: 12px;
-  font-weight: 800;
-  color: #16336f;
-  background: rgba(255,255,255,0.9);
-  border: 1px solid rgba(19,41,88,0.08);
-  box-shadow: 0 8px 18px rgba(12,24,48,0.06);
-}
-
-html[data-scheme="dark"] .quick-jumps a {
-  background: rgba(15,23,42,0.88);
-  color: #e2e8f0;
-  border-color: rgba(148,163,184,0.16);
-}
-
-@media (max-width: 980px) {
-  .masthead {
-    gap: 10px;
-    align-items: center;
-  }
-
-  .masthead-brand {
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-
-  .masthead-title {
-    max-width: 220px;
-    line-height: 1.3;
-  }
-
-  .prod-nav {
-    display: none;
-  }
-
-  .mob-toggle {
-    display: flex;
-    margin-inline-start: auto;
-  }
-
-  .quick-jumps {
-    display: flex;
-  }
-
-  .catalog-bar {
-    padding: 0;
-  }
-}
-
-@media (max-width: 640px) {
-  body {
-    background: linear-gradient(180deg, #eef3fb 0%, #f8f4ea 42%, #edf1f7 100%);
-  }
-
-  .page-wrap {
-    width: calc(100% - 16px);
-    margin-inline: auto;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
-
-  .masthead {
-    width: calc(100% - 12px);
-    margin-top: 8px;
-    padding: 10px 12px;
-    border-radius: 18px;
-  }
-
-  .masthead .logo-pill {
-    padding: 4px 12px !important;
-    gap: 4px !important;
-  }
-
-  .masthead .logo-pill span {
-    font-size: 12.5px !important;
-  }
-
-  .masthead-title {
-    max-width: 150px;
-    font-size: 11px !important;
-  }
-
-  .theme-btn,
-  .mob-toggle {
-    width: 40px;
-    height: 40px;
-    padding: 0;
-  }
-
-  .site-hero {
-    margin-top: 14px;
-  }
-
-  .hero-shell {
-    gap: 14px;
-    padding: 16px;
-    border-radius: 22px;
-  }
-
-  .hero-title {
-    font-size: clamp(22px, 9vw, 28px);
-  }
-
-  .hero-text {
-    margin-top: 10px;
-    font-size: 13px;
-    line-height: 1.75;
-  }
-
-  .hero-card {
-    padding: 14px;
-    border-radius: 18px;
-  }
-
-  .hero-search {
-    min-height: 46px;
-    border-radius: 14px;
-  }
-
-  .hero-filter {
-    flex: 1 1 calc(50% - 6px);
-    min-height: 34px;
-    padding: 0 10px;
-    font-size: 11px;
-  }
-
-  .hero-stat {
-    padding: 12px;
-  }
-
-  .hero-stat strong {
-    font-size: 20px;
-  }
-
-  .catalog-title {
-    font-size: 18px;
-  }
-
-  .catalog-sub {
-    font-size: 12px;
-  }
-
-  .catalog-count {
-    min-height: 38px;
-    padding: 0 12px;
-    font-size: 13px;
-  }
-
-  .products-grid {
-    gap: 14px;
-    padding-inline: 6px;
-  }
-
-  .product-card {
-    border-radius: 18px;
-    box-shadow: 0 14px 30px rgba(15,30,66,0.08), 0 2px 8px rgba(15,30,66,0.04);
-  }
-
-  .card-header {
-    padding: 12px 14px 10px;
-  }
-
-  .card-prod-name {
-    font-size: 16px;
-  }
-
-  .card-prod-code {
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
-
-  .prod-type-tag {
-    margin: 12px 14px 0;
-    padding: 5px 10px;
-    font-size: 10px;
-  }
-
-  .card-body {
-    padding: 14px;
-  }
-
-  .card-top-row {
-    gap: 14px;
-  }
-
-  .card-icon-box {
-    max-width: 140px;
-    min-height: 104px;
-  }
-
-  .btext,
-  .blist li,
-  .dosage-line,
-  .note-head {
-    font-size: 13px;
-    line-height: 1.7;
-  }
-
-  .dose-table,
-  .tech-table-enhanced {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .dose-table thead tr th,
-  .dose-table tbody tr td,
-  .tech-table-enhanced thead th,
-  .tech-table-enhanced tbody td {
-    white-space: nowrap;
-    font-size: 11px;
-    padding: 6px 8px;
-  }
-
-  .site-footer {
-    width: calc(100% - 12px);
-    margin: 14px auto 18px;
-    padding: 20px 16px;
-  }
-
-  .footer-brand {
-    gap: 10px;
-  }
-
-  .footer-copy {
-    text-align: right;
-  }
-
-  html[data-scheme="dark"] body {
-    background: linear-gradient(180deg, #081121 0%, #0f172a 62%, #111827 100%);
-  }
-}
-
-@media (max-width: 420px) {
-  .masthead-title {
-    display: none;
-  }
-
-  .hero-filter {
-    flex-basis: 100%;
-  }
-
-  .quick-jumps a {
-    min-height: 34px;
-    padding: 0 10px;
-    font-size: 11px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .product-card,
-  .hero-btn,
-  .hero-filter,
-  .prod-nav a,
-  .mob-toggle span {
-    transition: none !important;
-  }
-}
-</style>
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
@@ -2080,39 +101,7 @@ html[data-scheme="dark"] .quick-jumps a {
     <button class="intro-skip" onclick="closeIntro()">تخطي الدليل ›</button>
   </div>
 </div>
-<script>
-(function(){
-  var t;
-  var lockedScrollY = 0;
-  function lockIntroScroll() {
-    lockedScrollY = window.scrollY || window.pageYOffset || 0;
-    document.documentElement.classList.add('intro-lock');
-    document.body.classList.add('intro-lock');
-    document.body.style.top = '-' + lockedScrollY + 'px';
-  }
-  function unlockIntroScroll() {
-    var top = parseInt(document.body.style.top || '0', 10) || 0;
-    document.documentElement.classList.remove('intro-lock');
-    document.body.classList.remove('intro-lock');
-    document.body.style.top = '';
-    window.scrollTo(0, -top);
-  }
 
-  window.closeIntro = function(){
-    clearTimeout(t);
-    var el = document.getElementById('intro-overlay');
-    if(!el || el.classList.contains('hiding')) return;
-    el.classList.add('hiding');
-    setTimeout(function(){
-      el.style.display = 'none';
-      unlockIntroScroll();
-    }, 680);
-  };
-
-  lockIntroScroll();
-  t = setTimeout(window.closeIntro, 30000);
-})();
-</script>
 <!-- ═══ END SPLASH ═══ -->
 
 <!-- ═══ BUBBLE CANVAS ═══ -->
@@ -2135,6 +124,8 @@ html[data-scheme="dark"] .quick-jumps a {
     <a href="#neutra3in1" class="nav-theme" data-theme="red">Neutra 3in1</a>
     <a href="#clax200"    class="nav-theme" data-theme="green">CLAX 200</a>
     <a href="#clax100"    class="nav-theme" data-theme="green">CLAX 100 Color</a>
+    <span style="color:var(--border);font-size:14px;margin:0 2px;">│</span>
+    <a href="#programs" class="nav-prog-link">⚙ Programs</a>
   </nav>
 
   <button class="theme-btn" id="theme-btn" aria-label="Toggle Dark Mode" onclick="toggleTheme()">
@@ -2165,101 +156,13 @@ html[data-scheme="dark"] .quick-jumps a {
   <a href="#neutra3in1" data-theme="red"   onclick="closeMobMenu()">Neutra 3in1</a>
   <a href="#clax200"    data-theme="green" onclick="closeMobMenu()">CLAX 200</a>
   <a href="#clax100"    data-theme="green" onclick="closeMobMenu()">CLAX 100 Color</a>
+  <div style="height:1px;background:rgba(197,160,90,0.15);margin:8px 0;"></div>
+  <a href="#programs" data-theme="teal" onclick="closeMobMenu()" style="background:#ecfeff;color:#0e7490;border-color:#0891b2;">⚙ برامج الغسيل</a>
 
   <div class="mob-drawer-foot">Diversey Clax · دليل المنتجات</div>
 </div>
 
-<script>
-function toggleMobMenu() {
-  var drawer   = document.getElementById('mob-drawer');
-  var backdrop = document.getElementById('mob-backdrop');
-  var toggle   = document.getElementById('mob-toggle');
-  var isOpen   = drawer.classList.contains('open');
-  if (isOpen) { closeMobMenu(); } else {
-    backdrop.classList.add('open');
-    requestAnimationFrame(function(){
-      backdrop.classList.add('visible');
-      drawer.classList.add('open');
-      toggle.classList.add('active');
-    });
-    document.body.style.overflow = 'hidden';
-  }
-}
-function closeMobMenu() {
-  var drawer   = document.getElementById('mob-drawer');
-  var backdrop = document.getElementById('mob-backdrop');
-  var toggle   = document.getElementById('mob-toggle');
-  backdrop.classList.remove('visible');
-  drawer.classList.remove('open');
-  toggle.classList.remove('active');
-  document.body.style.overflow = '';
-  setTimeout(function(){ backdrop.classList.remove('open'); }, 380);
-}
 
-window.addEventListener('resize', function () {
-  if (window.innerWidth > 980) {
-    closeMobMenu();
-  }
-});
-
-document.addEventListener('keydown', function (event) {
-  if (event.key === 'Escape') {
-    closeMobMenu();
-  }
-});
-
-function toggleTheme() {
-  var html = document.documentElement;
-  var current = html.getAttribute('data-scheme');
-  var next = current === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-scheme', next);
-  localStorage.setItem('clax_theme', next);
-}
-
-function initCatalogUX() {
-  var searchInput = document.getElementById('product-search');
-  var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.hero-filter'));
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
-  var countNode = document.getElementById('catalog-count');
-  var currentTheme = 'all';
-
-  function applyFilters() {
-    var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
-    var visible = 0;
-
-    cards.forEach(function (card) {
-      var text = card.textContent.toLowerCase();
-      var matchesQuery = !query || text.indexOf(query) !== -1;
-      var matchesTheme = currentTheme === 'all' || card.getAttribute('data-theme') === currentTheme;
-      var show = matchesQuery && matchesTheme;
-      card.classList.toggle('is-hidden', !show);
-      if (show) visible++;
-    });
-
-    if (countNode) {
-      countNode.textContent = visible + ' products';
-    }
-  }
-
-  if (searchInput) {
-    searchInput.addEventListener('input', applyFilters);
-  }
-
-  filterButtons.forEach(function (button) {
-    button.addEventListener('click', function () {
-      currentTheme = button.getAttribute('data-filter') || 'all';
-      filterButtons.forEach(function (btn) {
-        btn.classList.toggle('active', btn === button);
-      });
-      applyFilters();
-    });
-  });
-
-  applyFilters();
-}
-
-document.addEventListener('DOMContentLoaded', initCatalogUX);
-</script>
 
 <div class="page-wrap">
 <section class="site-hero">
@@ -2271,6 +174,11 @@ document.addEventListener('DOMContentLoaded', initCatalogUX);
       <div class="hero-actions">
         <a class="hero-btn hero-btn-primary" href="#hypo">Start With Products</a>
       </div>
+        <!-- Button to jump to programs -->
+      <a class="hero-btn hero-btn-secondary" href="#programs">
+        Open Laundry Programs
+      </a>
+
     </div>
 
     <div class="hero-panel">
@@ -2632,7 +540,7 @@ document.addEventListener('DOMContentLoaded', initCatalogUX);
           <li>سهل الجرعة</li>
           <li>بيحافظ على الغسيل لو اتستخدم صح</li>
         </ul>
-      </div>
+      </div>        
 
       <div class="card-icon-box">
         <svg viewBox="0 0 80 70" xmlns="http://www.w3.org/2000/svg">
@@ -3032,6 +940,1345 @@ document.addEventListener('DOMContentLoaded', initCatalogUX);
 
 
 </div><!-- /products-grid -->
+
+<!-- ═══════════════════════════════════════════════════════════
+     PROGRAMS DEPARTMENT
+═══════════════════════════════════════════════════════════ -->
+<section class="programs-section" id="programs">
+  <div class="prog-section-header">
+    <div class="prog-section-badge"><span class="prog-badge-dot"></span>WASHING PROGRAMS<span class="prog-badge-dot"></span></div>
+    <h2 class="prog-section-title">برامج الغسيل</h2>
+    <p class="prog-section-sub">Triumph New Cairo — Chemical Washing Formulas</p>
+  </div>
+
+  <div class="programs-grid">
+
+<!-- Program 1 -->
+<article class="prog-card" id="prog1">
+  <div class="prog-card-head">
+    <span class="prog-num">1</span>
+    <div class="prog-titles">
+      <div class="prog-en">Bed Sheets</div>
+      <div class="prog-ar">ملايات بيضاء</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">43 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">0.5<br>2<br>1</td>
+          <td class="num-col">40<br>160<br>80</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>70</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">مستوى المياه ٧٠ — شطفة رئيسية ١٠ دقائق</div>
+</article>
+
+<!-- Program 2 -->
+<article class="prog-card" id="prog2">
+  <div class="prog-card-head">
+    <span class="prog-num">2</span>
+    <div class="prog-titles">
+      <div class="prog-en">Pillow Cases</div>
+      <div class="prog-ar">أكياس مخدات</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">43 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">1<br>4<br>1.5</td>
+          <td class="num-col">80<br>320<br>120</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>70</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">مستوى المياه ٧٠ — شطفة رئيسية ١٠ دقائق</div>
+</article>
+
+<!-- Program 3 -->
+<article class="prog-card" id="prog3">
+  <div class="prog-card-head">
+    <span class="prog-num">3</span>
+    <div class="prog-titles">
+      <div class="prog-en">White Towels</div>
+      <div class="prog-ar">بشاكير بيضاء</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">48 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">1<br>4<br>1.5</td>
+          <td class="num-col">80<br>320<br>120</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>70</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت + ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span><br><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1<br>1</td>
+          <td class="num-col">80<br>80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">بشاكير أبيض و نابكن</div>
+</article>
+
+<!-- Program 4 -->
+<article class="prog-card" id="prog4">
+  <div class="prog-card-head">
+    <span class="prog-num">4</span>
+    <div class="prog-titles">
+      <div class="prog-en">Pool Towels</div>
+      <div class="prog-ar">بشاكير سباحة</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">50°C</span>
+      <span class="prog-time">33 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>50</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">2<br>1</td>
+          <td class="num-col">160<br>80</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">بشاكير ملون سباحة — مستوى المياه ٦٥</div>
+</article>
+
+<!-- Program 5 -->
+<article class="prog-card" id="prog5">
+  <div class="prog-card-head">
+    <span class="prog-num">5</span>
+    <div class="prog-titles">
+      <div class="prog-en">White Table Linen</div>
+      <div class="prog-ar">مفارش وناپكن أبيض</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">75°C</span>
+      <span class="prog-time">48 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span></td>
+          <td class="num-col">1.5<br>4</td>
+          <td class="num-col">120<br>320</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>سخن</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>تبييض</td>
+          <td>2</td>
+          <td>60</td>
+          <td>8</td>
+          <td><span class="prog-chem chem-orange">Clax Hypo</span></td>
+          <td class="num-col">5</td>
+          <td class="num-col">400</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">تبييض ٦٠°م لمدة ٨ دقائق — مفارش أبيض و ناپكن</div>
+</article>
+
+<!-- Program 6 -->
+<article class="prog-card" id="prog6">
+  <div class="prog-card-head">
+    <span class="prog-num">6</span>
+    <div class="prog-titles">
+      <div class="prog-en">Colored Table Linen</div>
+      <div class="prog-ar">مفارش وناپكن ألوان</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">36 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">2<br>1<br>1</td>
+          <td class="num-col">160<br>80<br>80</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>65</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">مفارش و ناپكن ألوان — مستوى المياه ٦٥</div>
+</article>
+
+<!-- Program 7 -->
+<article class="prog-card" id="prog7">
+  <div class="prog-card-head">
+    <span class="prog-num">7</span>
+    <div class="prog-titles">
+      <div class="prog-en">Kitchen Jacket</div>
+      <div class="prog-ar">جواكت مطبخ / رواجع أبيض</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">80°C</span>
+      <span class="prog-time">55 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span></td>
+          <td class="num-col">3<br>6</td>
+          <td class="num-col">240<br>480</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>سخن</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>تبييض</td>
+          <td>2</td>
+          <td>60</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-orange">Clax Hypo</span></td>
+          <td class="num-col">7</td>
+          <td class="num-col">560</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">تبييض ٦٠°م لمدة ١٠ دقائق — جواكت مطبخ و رواجع</div>
+</article>
+
+<!-- Program 8 -->
+<article class="prog-card" id="prog8">
+  <div class="prog-card-head">
+    <span class="prog-num">8</span>
+    <div class="prog-titles">
+      <div class="prog-en">Light Uniform</div>
+      <div class="prog-ar">فواتح يونيفورم</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">65°C</span>
+      <span class="prog-time">36 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">2<br>1<br>1</td>
+          <td class="num-col">160<br>80<br>80</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>65</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">فواتح يونيفورم — مستوى المياه ٦٥</div>
+</article>
+
+<!-- Program 9 -->
+<article class="prog-card" id="prog9">
+  <div class="prog-card-head">
+    <span class="prog-num">9</span>
+    <div class="prog-titles">
+      <div class="prog-en">Dark Uniform</div>
+      <div class="prog-ar">غوامق يونيفورم</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">40°C</span>
+      <span class="prog-time">31 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>40</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span></td>
+          <td class="num-col">2</td>
+          <td class="num-col">160</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">غوامق يونيفورم — حرارة منخفضة للحفاظ على الألوان</div>
+</article>
+
+<!-- Program 10 -->
+<article class="prog-card" id="prog10">
+  <div class="prog-card-head">
+    <span class="prog-num">10</span>
+    <div class="prog-titles">
+      <div class="prog-en">Colored Towels</div>
+      <div class="prog-ar">بشاكير ألوان</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">40°C</span>
+      <span class="prog-time">31 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>40</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span></td>
+          <td class="num-col">2</td>
+          <td class="num-col">160</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">بشاكير ألوان — حرارة منخفضة للحفاظ على الألوان</div>
+</article>
+
+<!-- Program 11 -->
+<article class="prog-card prog-card-special" id="prog11">
+  <div class="prog-card-head prog-head-special">
+    <span class="prog-num">11</span>
+    <div class="prog-titles">
+      <div class="prog-en">Sour Bath</div>
+      <div class="prog-ar">حمام ساور</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">60°C</span>
+      <span class="prog-time">25 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة ساور</td>
+          <td>1</td>
+          <td>60</td>
+          <td>15</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">5</td>
+          <td class="num-col">400</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">حمام ساور ومعالجة القصر — غسلة رئيسية ١٥ دقيقة</div>
+</article>
+
+<!-- Program 12 -->
+<article class="prog-card prog-card-special" id="prog12">
+  <div class="prog-card-head prog-head-special">
+    <span class="prog-num">12</span>
+    <div class="prog-titles">
+      <div class="prog-en">Rinse Only</div>
+      <div class="prog-ar">غسيل بدون كيماويات</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">60°C</span>
+      <span class="prog-time">25 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة بدون كيمياء</td>
+          <td>1</td>
+          <td>60</td>
+          <td>15</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">دورة غسيل بدون استخدام أي مواد كيميائية</div>
+</article>
+
+<!-- Program 13 -->
+<article class="prog-card" id="prog13">
+  <div class="prog-card-head">
+    <span class="prog-num">13</span>
+    <div class="prog-titles">
+      <div class="prog-en">Light Colors</div>
+      <div class="prog-ar">ألوان فواتح</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">40°C</span>
+      <span class="prog-time">25 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>40</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span></td>
+          <td class="num-col">2</td>
+          <td class="num-col">160</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">ألوان فواتح — غسيل سريع</div>
+</article>
+
+  </div><!-- /programs-grid -->
+
+  <!-- Best Practices / Tips Section -->
+  <div class="prog-tips-section">
+    <div class="prog-tips-header">
+      <span class="prog-tips-icon">💡</span>
+      <h3>نصائح هامة لنجاح عملية الغسيل</h3>
+    </div>
+    <ul class="prog-tips-list">
+      <li><strong>فرز الملابس (Sorting):</strong> يُفضل دائماً فصل الألوان الفاتحة عن الغوامق، وفصل الفوط والبشاكير عن الملايات لتجنب وبر الأقمشة.</li>
+      <li><strong>مستوى المياه (Water Level):</strong> تأكد من ضبط مستوى المياه بشكل صحيح؛ المياه الزائدة تقلل من تركيز الكيماويات والمياه القليلة تسبب احتكاكاً قد يضر الأنسجة.</li>
+      <li><strong>ضبط درجات الحرارة:</strong> درجة الحرارة المثالية لعمليات التبييض (Bleaching) هي بين 60°C و 65°C لضمان تفاعل آمن وفعّال.</li>
+      <li><strong>عملية التعادل (Neutralization):</strong> مرحلة الساور (Sour) أساسية جداً لمعادلة قلوية الغسيل ومنع اصفرار الملابس أو تهيج الجلد.</li>
+    </ul>
+  </div>
+
+
+  <!-- Best Practices / Tips Section -->
+  <div class="prog-tips-section">
+    <div class="prog-tips-header">
+      <span class="prog-tips-icon">💡</span>
+      <h3>نصائح هامة لنجاح عملية الغسيل</h3>
+    </div>
+    <ul class="prog-tips-list">
+      <li><strong>فرز الملابس (Sorting):</strong> يُفضل دائماً فصل الألوان الفاتحة عن الغوامق، وفصل الفوط والبشاكير عن الملايات لتجنب وبر الأقمشة.</li>
+      <li><strong>مستوى المياه (Water Level):</strong> تأكد من ضبط مستوى المياه بشكل صحيح؛ المياه الزائدة تقلل من تركيز الكيماويات والمياه القليلة تسبب احتكاكاً قد يضر الأنسجة.</li>
+      <li><strong>ضبط درجات الحرارة:</strong> درجة الحرارة المثالية لعمليات التبييض (Bleaching) هي بين 60°C و 65°C لضمان تفاعل آمن وفعّال.</li>
+      <li><strong>عملية التعادل (Neutralization):</strong> مرحلة الساور (Sour) أساسية جداً لمعادلة قلوية الغسيل ومنع اصفرار الملابس أو تهيج الجلد.</li>
+    </ul>
+  </div>
+
+</section>
+<!-- ═══ END PROGRAMS ═══ -->
+
 </div><!-- /page-wrap -->
 
 <!-- ═══ FOOTER ═══ -->
@@ -3049,146 +2296,8 @@ document.addEventListener('DOMContentLoaded', initCatalogUX);
 </footer>
 <!-- ═══ END FOOTER ═══ -->
 
-<script>
-/* ═══ INTERACTIVE BUBBLE ANIMATION ═══ */
-(function () {
-  var canvas = document.getElementById('bubble-canvas');
-  if (!canvas) return;
-  var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) {
-    canvas.style.display = 'none';
-    return;
-  }
-  var ctx = canvas.getContext('2d');
-  var mouse = { x: -9999, y: -9999 };
-  var bubbles = [];
-  var isCompactViewport = window.matchMedia('(max-width: 700px)').matches;
-  var isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
-  var COUNT = isCompactViewport || isTouchDevice ? 20 : 55;
-  var W, H;
 
-  function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
 
-  /* Track mouse and touch */
-  if (!isTouchDevice) {
-    document.addEventListener('mousemove', function (e) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-    });
-  } else {
-    document.addEventListener('touchmove', function (e) {
-      mouse.x = e.touches[0].clientX;
-      mouse.y = e.touches[0].clientY;
-    }, { passive: true });
-  }
-  document.addEventListener('mouseleave', function () {
-    mouse.x = -9999; mouse.y = -9999;
-  });
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) {
-      mouse.x = -9999;
-      mouse.y = -9999;
-    }
-  });
-
-  /* Colour palette matching the design */
-  var COLORS = [
-    '197,160,90',   /* gold */
-    '43,82,168',    /* blue */
-    '255,255,255',  /* white */
-    '197,160,90',   /* gold (weighted) */
-    '43,82,168'     /* blue (weighted) */
-  ];
-
-  function randomBubble(spreadY) {
-    var r = Math.random() * 28 + 5;
-    return {
-      x     : Math.random() * W,
-      y     : spreadY ? Math.random() * H : H + r + 10,
-      r     : r,
-      vx    : (Math.random() - 0.5) * 0.8,
-      vy    : -(Math.random() * 0.2 + 0.08),   /* upward, slow */
-      alpha : Math.random() * 0.25 + 0.04,
-      color : COLORS[Math.floor(Math.random() * COLORS.length)]
-    };
-  }
-
-  for (var i = 0; i < COUNT; i++) {
-    bubbles.push(randomBubble(true));
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    for (var i = 0; i < bubbles.length; i++) {
-      var b = bubbles[i];
-
-      /* Mouse repulsion */
-      var dx   = b.x - mouse.x;
-      var dy   = b.y - mouse.y;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 150 && dist > 0) {
-        var force = (150 - dist) / 150 * 4.5;
-        b.vx += (dx / dist) * force * 0.12;
-        b.vy += (dy / dist) * force * 0.12;
-      }
-
-      /* Drift damping so they don't rocket off */
-      b.vx *= 0.97;
-      b.vy  = b.vy * 0.985 - (Math.random() * 0.003 + 0.07);  /* keep rising very slowly */
-
-      b.x += b.vx;
-      b.y += b.vy;
-
-      /* Wrap horizontally */
-      if (b.x < -b.r)       b.x = W + b.r;
-      if (b.x > W + b.r)    b.x = -b.r;
-
-      /* Recycle when off top */
-      if (b.y < -b.r * 3) {
-        bubbles[i] = randomBubble(false);
-        continue;
-      }
-
-      /* Draw bubble ring */
-      var grad = ctx.createRadialGradient(
-        b.x - b.r * 0.3, b.y - b.r * 0.35, b.r * 0.05,
-        b.x, b.y, b.r
-      );
-      grad.addColorStop(0, 'rgba(' + b.color + ',' + (b.alpha * 1.8) + ')');
-      grad.addColorStop(0.7, 'rgba(' + b.color + ',' + (b.alpha * 0.5) + ')');
-      grad.addColorStop(1, 'rgba(' + b.color + ',0)');
-
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-
-      /* Glint */
-      ctx.beginPath();
-      ctx.arc(b.x - b.r * 0.32, b.y - b.r * 0.32, b.r * 0.18, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,' + (b.alpha * 3.5) + ')';
-      ctx.fill();
-
-      /* Ring outline */
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(' + b.color + ',' + (b.alpha * 2.2) + ')';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-    }
-
-    requestAnimationFrame(draw);
-  }
-
-  draw();
-})();
-</script>
-
+<script src="script.js" defer></script>
 </body>
 </html>
