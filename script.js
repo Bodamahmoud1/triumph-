@@ -76,11 +76,11 @@ function toggleTheme() {
   localStorage.setItem('clax_theme', next);
 }
 
-function initCatalogUX() {
+function initChemicalsUX() {
   var searchInput = document.getElementById('product-search');
   var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.hero-filter'));
   var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
-  var countNode = document.getElementById('catalog-count');
+  var countNode = document.getElementById('chemicals-count');
   var currentTheme = 'all';
 
   function applyFilters() {
@@ -97,7 +97,7 @@ function initCatalogUX() {
     });
 
     if (countNode) {
-      countNode.textContent = visible + ' products';
+      countNode.textContent = visible + ' chemicals';
     }
   }
 
@@ -118,7 +118,7 @@ function initCatalogUX() {
   applyFilters();
 }
 
-document.addEventListener('DOMContentLoaded', initCatalogUX);
+document.addEventListener('DOMContentLoaded', initChemicalsUX);
 
 /* ═══ SECTION SWITCHER ═══ */
 function switchSection(sectionName) {
