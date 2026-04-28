@@ -1,0 +1,1292 @@
+
+<!-- Program 1 -->
+<article class="prog-card" id="prog1">
+  <div class="prog-card-head">
+    <span class="prog-num">1</span>
+    <div class="prog-titles">
+      <div class="prog-en">Bed Sheets</div>
+      <div class="prog-ar">ملايات بيضاء</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">43 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">0.5<br>2<br>1</td>
+          <td class="num-col">40<br>160<br>80</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>70</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">مستوى المياه ٧٠ — شطفة رئيسية ١٠ دقائق</div>
+</article>
+
+<!-- Program 2 -->
+<article class="prog-card" id="prog2">
+  <div class="prog-card-head">
+    <span class="prog-num">2</span>
+    <div class="prog-titles">
+      <div class="prog-en">Pillow Cases</div>
+      <div class="prog-ar">أكياس مخدات</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">43 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">1<br>4<br>1.5</td>
+          <td class="num-col">80<br>320<br>120</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>70</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">مستوى المياه ٧٠ — شطفة رئيسية ١٠ دقائق</div>
+</article>
+
+<!-- Program 3 -->
+<article class="prog-card" id="prog3">
+  <div class="prog-card-head">
+    <span class="prog-num">3</span>
+    <div class="prog-titles">
+      <div class="prog-en">White Towels</div>
+      <div class="prog-ar">بشاكير بيضاء</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">48 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">1<br>4<br>1.5</td>
+          <td class="num-col">80<br>320<br>120</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>70</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت + ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span><br><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1<br>1</td>
+          <td class="num-col">80<br>80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">بشاكير أبيض و نابكن</div>
+</article>
+
+<!-- Program 4 -->
+<article class="prog-card" id="prog4">
+  <div class="prog-card-head">
+    <span class="prog-num">4</span>
+    <div class="prog-titles">
+      <div class="prog-en">Pool Towels</div>
+      <div class="prog-ar">بشاكير سباحة</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">50°C</span>
+      <span class="prog-time">33 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>50</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">2<br>1</td>
+          <td class="num-col">160<br>80</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">بشاكير ملون سباحة — مستوى المياه ٦٥</div>
+</article>
+
+<!-- Program 5 -->
+<article class="prog-card" id="prog5">
+  <div class="prog-card-head">
+    <span class="prog-num">5</span>
+    <div class="prog-titles">
+      <div class="prog-en">White Table Linen</div>
+      <div class="prog-ar">مفارش وناپكن أبيض</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">75°C</span>
+      <span class="prog-time">48 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span></td>
+          <td class="num-col">1.5<br>4</td>
+          <td class="num-col">120<br>320</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>سخن</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>تبييض</td>
+          <td>2</td>
+          <td>60</td>
+          <td>8</td>
+          <td><span class="prog-chem chem-orange">Clax Hypo</span></td>
+          <td class="num-col">5</td>
+          <td class="num-col">400</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">تبييض ٦٠°م لمدة ٨ دقائق — مفارش أبيض و ناپكن</div>
+</article>
+
+<!-- Program 6 -->
+<article class="prog-card" id="prog6">
+  <div class="prog-card-head">
+    <span class="prog-num">6</span>
+    <div class="prog-titles">
+      <div class="prog-en">Colored Table Linen</div>
+      <div class="prog-ar">مفارش وناپكن ألوان</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">55°C</span>
+      <span class="prog-time">36 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">2<br>1<br>1</td>
+          <td class="num-col">160<br>80<br>80</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>65</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">مفارش و ناپكن ألوان — مستوى المياه ٦٥</div>
+</article>
+
+<!-- Program 7 -->
+<article class="prog-card" id="prog7">
+  <div class="prog-card-head">
+    <span class="prog-num">7</span>
+    <div class="prog-titles">
+      <div class="prog-en">Kitchen Jacket</div>
+      <div class="prog-ar">جواكت مطبخ / رواجع أبيض</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">80°C</span>
+      <span class="prog-time">55 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td><span class="prog-chem chem-green">Clax 200</span><br><span class="prog-chem chem-blue">Clax Build Lite</span></td>
+          <td class="num-col">3<br>6</td>
+          <td class="num-col">240<br>480</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>سخن</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>تبييض</td>
+          <td>2</td>
+          <td>60</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-orange">Clax Hypo</span></td>
+          <td class="num-col">7</td>
+          <td class="num-col">560</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>ساور</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">تبييض ٦٠°م لمدة ١٠ دقائق — جواكت مطبخ و رواجع</div>
+</article>
+
+<!-- Program 8 -->
+<article class="prog-card" id="prog8">
+  <div class="prog-card-head">
+    <span class="prog-num">8</span>
+    <div class="prog-titles">
+      <div class="prog-en">Light Uniform</div>
+      <div class="prog-ar">فواتح يونيفورم</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">65°C</span>
+      <span class="prog-time">36 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسيل بدون بلاعة</td>
+          <td>1</td>
+          <td>55</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span><br><span class="prog-chem chem-blue">Clax Build Lite</span><br><span class="prog-chem chem-red">Clax Sonril Ultra</span></td>
+          <td class="num-col">2<br>1<br>1</td>
+          <td class="num-col">160<br>80<br>80</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>65</td>
+          <td>10</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>8</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">فواتح يونيفورم — مستوى المياه ٦٥</div>
+</article>
+
+<!-- Program 9 -->
+<article class="prog-card" id="prog9">
+  <div class="prog-card-head">
+    <span class="prog-num">9</span>
+    <div class="prog-titles">
+      <div class="prog-en">Dark Uniform</div>
+      <div class="prog-ar">غوامق يونيفورم</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">40°C</span>
+      <span class="prog-time">31 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>40</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span></td>
+          <td class="num-col">2</td>
+          <td class="num-col">160</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">غوامق يونيفورم — حرارة منخفضة للحفاظ على الألوان</div>
+</article>
+
+<!-- Program 10 -->
+<article class="prog-card" id="prog10">
+  <div class="prog-card-head">
+    <span class="prog-num">10</span>
+    <div class="prog-titles">
+      <div class="prog-en">Colored Towels</div>
+      <div class="prog-ar">بشاكير ألوان</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">40°C</span>
+      <span class="prog-time">31 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>غسلة مبدئية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>40</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span></td>
+          <td class="num-col">2</td>
+          <td class="num-col">160</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>عصر</td>
+          <td>-</td>
+          <td>-</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>شطفة ثالثة</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">بشاكير ألوان — حرارة منخفضة للحفاظ على الألوان</div>
+</article>
+
+<!-- Program 11 -->
+<article class="prog-card prog-card-special" id="prog11">
+  <div class="prog-card-head prog-head-special">
+    <span class="prog-num">11</span>
+    <div class="prog-titles">
+      <div class="prog-en">Sour Bath</div>
+      <div class="prog-ar">حمام ساور</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">60°C</span>
+      <span class="prog-time">25 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة ساور</td>
+          <td>1</td>
+          <td>60</td>
+          <td>15</td>
+          <td><span class="prog-chem chem-darkred">Clax Neutra 3in1</span></td>
+          <td class="num-col">5</td>
+          <td class="num-col">400</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">حمام ساور ومعالجة القصر — غسلة رئيسية ١٥ دقيقة</div>
+</article>
+
+<!-- Program 12 -->
+<article class="prog-card prog-card-special" id="prog12">
+  <div class="prog-card-head prog-head-special">
+    <span class="prog-num">12</span>
+    <div class="prog-titles">
+      <div class="prog-en">Rinse Only</div>
+      <div class="prog-ar">غسيل بدون كيماويات</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">60°C</span>
+      <span class="prog-time">25 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة بدون كيمياء</td>
+          <td>1</td>
+          <td>60</td>
+          <td>15</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">دورة غسيل بدون استخدام أي مواد كيميائية</div>
+</article>
+
+<!-- Program 13 -->
+<article class="prog-card" id="prog13">
+  <div class="prog-card-head">
+    <span class="prog-num">13</span>
+    <div class="prog-titles">
+      <div class="prog-en">Light Colors</div>
+      <div class="prog-ar">ألوان فواتح</div>
+    </div>
+    <div class="prog-badges">
+      <span class="prog-temp">40°C</span>
+      <span class="prog-time">25 min min</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="prog-tbl-full">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>العملية</th>
+          <th>مستوى المياه</th>
+          <th>الحرارة</th>
+          <th>الوقت (د)</th>
+          <th>الكيماويات</th>
+          <th>مل/كجم</th>
+          <th>مل/ماكينة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>شطفة أولى</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>غسلة رئيسية</td>
+          <td>1</td>
+          <td>40</td>
+          <td>10</td>
+          <td><span class="prog-chem chem-green">Clax 100 Color</span></td>
+          <td class="num-col">2</td>
+          <td class="num-col">160</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>شطفة ثانية</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>2</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>سوفت</td>
+          <td>2</td>
+          <td>بارد</td>
+          <td>5</td>
+          <td><span class="prog-chem chem-pink">Clax Soft Extra</span></td>
+          <td class="num-col">1</td>
+          <td class="num-col">80</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>عصر أخير</td>
+          <td>-</td>
+          <td>-</td>
+          <td>6</td>
+          <td>-</td><td class="num-col">-</td><td class="num-col">-</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prog-note">ألوان فواتح — غسيل سريع</div>
+</article>

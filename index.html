@@ -3,9 +3,53 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="TRIUMPH HOTEL - LAUNDRY DEPARTMENT / Product Guide">
-<title>Triumph Luxury Hotel - Product Guide</title>
+
+<!-- SEO Meta Tags -->
+<title>Triumph Hotel Laundry | دليل الغسيل والكيماويات — Triumph Laundry Guide</title>
+<meta name="description" content="Triumph Luxury Hotel - Laundry Department Guide. Complete reference for Clax chemicals, washing programs, dosages, and laundry procedures. دليل قسم المغسلة — فندق تريومف.">
+<meta name="keywords" content="Triumph, Triumph Hotel, Triumph Laundry, Triumph Luxury Hotel, فندق تريومف, مغسلة تريومف, Clax, laundry guide, washing programs, chemicals guide, دليل الغسيل, كيماويات الغسيل">
+<meta name="author" content="Triumph Luxury Hotel — Laundry Department">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0f1e42">
+
+<!-- Open Graph (Facebook / Social) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Triumph Hotel Laundry | دليل الغسيل والكيماويات">
+<meta property="og:description" content="Complete laundry guide for Triumph Luxury Hotel — chemicals, washing programs, and procedures for the laundry department team.">
+<meta property="og:url" content="https://triumph-laundry.vercel.app/">
+<meta property="og:image" content="https://triumph-laundry.vercel.app/logo.png">
+<meta property="og:site_name" content="Triumph Laundry Guide">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Triumph Hotel Laundry Guide">
+<meta name="twitter:description" content="Triumph Luxury Hotel — Laundry Department chemicals & washing programs reference guide.">
+<meta name="twitter:image" content="https://triumph-laundry.vercel.app/logo.png">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://triumph-laundry.vercel.app/">
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Triumph Hotel Laundry Guide",
+  "alternateName": "Triumph Laundry",
+  "description": "Internal laundry department guide for Triumph Luxury Hotel — chemical products reference and washing programs.",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "author": {
+    "@type": "Organization",
+    "name": "Triumph Luxury Hotel",
+    "department": "Laundry Department"
+  },
+  "keywords": "Triumph, Triumph Laundry, Triumph Hotel, laundry guide, washing programs"
+}
+</script>
+
 <link rel="icon" href="logo.png" type="image/png">
+<link rel="apple-touch-icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -67,7 +111,7 @@
 
     <!-- Guide title -->
     <div class="intro-guide-label">دليل منتجات Diversey Clax</div>
-    <div class="intro-guide-sub">Chemical Product Reference Guide</div>
+    <div class="intro-guide-sub">Chemicals & Washing Programs Guide</div>
 
     <!-- Diamond divider -->
     <div class="intro-divider">
@@ -125,7 +169,7 @@
     <a href="#clax200"    class="nav-theme" data-theme="green">CLAX 200</a>
     <a href="#clax100"    class="nav-theme" data-theme="green">CLAX 100 Color</a>
     <span style="color:var(--border);font-size:14px;margin:0 2px;">│</span>
-    <a href="#programs" class="nav-prog-link">⚙ Programs</a>
+    <a href="javascript:void(0)" class="nav-prog-link" onclick="switchSection('programs')">⚙ Programs</a>
   </nav>
 
   <button class="theme-btn" id="theme-btn" aria-label="Toggle Dark Mode" onclick="toggleTheme()">
@@ -133,7 +177,7 @@
     <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
   </button>
 
-  <button class="mob-toggle" id="mob-toggle" aria-label="قائمة المنتجات" onclick="toggleMobMenu()">
+  <button class="mob-toggle" id="mob-toggle" aria-label="قائمة" onclick="toggleMobMenu()">
     <span></span><span></span><span></span>
   </button>
 </header>
@@ -148,16 +192,57 @@
     <button class="mob-drawer-close" onclick="closeMobMenu()">✕</button>
   </div>
 
-  <a href="#hypo"       data-theme="gold"  onclick="closeMobMenu()">CLAX Hypo</a>
-  <a href="#soft"       data-theme="pink"  onclick="closeMobMenu()">Soft Extra</a>
-  <a href="#buildlite"  data-theme="blue"  onclick="closeMobMenu()">Build Lite</a>
-  <a href="#sonril"     data-theme="gold"  onclick="closeMobMenu()">Sonril Ultra</a>
-  <a href="#neutrapur"  data-theme="red"   onclick="closeMobMenu()">Neutrapur</a>
-  <a href="#neutra3in1" data-theme="red"   onclick="closeMobMenu()">Neutra 3in1</a>
-  <a href="#clax200"    data-theme="green" onclick="closeMobMenu()">CLAX 200</a>
-  <a href="#clax100"    data-theme="green" onclick="closeMobMenu()">CLAX 100 Color</a>
-  <div style="height:1px;background:rgba(197,160,90,0.15);margin:8px 0;"></div>
-  <a href="#programs" data-theme="teal" onclick="closeMobMenu()" style="background:#ecfeff;color:#0e7490;border-color:#0891b2;">⚙ برامج الغسيل</a>
+  <!-- Chemicals Category -->
+  <div class="mob-category">
+    <button class="mob-cat-btn" onclick="toggleMobCat(this)">
+      <span class="mob-cat-icon">🧪</span>
+      <span class="mob-cat-label">Chemicals</span>
+      <span class="mob-cat-arrow">›</span>
+    </button>
+    <div class="mob-cat-items">
+      <a href="#hypo"       data-theme="gold"  onclick="switchSection('chemicals'); closeMobMenu()">CLAX Hypo</a>
+      <a href="#soft"       data-theme="pink"  onclick="switchSection('chemicals'); closeMobMenu()">Soft Extra</a>
+      <a href="#buildlite"  data-theme="blue"  onclick="switchSection('chemicals'); closeMobMenu()">Build Lite</a>
+      <a href="#sonril"     data-theme="gold"  onclick="switchSection('chemicals'); closeMobMenu()">Sonril Ultra</a>
+      <a href="#neutrapur"  data-theme="red"   onclick="switchSection('chemicals'); closeMobMenu()">Neutrapur</a>
+      <a href="#neutra3in1" data-theme="red"   onclick="switchSection('chemicals'); closeMobMenu()">Neutra 3in1</a>
+      <a href="#clax200"    data-theme="green" onclick="switchSection('chemicals'); closeMobMenu()">CLAX 200</a>
+      <a href="#clax100"    data-theme="green" onclick="switchSection('chemicals'); closeMobMenu()">CLAX 100 Color</a>
+    </div>
+  </div>
+
+  <!-- Programs Category -->
+  <div class="mob-category">
+    <button class="mob-cat-btn" onclick="toggleMobCat(this)">
+      <span class="mob-cat-icon">⚙️</span>
+      <span class="mob-cat-label">برامج الغسيل</span>
+      <span class="mob-cat-arrow">›</span>
+    </button>
+    <div class="mob-cat-items">
+      <a href="#prog1"  onclick="switchSection('programs'); closeMobMenu()">1 — Bed Sheets</a>
+      <a href="#prog2"  onclick="switchSection('programs'); closeMobMenu()">2 — Pillow Cases</a>
+      <a href="#prog3"  onclick="switchSection('programs'); closeMobMenu()">3 — White Towels</a>
+      <a href="#prog4"  onclick="switchSection('programs'); closeMobMenu()">4 — Pool Towels</a>
+      <a href="#prog5"  onclick="switchSection('programs'); closeMobMenu()">5 — White Table Linen</a>
+      <a href="#prog6"  onclick="switchSection('programs'); closeMobMenu()">6 — Colored Table Linen</a>
+      <a href="#prog7"  onclick="switchSection('programs'); closeMobMenu()">7 — Kitchen Jacket</a>
+      <a href="#prog8"  onclick="switchSection('programs'); closeMobMenu()">8 — Light Uniform</a>
+      <a href="#prog9"  onclick="switchSection('programs'); closeMobMenu()">9 — Dark Uniform</a>
+      <a href="#prog10" onclick="switchSection('programs'); closeMobMenu()">10 — Colored Towels</a>
+      <a href="#prog11" onclick="switchSection('programs'); closeMobMenu()">11 — Sour Bath</a>
+      <a href="#prog12" onclick="switchSection('programs'); closeMobMenu()">12 — Rinse Only</a>
+      <a href="#prog13" onclick="switchSection('programs'); closeMobMenu()">13 — Light Colors</a>
+    </div>
+  </div>
+
+  <!-- Tips Category -->
+  <div class="mob-category">
+    <button class="mob-cat-btn" onclick="switchSection('tips'); closeMobMenu()">
+      <span class="mob-cat-icon">💡</span>
+      <span class="mob-cat-label">النصايح</span>
+      <span class="mob-cat-arrow">›</span>
+    </button>
+  </div>
 
   <div class="mob-drawer-foot">Diversey Clax · دليل المنتجات</div>
 </div>
@@ -165,6 +250,102 @@
 
 
 <div class="page-wrap">
+
+<!-- ═══ SECTION: LANDING (Main Hub) ═══ -->
+<div id="section-landing" class="app-section is-active">
+  <section class="landing-hero">
+    <div class="landing-hero-shell">
+      <!-- Decorative orbs -->
+      <div class="landing-orb landing-orb-1"></div>
+      <div class="landing-orb landing-orb-2"></div>
+      <div class="landing-orb landing-orb-3"></div>
+
+      <!-- Header -->
+      <div class="landing-header">
+        <div class="landing-eyebrow">
+          <span class="landing-dot"></span>
+          TRIUMPH LUXURY HOTEL
+          <span class="landing-dot"></span>
+        </div>
+        <h1 class="landing-title">Laundry Department</h1>
+        <p class="landing-subtitle">اختر القسم اللي عايز تتصفحه</p>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="landing-cards">
+
+        <!-- Chemicals Card -->
+        <button class="landing-card landing-card-chem" id="landing-goto-chem" onclick="switchSection('chemicals')">
+          <div class="landing-card-glow"></div>
+          <div class="landing-card-icon">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="24" y="8" width="32" height="6" rx="3" fill="rgba(255,255,255,0.3)"/>
+              <path d="M28 14 L28 32 L16 58 C14 62 17 66 21 66 L59 66 C63 66 66 62 64 58 L52 32 L52 14" stroke="#fff" stroke-width="2.5" fill="rgba(255,255,255,0.08)" stroke-linejoin="round"/>
+              <path d="M20 52 Q30 46 40 52 Q50 58 60 52" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none"/>
+              <path d="M22 56 Q32 50 42 56 Q52 62 58 56" stroke="rgba(255,255,255,0.3)" stroke-width="1.2" fill="none"/>
+              <circle cx="36" cy="44" r="3" fill="rgba(255,255,255,0.35)"/>
+              <circle cx="44" cy="48" r="2" fill="rgba(255,255,255,0.25)"/>
+              <circle cx="40" cy="38" r="1.5" fill="rgba(255,255,255,0.2)"/>
+            </svg>
+          </div>
+          <div class="landing-card-content">
+            <h2 class="landing-card-title">Chemicals</h2>
+            <p class="landing-card-title-ar">الكيماويات</p>
+            <p class="landing-card-desc">دليل شامل لكل منتجات Diversey Clax — الجرعات، البيانات الفنية، وطريقة الاستخدام</p>
+          </div>
+          <div class="landing-card-stats">
+            <div class="landing-stat"><strong>8</strong><span>Products</span></div>
+            <div class="landing-stat"><strong>5</strong><span>Categories</span></div>
+          </div>
+          <div class="landing-card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </button>
+
+        <!-- Programs Card -->
+        <button class="landing-card landing-card-prog" id="landing-goto-prog" onclick="switchSection('programs')">
+          <div class="landing-card-glow"></div>
+          <div class="landing-card-icon">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="10" y="12" width="60" height="50" rx="6" stroke="#fff" stroke-width="2.5" fill="rgba(255,255,255,0.06)"/>
+              <rect x="10" y="12" width="60" height="14" rx="6" fill="rgba(255,255,255,0.12)" stroke="#fff" stroke-width="2.5"/>
+              <circle cx="24" cy="19" r="3" fill="rgba(255,255,255,0.4)"/>
+              <circle cx="34" cy="19" r="3" fill="rgba(255,255,255,0.25)"/>
+              <circle cx="44" cy="19" r="3" fill="rgba(255,255,255,0.15)"/>
+              <circle cx="40" cy="45" r="14" stroke="#fff" stroke-width="2" fill="rgba(255,255,255,0.06)"/>
+              <circle cx="40" cy="45" r="9" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+              <circle cx="40" cy="45" r="3" fill="rgba(255,255,255,0.35)"/>
+              <path d="M28 39 A14 14 0 0 1 40 31" stroke="rgba(255,255,255,0.5)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="landing-card-content">
+            <h2 class="landing-card-title">Programs</h2>
+            <p class="landing-card-title-ar">برامج الغسيل</p>
+            <p class="landing-card-desc">جداول غسيل مفصلة لكل نوع — درجات الحرارة، مستويات المياه، والكيماويات المستخدمة</p>
+          </div>
+          <div class="landing-card-stats">
+            <div class="landing-stat"><strong>13</strong><span>Programs</span></div>
+            <div class="landing-stat"><strong>8</strong><span>Chemicals</span></div>
+          </div>
+          <div class="landing-card-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+        </button>
+
+      </div>
+
+      <!-- Footer tagline -->
+      <div class="landing-footer-tag">
+        <div class="landing-divider"><div class="landing-divider-line"></div><div class="landing-divider-diamond"></div><div class="landing-divider-line"></div></div>
+        <p class="landing-powered">Triumph Hotel — Laundry Department Internal Guide</p>
+      </div>
+    </div>
+  </section>
+</div>
+<!-- ═══ END LANDING ═══ -->
+
+<!-- ═══ SECTION: CHEMICALS (Products) ═══ -->
+<div id="section-chemicals" class="app-section">
 <section class="site-hero">
   <div class="hero-shell">
     <div class="hero-copy">
@@ -175,7 +356,7 @@
         <a class="hero-btn hero-btn-primary" href="#hypo">Start With Products</a>
       </div>
         <!-- Button to jump to programs -->
-      <a class="hero-btn hero-btn-secondary" href="#programs">
+      <a class="hero-btn hero-btn-secondary" href="javascript:void(0)" onclick="switchSection('programs')">
         Open Laundry Programs
       </a>
 
@@ -223,16 +404,7 @@
   </div>
 </section>
 
-<nav class="quick-jumps" aria-label="Quick product jumps">
-  <a href="#hypo">Hypo</a>
-  <a href="#soft">Soft Extra</a>
-  <a href="#buildlite">Build Lite</a>
-  <a href="#sonril">Sonril Ultra</a>
-  <a href="#neutrapur">Neutrapur</a>
-  <a href="#neutra3in1">Neutra 3in1</a>
-  <a href="#clax200">CLAX 200</a>
-  <a href="#clax100">CLAX 100 Color</a>
-</nav>
+
 
 <div class="products-grid">
 
@@ -940,10 +1112,13 @@
 
 
 </div><!-- /products-grid -->
+</div><!-- /section-chemicals -->
 
 <!-- ═══════════════════════════════════════════════════════════
      PROGRAMS DEPARTMENT
 ═══════════════════════════════════════════════════════════ -->
+<!-- ═══ SECTION: PROGRAMS ═══ -->
+<div id="section-programs" class="app-section">
 <section class="programs-section" id="programs">
   <div class="prog-section-header">
     <div class="prog-section-badge"><span class="prog-badge-dot"></span>WASHING PROGRAMS<span class="prog-badge-dot"></span></div>
@@ -2248,24 +2423,80 @@
   </div><!-- /programs-grid -->
 
 
-  <!-- Best Practices / Tips Section -->
-  <div class="prog-tips-section">
-    <div class="prog-tips-header">
-      <span class="prog-tips-icon">💡</span>
-      <h3>نصائح هامة لنجاح عملية الغسيل</h3>
-    </div>
-    <ul class="prog-tips-list">
-      <li><strong>فرز الملابس (Sorting):</strong> يُفضل دائماً فصل الألوان الفاتحة عن الغوامق، وفصل الفوط والبشاكير عن الملايات لتجنب وبر الأقمشة.</li>
-      <li><strong>مستوى المياه (Water Level):</strong> تأكد من ضبط مستوى المياه بشكل صحيح؛ المياه الزائدة تقلل من تركيز الكيماويات والمياه القليلة تسبب احتكاكاً قد يضر الأنسجة.</li>
-      <li><strong>ضبط درجات الحرارة:</strong> درجة الحرارة المثالية لعمليات التبييض (Bleaching) هي بين 60°C و 65°C لضمان تفاعل آمن وفعّال.</li>
-      <li><strong>عملية التعادل (Neutralization):</strong> مرحلة الساور (Sour) أساسية جداً لمعادلة قلوية الغسيل ومنع اصفرار الملابس أو تهيج الجلد.</li>
-    </ul>
-  </div>
-
 </section>
+</div><!-- /section-programs -->
+
+<!-- ═══ SECTION: TIPS ═══ -->
+<div id="section-tips" class="app-section">
+  <div class="tips-full-section">
+    <div class="tips-section-header">
+      <div class="tips-badge"><span class="tips-badge-dot"></span>LAUNDRY TIPS<span class="tips-badge-dot"></span></div>
+      <h2 class="tips-section-title">نصائح هامة</h2>
+      <p class="tips-section-sub">إرشادات أساسية لنجاح عملية الغسيل</p>
+    </div>
+
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-card-icon">👕</div>
+        <h4 class="tip-card-title">فرز الملابس (Sorting)</h4>
+        <p class="tip-card-text">يُفضل دائماً فصل الألوان الفاتحة عن الغوامق، وفصل الفوط والبشاكير عن الملايات لتجنب وبر الأقمشة. فرز الغسيل بشكل صحيح يضمن نتائج أفضل ويحمي الأقمشة.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">💧</div>
+        <h4 class="tip-card-title">مستوى المياه (Water Level)</h4>
+        <p class="tip-card-text">تأكد من ضبط مستوى المياه بشكل صحيح؛ المياه الزائدة تقلل من تركيز الكيماويات والمياه القليلة تسبب احتكاكاً قد يضر الأنسجة.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">🌡️</div>
+        <h4 class="tip-card-title">ضبط درجات الحرارة</h4>
+        <p class="tip-card-text">درجة الحرارة المثالية لعمليات التبييض (Bleaching) هي بين 60°C و 65°C لضمان تفاعل آمن وفعّال. الحرارة العالية جداً قد تتلف الألياف الطبيعية.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">⚗️</div>
+        <h4 class="tip-card-title">عملية التعادل (Neutralization)</h4>
+        <p class="tip-card-text">مرحلة الساور (Sour) أساسية جداً لمعادلة قلوية الغسيل ومنع اصفرار الملابس أو تهيج الجلد. لا تتخطى هذه الخطوة أبداً.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">⏱️</div>
+        <h4 class="tip-card-title">وقت الغسيل</h4>
+        <p class="tip-card-text">التزم بأوقات الغسيل المحددة في كل برنامج. الوقت الزائد يُهلك الأقمشة والوقت القليل لا يعطي نتيجة كافية.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">📏</div>
+        <h4 class="tip-card-title">جرعة الكيماويات</h4>
+        <p class="tip-card-text">اتبع الجرعات المحددة بدقة. الزيادة في الكيماويات قد تتلف الأقمشة وتسبب تهيج الجلد، والنقصان يضعف جودة الغسيل.</p>
+      </div>
+    </div>
+  </div>
+</div><!-- /section-tips -->
 <!-- ═══ END PROGRAMS ═══ -->
 
 </div><!-- /page-wrap -->
+
+<!-- ═══ BOTTOM NAVIGATION BAR ═══ -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bnav-item is-active" data-section="landing" onclick="switchSection('landing')">
+    <span class="bnav-icon">🏠</span>
+    <span class="bnav-label">Home</span>
+    <span class="bnav-indicator"></span>
+  </button>
+  <button class="bnav-item" data-section="chemicals" onclick="switchSection('chemicals')">
+    <span class="bnav-icon">🧪</span>
+    <span class="bnav-label">Chemicals</span>
+    <span class="bnav-indicator"></span>
+  </button>
+  <button class="bnav-item" data-section="programs" onclick="switchSection('programs')">
+    <span class="bnav-icon">⚙️</span>
+    <span class="bnav-label">Programs</span>
+    <span class="bnav-indicator"></span>
+  </button>
+  <button class="bnav-item" data-section="tips" onclick="switchSection('tips')">
+    <span class="bnav-icon">💡</span>
+    <span class="bnav-label">Tips</span>
+    <span class="bnav-indicator"></span>
+  </button>
+</nav>
+<!-- ═══ END BOTTOM NAV ═══ -->
 
 <!-- ═══ FOOTER ═══ -->
 <footer class="site-footer">

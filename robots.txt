@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://triumph-laundry.vercel.app/sitemap.xml

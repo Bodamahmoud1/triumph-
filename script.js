@@ -120,6 +120,58 @@ function initCatalogUX() {
 
 document.addEventListener('DOMContentLoaded', initCatalogUX);
 
+/* ═══ SECTION SWITCHER ═══ */
+function switchSection(sectionName) {
+  // Hide all sections
+  var sections = document.querySelectorAll('.app-section');
+  for (var i = 0; i < sections.length; i++) {
+    sections[i].classList.remove('is-active');
+  }
+
+  // Show the target section
+  var target = document.getElementById('section-' + sectionName);
+  if (target) {
+    // Force re-trigger animation by removing then adding class
+    target.style.animation = 'none';
+    target.offsetHeight; // reflow
+    target.style.animation = '';
+    target.classList.add('is-active');
+  }
+
+  // Update bottom nav active state
+  var navBtns = document.querySelectorAll('.bnav-item');
+  for (var j = 0; j < navBtns.length; j++) {
+    var btn = navBtns[j];
+    if (btn.getAttribute('data-section') === sectionName) {
+      btn.classList.add('is-active');
+    } else {
+      btn.classList.remove('is-active');
+    }
+  }
+
+  // Scroll to top of page
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ═══ MOBILE DRAWER CATEGORY TOGGLE ═══ */
+function toggleMobCat(btn) {
+  var category = btn.closest('.mob-category');
+  if (!category) return;
+
+  // If it has sub-items, toggle the accordion
+  var items = category.querySelector('.mob-cat-items');
+  if (items) {
+    // Close all other open categories
+    var allCats = document.querySelectorAll('.mob-category.open');
+    for (var i = 0; i < allCats.length; i++) {
+      if (allCats[i] !== category) {
+        allCats[i].classList.remove('open');
+      }
+    }
+    category.classList.toggle('open');
+  }
+}
+
 /* ═══ INTERACTIVE BUBBLE ANIMATION ═══ */
 (function () {
   var canvas = document.getElementById('bubble-canvas');
