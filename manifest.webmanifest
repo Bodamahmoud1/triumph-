@@ -1,0 +1,41 @@
+{
+  "name": "Triumph Laundry Guide",
+  "short_name": "Laundry Guide",
+  "description": "Internal Triumph Luxury Hotel laundry chemicals and washing programs guide.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#081121",
+  "theme_color": "#0f1e42",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192 512x512 1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Chemicals",
+      "short_name": "Chemicals",
+      "url": "./#chemicals",
+      "icons": [{ "src": "logo.png", "sizes": "1024x1024" }]
+    },
+    {
+      "name": "Programs",
+      "short_name": "Programs",
+      "url": "./#programs",
+      "icons": [{ "src": "logo.png", "sizes": "1024x1024" }]
+    },
+    {
+      "name": "Schedule",
+      "short_name": "Schedule",
+      "url": "./#schedule",
+      "icons": [{ "src": "logo.png", "sizes": "1024x1024" }]
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "lang": "ar"
+}
