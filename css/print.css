@@ -1,0 +1,15 @@
+@media print {
+  .masthead, .prod-nav { display: none; }
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .product-card { box-shadow: none; border: 1px solid #ccc; }
+  body { background: #fff; }
+}
+@media print {
+  .schedule-section .schedule-actions,
+  .schedule-section .schedule-toolbar,
+  .schedule-section .schedule-card-list { display: none !important; }
+  .schedule-section .schedule-table-wrap { display: block !important; overflow: visible !important; }
+  .schedule-table { min-width: 0 !important; font-size: 10px !important; }
+  .schedule-table thead { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .shift-cell { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
