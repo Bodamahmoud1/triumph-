@@ -603,7 +603,7 @@ function toggleMobCat(btn) {
   var titleLabel = document.getElementById('schedule-active-week');
   var searchInput = document.getElementById('schedule-search');
   var filterBtns = document.querySelectorAll('.schedule-filter');
-  var emptyState = document.getElementById('schedule-empty-state');
+  var emptyState = document.getElementById('schedule-empty');
   
   var activeFilter = 'all';
 
@@ -763,14 +763,14 @@ function toggleMobCat(btn) {
     btn.addEventListener('click', function() {
       filterBtns.forEach(function(b) { b.classList.remove('is-active'); });
       this.classList.add('is-active');
-      activeFilter = this.getAttribute('data-filter');
+      activeFilter = this.getAttribute('data-schedule-filter') || 'all';
       filterAndRender();
     });
   });
 
-  var btnPrev = document.getElementById('sched-btn-prev');
-  var btnNext = document.getElementById('sched-btn-next');
-  var btnCurrent = document.getElementById('sched-btn-current');
+  var btnPrev = document.getElementById('schedule-prev');
+  var btnNext = document.getElementById('schedule-next');
+  var btnCurrent = document.getElementById('schedule-current');
 
   function navWeek(offset) {
     if (!currentWeekKey) currentWeekKey = getISOWeekString(new Date());

@@ -1,0 +1,30 @@
+@media print {
+  .bottom-nav,
+  #intro-overlay,
+  #bubble-canvas,
+  .theme-btn,
+  .site-footer,
+  .mobile-drawer,
+  .overlay {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .app-section {
+    display: none !important;
+  }
+
+  .app-section.is-active,
+  .print-target {
+    display: block !important;
+  }
+
+  .print-target {
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+}

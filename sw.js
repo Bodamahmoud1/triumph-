@@ -1,4 +1,4 @@
-const CACHE_NAME = "triumph-laundry-guide-v3";
+const CACHE_NAME = "triumph-laundry-guide-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
