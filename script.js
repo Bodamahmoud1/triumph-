@@ -1,7 +1,7 @@
 
 function initChemicalsUX() {
   var searchInput = document.getElementById('product-search');
-  var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.hero-filter'));
+  var filterButtons = Array.prototype.slice.call(document.querySelectorAll('#section-chemicals .hero-filter'));
   var countNode = document.getElementById('chemicals-count');
   var emptyNode = document.getElementById('chemicals-empty');
   var currentTheme = 'all';

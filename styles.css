@@ -3681,8 +3681,15 @@ html[data-scheme="dark"] .tip-card-text {
 }
 
 /* Dark Scheme */
-html[data-scheme="dark"] .schedule-search-card,
-
+:root[data-scheme="dark"] .schedule-search-card,
+:root[data-scheme="dark"] .schedule-filter-card,
+:root[data-scheme="dark"] .schedule-table,
+:root[data-scheme="dark"] .schedule-emp-card,
+:root[data-scheme="dark"] .schedule-week-card {
+  background: #111827;
+  color: #e5e7eb;
+  border-color: #253045;
+}
 
 /* Generated content cards */
 .card-body, .prog-body { padding: 12px 14px 16px; }
