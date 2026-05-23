@@ -1,49 +1,30 @@
-// js/intro.js - Startup Loading Animation
-(function(){
-  var INTRO_KEY = 'clax_intro_seen_v1';
-  var t;
-  var lockedScrollY = 0;
-  var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(function (global) {
+  var INTRO_KEY = 'triumph_intro_seen_v1';
 
-  function lockIntroScroll() {
-    lockedScrollY = window.scrollY || window.pageYOffset || 0;
-    document.documentElement.classList.add('intro-lock');
-    document.body.classList.add('intro-lock');
-    document.body.style.top = '-' + lockedScrollY + 'px';
-  }
-  function unlockIntroScroll() {
-    var top = parseInt(document.body.style.top || '0', 10) || 0;
-    document.documentElement.classList.remove('intro-lock');
-    document.body.classList.remove('intro-lock');
-    document.body.style.top = '';
-    window.scrollTo(0, -top);
+  function closeIntro() {
+    var overlay = document.getElementById('intro-overlay');
+    if (!overlay) return;
+    overlay.classList.add('is-hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+    try { localStorage.setItem(INTRO_KEY, '1'); } catch (e) {}
   }
 
-  window.closeIntro = function(){
-    clearTimeout(t);
-    var el = document.getElementById('intro-overlay');
-    if(!el || el.classList.contains('hiding')) return;
-    try {
-      localStorage.setItem(INTRO_KEY, '1');
-    } catch (error) {}
-    el.classList.add('hiding');
-    setTimeout(function(){
-      el.style.display = 'none';
-      unlockIntroScroll();
-    }, reducedMotion ? 0 : 420);
-  };
+  document.addEventListener('DOMContentLoaded', function () {
+    var overlay = document.getElementById('intro-overlay');
+    if (!overlay) return;
 
-  var overlay = document.getElementById('intro-overlay');
-  var seenIntro = false;
-  try {
-    seenIntro = localStorage.getItem(INTRO_KEY) === '1';
-  } catch (error) {}
+    var seen = false;
+    try { seen = localStorage.getItem(INTRO_KEY) === '1'; } catch (e) {}
+    if (seen) {
+      closeIntro();
+      return;
+    }
 
-  if (!overlay || seenIntro || reducedMotion) {
-    if (overlay) overlay.style.display = 'none';
-    return;
-  }
+    setTimeout(closeIntro, 6000);
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeIntro();
+    });
+  });
 
-  lockIntroScroll();
-  t = setTimeout(window.closeIntro, 2800);
-})();
+  global.closeIntro = closeIntro;
+})(window);

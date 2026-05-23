@@ -1,52 +1,35 @@
-// js/navigation.js - Mobile Drawer and Theme Toggle
-function toggleMobMenu() {
-  var drawer   = document.getElementById('mob-drawer');
-  var backdrop = document.getElementById('mob-backdrop');
-  var toggle   = document.getElementById('mob-toggle');
-  if (!drawer || !backdrop || !toggle) return;
-  var isOpen   = drawer.classList.contains('open');
-  if (isOpen) { closeMobMenu(); } else {
-    backdrop.classList.add('open');
-    requestAnimationFrame(function(){
-      backdrop.classList.add('visible');
-      drawer.classList.add('open');
-      toggle.classList.add('active');
-      toggle.setAttribute('aria-expanded', 'true');
-      toggle.setAttribute('aria-label', 'Close menu / إغلاق القائمة');
-    });
-    document.body.style.overflow = 'hidden';
-  }
-}
-function closeMobMenu() {
-  var drawer   = document.getElementById('mob-drawer');
-  var backdrop = document.getElementById('mob-backdrop');
-  var toggle   = document.getElementById('mob-toggle');
-  if (!drawer || !backdrop || !toggle) return;
-  backdrop.classList.remove('visible');
-  drawer.classList.remove('open');
-  toggle.classList.remove('active');
-  toggle.setAttribute('aria-expanded', 'false');
-  toggle.setAttribute('aria-label', 'Open menu / فتح القائمة');
-  document.body.style.overflow = '';
-  setTimeout(function(){ backdrop.classList.remove('open'); }, 380);
-}
+(function (global) {
+  function getEl(id) { return document.getElementById(id); }
 
-window.addEventListener('resize', function () {
-  if (window.innerWidth > 980) {
-    closeMobMenu();
-  }
-});
+  function toggleMobMenu(forceOpen) {
+    var drawer = getEl('mob-drawer');
+    var backdrop = getEl('mob-backdrop');
+    var toggle = document.querySelector('.mob-toggle');
+    if (!drawer || !backdrop) return;
 
-document.addEventListener('keydown', function (event) {
-  if (event.key === 'Escape') {
-    closeMobMenu();
+    var open = typeof forceOpen === 'boolean' ? forceOpen : !drawer.classList.contains('open');
+    drawer.classList.toggle('open', open);
+    backdrop.classList.toggle('show', open);
+    drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.classList.toggle('no-scroll', open);
   }
-});
 
-function toggleTheme() {
-  var html = document.documentElement;
-  var current = html.getAttribute('data-scheme');
-  var next = current === 'dark' ? 'light' : 'dark';
-  html.setAttribute('data-scheme', next);
-  localStorage.setItem('clax_theme', next);
-}
+  function closeMobMenu() { toggleMobMenu(false); }
+
+  function toggleTheme() {
+    var root = document.documentElement;
+    var current = root.getAttribute('data-scheme') || 'light';
+    var next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-scheme', next);
+    try { localStorage.setItem('clax_theme', next); } catch (e) {}
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeMobMenu();
+  });
+
+  global.toggleMobMenu = toggleMobMenu;
+  global.closeMobMenu = closeMobMenu;
+  global.toggleTheme = toggleTheme;
+})(window);

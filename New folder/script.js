@@ -1,7 +1,8 @@
 
 function initChemicalsUX() {
   var searchInput = document.getElementById('product-search');
-  var filterButtons = Array.prototype.slice.call(document.querySelectorAll('#section-chemicals .hero-filter'));
+  var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.hero-filter'));
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
   var countNode = document.getElementById('chemicals-count');
   var emptyNode = document.getElementById('chemicals-empty');
   var currentTheme = 'all';
@@ -9,7 +10,6 @@ function initChemicalsUX() {
   function applyFilters() {
     var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
     var visible = 0;
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
 
     cards.forEach(function (card) {
       var text = card.textContent.toLowerCase();
@@ -28,13 +28,11 @@ function initChemicalsUX() {
     }
   }
 
-  if (searchInput && !searchInput.dataset.boundChem) {
+  if (searchInput) {
     searchInput.addEventListener('input', applyFilters);
-    searchInput.dataset.boundChem = '1';
   }
 
   filterButtons.forEach(function (button) {
-    if (button.dataset.boundChem) return;
     button.addEventListener('click', function () {
       currentTheme = button.getAttribute('data-filter') || 'all';
       filterButtons.forEach(function (btn) {
@@ -43,7 +41,6 @@ function initChemicalsUX() {
       });
       applyFilters();
     });
-    button.dataset.boundChem = '1';
   });
 
   filterButtons.forEach(function (button) {
@@ -56,6 +53,7 @@ function initChemicalsUX() {
 function initProgramsUX() {
   var searchInput = document.getElementById('program-search');
   var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.program-filter'));
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.prog-card'));
   var countNode = document.getElementById('programs-count');
   var emptyNode = document.getElementById('programs-empty');
   var currentType = 'all';
@@ -63,7 +61,6 @@ function initProgramsUX() {
   function applyFilters() {
     var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
     var visible = 0;
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.prog-card'));
 
     cards.forEach(function (card) {
       var text = card.textContent.toLowerCase();
@@ -83,13 +80,11 @@ function initProgramsUX() {
     }
   }
 
-  if (searchInput && !searchInput.dataset.boundProg) {
+  if (searchInput) {
     searchInput.addEventListener('input', applyFilters);
-    searchInput.dataset.boundProg = '1';
   }
 
   filterButtons.forEach(function (button) {
-    if (button.dataset.boundProg) return;
     button.addEventListener('click', function () {
       currentType = button.getAttribute('data-program-filter') || 'all';
       filterButtons.forEach(function (btn) {
@@ -98,7 +93,6 @@ function initProgramsUX() {
       });
       applyFilters();
     });
-    button.dataset.boundProg = '1';
   });
 
   filterButtons.forEach(function (button) {
@@ -401,15 +395,6 @@ window.addEventListener('hashchange', function () {
   openCurrentHash(true);
 });
 
-
-document.addEventListener('laundry:data-ready', function () {
-  initChemicalsUX();
-  initProgramsUX();
-  initGlobalLookup();
-  initPrintTools();
-});
-
-
 /* ═══ SECTION SWITCHER ═══ */
 function switchSection(sectionName, options) {
   options = options || {};
@@ -618,7 +603,7 @@ function toggleMobCat(btn) {
   var titleLabel = document.getElementById('schedule-active-week');
   var searchInput = document.getElementById('schedule-search');
   var filterBtns = document.querySelectorAll('.schedule-filter');
-  var emptyState = document.getElementById('schedule-empty');
+  var emptyState = document.getElementById('schedule-empty-state');
   
   var activeFilter = 'all';
 
@@ -783,9 +768,9 @@ function toggleMobCat(btn) {
     });
   });
 
-  var btnPrev = document.getElementById('schedule-prev');
-  var btnNext = document.getElementById('schedule-next');
-  var btnCurrent = document.getElementById('schedule-current');
+  var btnPrev = document.getElementById('sched-btn-prev');
+  var btnNext = document.getElementById('sched-btn-next');
+  var btnCurrent = document.getElementById('sched-btn-current');
 
   function navWeek(offset) {
     if (!currentWeekKey) currentWeekKey = getISOWeekString(new Date());
