@@ -2,7 +2,6 @@
 function initChemicalsUX() {
   var searchInput = document.getElementById('product-search');
   var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.hero-filter'));
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
   var countNode = document.getElementById('chemicals-count');
   var emptyNode = document.getElementById('chemicals-empty');
   var currentTheme = 'all';
@@ -10,6 +9,7 @@ function initChemicalsUX() {
   function applyFilters() {
     var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
     var visible = 0;
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.product-card'));
 
     cards.forEach(function (card) {
       var text = card.textContent.toLowerCase();
@@ -28,11 +28,13 @@ function initChemicalsUX() {
     }
   }
 
-  if (searchInput) {
+  if (searchInput && !searchInput.dataset.boundChem) {
     searchInput.addEventListener('input', applyFilters);
+    searchInput.dataset.boundChem = '1';
   }
 
   filterButtons.forEach(function (button) {
+    if (button.dataset.boundChem) return;
     button.addEventListener('click', function () {
       currentTheme = button.getAttribute('data-filter') || 'all';
       filterButtons.forEach(function (btn) {
@@ -41,6 +43,7 @@ function initChemicalsUX() {
       });
       applyFilters();
     });
+    button.dataset.boundChem = '1';
   });
 
   filterButtons.forEach(function (button) {
@@ -53,7 +56,6 @@ function initChemicalsUX() {
 function initProgramsUX() {
   var searchInput = document.getElementById('program-search');
   var filterButtons = Array.prototype.slice.call(document.querySelectorAll('.program-filter'));
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.prog-card'));
   var countNode = document.getElementById('programs-count');
   var emptyNode = document.getElementById('programs-empty');
   var currentType = 'all';
@@ -61,6 +63,7 @@ function initProgramsUX() {
   function applyFilters() {
     var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
     var visible = 0;
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.prog-card'));
 
     cards.forEach(function (card) {
       var text = card.textContent.toLowerCase();
@@ -80,11 +83,13 @@ function initProgramsUX() {
     }
   }
 
-  if (searchInput) {
+  if (searchInput && !searchInput.dataset.boundProg) {
     searchInput.addEventListener('input', applyFilters);
+    searchInput.dataset.boundProg = '1';
   }
 
   filterButtons.forEach(function (button) {
+    if (button.dataset.boundProg) return;
     button.addEventListener('click', function () {
       currentType = button.getAttribute('data-program-filter') || 'all';
       filterButtons.forEach(function (btn) {
@@ -93,6 +98,7 @@ function initProgramsUX() {
       });
       applyFilters();
     });
+    button.dataset.boundProg = '1';
   });
 
   filterButtons.forEach(function (button) {
@@ -394,6 +400,15 @@ document.addEventListener('DOMContentLoaded', function () {
 window.addEventListener('hashchange', function () {
   openCurrentHash(true);
 });
+
+
+document.addEventListener('laundry:data-ready', function () {
+  initChemicalsUX();
+  initProgramsUX();
+  initGlobalLookup();
+  initPrintTools();
+});
+
 
 /* ═══ SECTION SWITCHER ═══ */
 function switchSection(sectionName, options) {

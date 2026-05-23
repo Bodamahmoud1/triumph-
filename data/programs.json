@@ -1,1 +1,15 @@
-[]
+[
+  {"id":"prog1","name":"Bed Sheets","family":"linen","temp_c":65,"time_min":42,"chemicals":["CLAX 200","Build Lite","CLAX Hypo","Neutrapur"],"load":"Normal","notes":"Main white-sheet cycle."},
+  {"id":"prog2","name":"Pillow Cases","family":"linen","temp_c":60,"time_min":38,"chemicals":["CLAX 200","Build Lite","Sonril Ultra","Neutrapur"],"load":"Light","notes":"Use oxygen booster for longevity."},
+  {"id":"prog3","name":"White Towels","family":"towels","temp_c":70,"time_min":48,"chemicals":["CLAX 200","Build Lite","CLAX Hypo","Neutra 3in1"],"load":"Heavy","notes":"Extra rinse recommended."},
+  {"id":"prog4","name":"Pool Towels","family":"towels","temp_c":55,"time_min":40,"chemicals":["CLAX 200","Sonril Ultra","Neutra 3in1"],"load":"Medium","notes":"Avoid aggressive chlorine."},
+  {"id":"prog5","name":"White Table Linen","family":"table","temp_c":65,"time_min":45,"chemicals":["CLAX 200","Build Lite","CLAX Hypo","Neutrapur"],"load":"Medium","notes":"Stain pre-treatment advised."},
+  {"id":"prog6","name":"Colored Table Linen","family":"table","temp_c":45,"time_min":36,"chemicals":["CLAX 100 Color","Build Lite","Neutra 3in1"],"load":"Light","notes":"Color-safe process."},
+  {"id":"prog7","name":"Kitchen Jacket","family":"uniforms","temp_c":60,"time_min":44,"chemicals":["CLAX 200","Build Lite","Sonril Ultra","Neutrapur"],"load":"Heavy","notes":"Good for grease and food soil."},
+  {"id":"prog8","name":"Light Uniform","family":"uniforms","temp_c":40,"time_min":32,"chemicals":["CLAX 100 Color","Neutra 3in1"],"load":"Light","notes":"Low-temp uniform protection."},
+  {"id":"prog9","name":"Dark Uniform","family":"uniforms","temp_c":35,"time_min":30,"chemicals":["CLAX 100 Color","Neutra 3in1"],"load":"Light","notes":"Inside-out wash recommended."},
+  {"id":"prog10","name":"Colored Towels","family":"towels","temp_c":50,"time_min":40,"chemicals":["CLAX 100 Color","Build Lite","Neutra 3in1"],"load":"Medium","notes":"Maintain color depth."},
+  {"id":"prog11","name":"Sour Bath","family":"utility","temp_c":35,"time_min":14,"chemicals":["Neutrapur"],"load":"Utility","notes":"Neutralization-only corrective cycle."},
+  {"id":"prog12","name":"Rinse Only","family":"utility","temp_c":25,"time_min":10,"chemicals":["Neutra 3in1"],"load":"Utility","notes":"Quick rinse/refresh."},
+  {"id":"prog13","name":"Light Colors","family":"linen","temp_c":40,"time_min":34,"chemicals":["CLAX 100 Color","Neutra 3in1"],"load":"Light","notes":"Safe for pastel fabrics."}
+]

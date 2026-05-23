@@ -1,1 +1,106 @@
-[]
+[
+  {
+    "id": "hypo",
+    "name": "CLAX Hypo",
+    "subtitle": "Chlorine bleach for white linen",
+    "theme": "gold",
+    "category": "Bleach",
+    "ph": "11.0 - 12.5",
+    "dosage_ml_kg": "4 - 8",
+    "temp_c": "55 - 65",
+    "use_for": ["White cotton sheets", "Pillow cases", "White table linen"],
+    "avoid_for": ["Colored fabrics", "Delicate fibers"],
+    "notes": "Dose only at bleaching stage and never mix with acidic products."
+  },
+  {
+    "id": "soft",
+    "name": "Soft Extra",
+    "subtitle": "Fabric conditioner",
+    "theme": "pink",
+    "category": "Softener",
+    "ph": "3.5 - 5.0",
+    "dosage_ml_kg": "2 - 5",
+    "temp_c": "Cold rinse",
+    "use_for": ["Guest towels", "Uniforms", "Bed linen"],
+    "avoid_for": ["Microfiber mops"],
+    "notes": "Apply in final rinse only to avoid reducing detergent action."
+  },
+  {
+    "id": "buildlite",
+    "name": "Build Lite",
+    "subtitle": "Alkaline builder",
+    "theme": "blue",
+    "category": "Builder",
+    "ph": "12.0 - 13.5",
+    "dosage_ml_kg": "3 - 7",
+    "temp_c": "40 - 75",
+    "use_for": ["Greasy kitchen linen", "Heavy soiling"],
+    "avoid_for": ["Wool", "Silk"],
+    "notes": "Works with detergents to boost soil removal and suspend hardness salts."
+  },
+  {
+    "id": "sonril",
+    "name": "Sonril Ultra",
+    "subtitle": "Oxygen bleach booster",
+    "theme": "gold",
+    "category": "Bleach",
+    "ph": "9.0 - 10.5",
+    "dosage_ml_kg": "2 - 6",
+    "temp_c": "50 - 70",
+    "use_for": ["Whites", "Color-safe brightening"],
+    "avoid_for": ["Direct chlorine combination"],
+    "notes": "Prefer for mixed loads requiring lower fabric damage risk."
+  },
+  {
+    "id": "neutrapur",
+    "name": "Neutrapur",
+    "subtitle": "Sour / neutralizer",
+    "theme": "red",
+    "category": "Neutralizer",
+    "ph": "1.5 - 2.5",
+    "dosage_ml_kg": "1 - 3",
+    "temp_c": "35 - 45",
+    "use_for": ["All linen final rinse"],
+    "avoid_for": ["Direct mix with chlorine"],
+    "notes": "Neutralizes alkalinity to protect skin and keep whites bright."
+  },
+  {
+    "id": "neutra3in1",
+    "name": "Neutra 3in1",
+    "subtitle": "Neutralize + soften + antistatic",
+    "theme": "red",
+    "category": "Neutralizer",
+    "ph": "2.0 - 3.0",
+    "dosage_ml_kg": "2 - 4",
+    "temp_c": "Cold rinse",
+    "use_for": ["Uniforms", "Guest linen"],
+    "avoid_for": ["Chlorine stage"],
+    "notes": "Multi-purpose final rinse additive for soft handle and pH balance."
+  },
+  {
+    "id": "clax200",
+    "name": "CLAX 200",
+    "subtitle": "Main detergent for whites",
+    "theme": "green",
+    "category": "Detergent",
+    "ph": "9.5 - 11.0",
+    "dosage_ml_kg": "4 - 10",
+    "temp_c": "45 - 75",
+    "use_for": ["Sheets", "Towels", "Table linen"],
+    "avoid_for": ["Wool", "Silk"],
+    "notes": "Primary detergent for institutional white loads."
+  },
+  {
+    "id": "clax100",
+    "name": "CLAX 100 Color",
+    "subtitle": "Color-safe detergent",
+    "theme": "green",
+    "category": "Detergent",
+    "ph": "8.5 - 10.0",
+    "dosage_ml_kg": "3 - 8",
+    "temp_c": "30 - 60",
+    "use_for": ["Colored uniforms", "Colored towels"],
+    "avoid_for": ["High chlorine bleaching"],
+    "notes": "Protects dyed textiles while maintaining cleaning performance."
+  }
+]

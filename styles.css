@@ -3683,3 +3683,33 @@ html[data-scheme="dark"] .tip-card-text {
 /* Dark Scheme */
 html[data-scheme="dark"] .schedule-search-card,
 
+
+/* Generated content cards */
+.card-body, .prog-body { padding: 12px 14px 16px; }
+.card-prod-name { font-weight: 800; font-size: 18px; }
+.card-tag { font-size: 12px; font-weight: 700; opacity: 0.8; }
+.card-sub, .prog-family { color: var(--text-sm); margin: 6px 0 10px; }
+.card-kpis { display: flex; flex-wrap: wrap; gap: 12px; font-size: 13px; margin-bottom: 10px; }
+.card-block ul { margin: 6px 16px; }
+.card-note, .prog-note { margin-top: 10px; font-size: 13px; color: var(--text-sm); }
+.prog-card { background:#fff; border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); padding: 0 0 8px; }
+.prog-card-head { display:flex; gap:12px; align-items:center; padding:12px 14px 0; }
+.prog-no { width:34px; height:34px; border-radius:50%; background:var(--blue); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; }
+.prog-en { font-size:17px; margin:0; }
+.is-hidden { display:none !important; }
+
+/* Intro and mobile drawer state helpers */
+#intro-overlay.is-hidden { display: none !important; }
+.mob-backdrop { display:none; }
+.mob-backdrop.show { display:block; }
+.mob-drawer { transform: translateX(110%); transition: transform .25s ease; }
+.mob-drawer.open { transform: translateX(0); }
+body.no-scroll { overflow: hidden; }
+
+/* Simple dark mode */
+:root[data-scheme="dark"] body { background:#0f172a; color:#e5e7eb; }
+:root[data-scheme="dark"] .masthead,
+:root[data-scheme="dark"] .product-card,
+:root[data-scheme="dark"] .prog-card,
+:root[data-scheme="dark"] .schedule-shell,
+:root[data-scheme="dark"] .tips-full-section { background:#111827; color:#e5e7eb; border-color:#253045; }
