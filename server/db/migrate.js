@@ -1,6 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 
+function getTableColumns(db, tableName) {
+  return new Set(db.prepare(`PRAGMA table_info(${tableName})`).all().map(column => column.name));
+}
+
+function addColumnIfMissing(db, tableName, columnName, definition) {
+  const columns = getTableColumns(db, tableName);
+  if (!columns.has(columnName)) {
+    db.exec(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${definition}`);
+  }
+}
+
+function ensureCompatibilitySchema(db) {
+  addColumnIfMissing(db, 'employees', 'status', "TEXT DEFAULT 'Active'");
+  addColumnIfMissing(db, 'employees', 'is_deleted', 'BOOLEAN DEFAULT 0');
+}
+
 function runMigrations(db) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS migrations (
@@ -36,6 +52,8 @@ function runMigrations(db) {
       }
     }
   }
+
+  ensureCompatibilitySchema(db);
 }
 
 module.exports = runMigrations;
