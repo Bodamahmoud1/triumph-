@@ -154,17 +154,13 @@ function setActiveSection(sectionName) {
 
   // Show/hide nav groups based on active section
   var chemGroup = document.getElementById('nav-chemicals-group');
-  var progGroup = document.getElementById('nav-programs-group');
   var navSeparator = document.querySelector('.nav-separator');
 
   if (chemGroup) {
     chemGroup.style.display = sectionName === 'chemicals' ? '' : 'none';
   }
-  if (progGroup) {
-    progGroup.style.display = sectionName === 'programs' ? '' : 'none';
-  }
   if (navSeparator) {
-    navSeparator.style.display = (sectionName === 'chemicals' || sectionName === 'programs') ? '' : 'none';
+    navSeparator.style.display = sectionName === 'chemicals' ? '' : 'none';
   }
 
   syncNavigation(sectionName);

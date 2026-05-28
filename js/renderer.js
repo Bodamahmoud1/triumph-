@@ -98,7 +98,6 @@
 
   function renderDynamicNavigation(chemicals, programs) {
     var chemGroup = document.getElementById('nav-chemicals-group');
-    var progGroup = document.getElementById('nav-programs-group');
     var mobChem = document.getElementById('mob-chemicals');
     var mobProg = document.getElementById('mob-programs');
 
@@ -109,17 +108,6 @@
           className: 'nav-theme',
           closeMobile: false,
           label: displayChemicalName
-        });
-      }).join('');
-    }
-
-    if (progGroup) {
-      progGroup.innerHTML = programs.map(function (prog) {
-        return renderNavLink(prog, {
-          section: 'programs',
-          className: 'nav-theme nav-prog-theme',
-          closeMobile: false,
-          label: displayProgramName
         });
       }).join('');
     }
