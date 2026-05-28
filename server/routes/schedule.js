@@ -261,4 +261,72 @@ router.post('/admin/schedule/restore/:id', authenticateToken, [
   }
 });
 
+// GET /api/admin/schedule/download/:id - AUTH via query token or header
+router.get('/admin/schedule/download/:id', [
+  param('id').isInt().toInt()
+], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+
+  // Support auth via query string for download links opened in new tabs
+  const token = req.query.token || (req.headers['authorization'] || '').replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'Authentication required' });
+
+  const jwt = require('jsonwebtoken');
+  try {
+    jwt.verify(token, process.env.JWT_SECRET);
+  } catch(e) {
+    return res.status(403).json({ error: 'Invalid or expired token' });
+  }
+
+  const db = req.app.locals.db;
+  const schedule = db.prepare('SELECT * FROM schedules WHERE id = ?').get(req.params.id);
+  if (!schedule) return res.status(404).json({ error: 'Schedule not found' });
+
+  // Build an Excel file from the schedule data
+  const shifts = db.prepare(`
+    SELECT ss.day, ss.shift, e.name_ar, e.name_en, e.department
+    FROM schedule_shifts ss
+    JOIN employees e ON ss.employee_id = e.id
+    WHERE ss.schedule_id = ?
+  `).all(schedule.id);
+
+  const ExcelJS = require('exceljs');
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet('Schedule ' + schedule.week_key);
+  
+  // Group shifts by employee
+  const empMap = {};
+  shifts.forEach(s => {
+    const key = s.name_ar;
+    if (!empMap[key]) empMap[key] = { name_ar: s.name_ar, name_en: s.name_en, department: s.department, shifts: {} };
+    empMap[key].shifts[s.day] = s.shift;
+  });
+
+  sheet.columns = [
+    { header: 'Name', key: 'name_ar', width: 25 },
+    { header: 'Department', key: 'department', width: 15 },
+    { header: 'Saturday', key: 'Saturday', width: 12 },
+    { header: 'Sunday', key: 'Sunday', width: 12 },
+    { header: 'Monday', key: 'Monday', width: 12 },
+    { header: 'Tuesday', key: 'Tuesday', width: 12 },
+    { header: 'Wednesday', key: 'Wednesday', width: 12 },
+    { header: 'Thursday', key: 'Thursday', width: 12 },
+    { header: 'Friday', key: 'Friday', width: 12 },
+  ];
+
+  Object.values(empMap).forEach(emp => {
+    sheet.addRow({
+      name_ar: emp.name_ar,
+      department: emp.department,
+      ...emp.shifts
+    });
+  });
+
+  const filename = `schedule_${schedule.week_key}.xlsx`;
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  workbook.xlsx.write(res).then(() => res.end());
+});
+
 module.exports = router;

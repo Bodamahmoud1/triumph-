@@ -1,54 +1,58 @@
 const fs = require('fs');
 
-const cssContent = fs.readFileSync('b:\\Downloads\\clax\\styles.css', 'utf16le'); // Assuming UTF-16LE since Select-String showed it was?
-// Actually, let's read it as utf8 first. If it's utf16, it might have null bytes.
-let content = fs.readFileSync('b:\\Downloads\\clax\\styles.css');
+const css = fs.readFileSync('styles.css', 'utf8');
 
-// Check BOM or null bytes to determine encoding
-let encoding = 'utf8';
-if (content[0] === 0xff && content[1] === 0xfe) {
-    encoding = 'utf16le';
-}
+// Find the major breakpoints
+// We will just do a simple split. We'll search for key section headers.
+// Since the file is 3500+ lines, let's find the indices of key sections.
 
-content = fs.readFileSync('b:\\Downloads\\clax\\styles.css', encoding);
+const idxReset = css.indexOf('/* ═══════════════════════════════════════\r\n   RESET');
+const idxLayout = css.indexOf('/* ═══════════════════════════════════════\r\n   PAGE WRAPPER');
+const idxComponents = css.indexOf('/* ═══════════════════════════════════════\r\n   CARDS');
+const idxSections = css.indexOf('/* ═══════════════════════════════════════\r\n   LANDING HERO');
 
-const lines = content.split(/\r?\n/);
-
-let currentFile = 'base.css';
-let fileContents = {
-  'base.css': []
+const getSafeIdx = (searchStr) => {
+    let i = css.indexOf(searchStr);
+    if (i === -1) i = css.indexOf(searchStr.replace(/\r\n/g, '\n'));
+    if (i === -1) i = css.indexOf(searchStr.replace(/\r\n/g, '\n').replace(/═/g, ''));
+    return i;
 };
 
-// Simple heuristic: if we see a big comment block, we might switch files.
-// But it's safer to just do a few big splits based on known keywords.
-let inDarkMode = false;
-let inPrint = false;
+const i1 = getSafeIdx('   RESET');
+const i2 = getSafeIdx('   PAGE WRAPPER');
+const i3 = getSafeIdx('   CARDS');
+const i4 = getSafeIdx('   LANDING HERO');
 
-for (let i = 0; i < lines.length; i++) {
-  const line = lines[i];
-  
-  if (line.includes('html[data-scheme="dark"]')) {
-      inDarkMode = true;
-  }
-  
-  if (line.includes('@media print')) {
-      inPrint = true;
-  }
-  
-  if (inPrint) {
-      if (!fileContents['print.css']) fileContents['print.css'] = [];
-      fileContents['print.css'].push(line);
-      if (line === '}') {
-         // end of media query? maybe.
-      }
-      continue;
-  }
+console.log('Indices:', i1, i2, i3, i4);
 
-  // Fallback to base.css
-  fileContents['base.css'].push(line);
+// If any index is missing, we'll abort to avoid breaking things.
+if (i1 === -1 || i2 === -1 || i3 === -1 || i4 === -1) {
+    console.log('Failed to find split points');
+    process.exit(1);
 }
 
-// Since automatic splitting without exact rules is dangerous (might break the site), 
-// I will just append a comment.
+// Find the start of the comment block for each
+const findCommentStart = (idx) => {
+    return css.lastIndexOf('/*', idx);
+};
 
-console.log("Refactoring CSS is risky. I will just split out a few key modules.");
+const s1 = findCommentStart(i1);
+const s2 = findCommentStart(i2);
+const s3 = findCommentStart(i3);
+const s4 = findCommentStart(i4);
+
+const tokens = css.substring(0, s1);
+const base = css.substring(s1, s2);
+const layout = css.substring(s2, s3);
+const components = css.substring(s3, s4);
+const sections = css.substring(s4);
+
+if (!fs.existsSync('css')) fs.mkdirSync('css');
+
+fs.writeFileSync('css/tokens.css', tokens);
+fs.writeFileSync('css/base.css', base);
+fs.writeFileSync('css/layout.css', layout);
+fs.writeFileSync('css/components.css', components);
+fs.writeFileSync('css/sections.css', sections);
+
+console.log('Successfully split styles.css into css/ directory!');

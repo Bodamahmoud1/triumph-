@@ -1,0 +1,40 @@
+/*    BUBBLE CANVAS
+═══════════════════════════════════════ */
+#bubble-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.masthead { position: sticky; z-index: 100; }
+.page-wrap { position: relative; z-index: 1; }
+.site-footer { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 840px) {
+  .products-grid { grid-template-columns: 1fr; gap: 26px; }
+  .prod-nav { display: none; }
+  .masthead-title { font-size: 12px; }
+}
+
+@media (max-width: 500px) {
+  .page-wrap { padding: 20px 24px 40px; }
+  .card-header { padding: 8px 12px 7px; }
+  .card-prod-name { font-size: 16px; }
+  .card-top-row { flex-direction: column; }
+  .card-icon-box { width: 100%; height: 80px; }
+  .card-icon-box svg { width: 90px; height: 78px; }
+  .btext, .blist li, .dosage-line, .note-head { font-size: 12px; }
+  .sec-head { font-size: 12px; }
+  .dose-table { max-width: 100%; }
+  .dose-table thead tr th,
+  .dose-table tbody tr td { font-size: 10.5px; padding: 5px 8px; }
+  .tech-table-enhanced thead th,
+  .tech-table-enhanced tbody td { font-size: 10.5px; padding: 5px 8px; }
+  .card-safe-text { font-size: 10px; }
+  
+}
+

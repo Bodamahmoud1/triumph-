@@ -1,0 +1,111 @@
+/* ═══════════════════════════════════════
+   STICKY MASTHEAD
+═══════════════════════════════════════ */
+.masthead {
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.masthead-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-pill {
+  background: linear-gradient(180deg, #e2bc69 0%, #c99f49 100%);
+  border-radius: 50px;
+  padding: 5px 22px 5px 14px;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.45),
+    0 8px 18px rgba(139,105,20,0.18);
+}
+
+.logo-leaf {
+  position: absolute;
+  top: -6px;
+  right: 10px;
+  width: 22px;
+  height: 16px;
+}
+
+.logo-name {
+  color: #0f2c63;
+  font-size: 18px;
+  font-weight: 800;
+  font-style: italic;
+  font-family: 'Outfit', Arial, sans-serif;
+}
+
+.logo-pill span {
+  color: #0f2c63;
+  font-size: 18px;
+  font-weight: 900;
+  font-family: 'Outfit', Arial, sans-serif;
+  letter-spacing: 0.7px;
+}
+
+.logo-tm {
+  color: #0f2c63;
+  font-size: 7px;
+  vertical-align: super;
+  font-family: Arial, sans-serif;
+}
+
+.masthead-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-sm);
+  letter-spacing: 0.3px;
+}
+
+/* Product nav pills */
+.prod-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.prod-nav a {
+  text-decoration: none;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1.5px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.prod-nav a:hover {
+  opacity: 0.8;
+}
+
+.nav-theme {
+  background: var(--thm-lt);
+  color: var(--thm-dk);
+  border-color: var(--thm);
+}
+
+/* ═══════════════════════════════════════
+   PAGE WRAPPER
+═══════════════════════════════════════ */
+.page-wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}

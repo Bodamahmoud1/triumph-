@@ -1,0 +1,296 @@
+/*    PRODUCT GRID
+═══════════════════════════════════════ */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+/* ═══════════════════════════════════════
+   PRODUCT CARD
+═══════════════════════════════════════ */
+.product-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  scroll-margin-top: 85px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  will-change: transform, box-shadow;
+}
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ── Card Header ── */
+.card-header {
+  padding: 10px 14px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.clax-badge-wrap {
+  display: flex;
+  align-items: center;
+}
+.clax-box {
+  background: var(--surface);
+  padding: 2px 7px;
+  display: inline-block;
+  line-height: 1;
+  border-radius: 2px;
+}
+.clax-box span {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--blue);
+  font-style: italic;
+  font-family: Arial, sans-serif;
+  line-height: 1.1;
+}
+.clax-divider {
+  width: 0; height: 0;
+  border-top: 30px solid var(--surface);
+  border-right: 10px solid transparent;
+  display: inline-block;
+  vertical-align: top;
+  margin-left: -1px;
+}
+.card-prod-name {
+  color: var(--inverse-text);
+  font-size: 18px;
+  font-weight: 700;
+  margin-right: 8px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  line-height: 1.2;
+}
+.card-prod-code {
+  color: rgba(255,255,255,0.92);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-family: Arial, sans-serif;
+  background: rgba(0,0,0,0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.hd-theme { background: var(--thm-gr); }
+
+/* ── Product Type Badge ── */
+.prod-type-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin: 10px 14px 0;
+  letter-spacing: 0.2px;
+}
+.tag-theme { background: var(--thm-lt); color: var(--thm-dk); border: 1px solid var(--thm-bd); }
+
+/* ── Card Body ── */
+.card-body {
+  padding: 10px 14px 0;
+  flex: 1;
+}
+
+/* Top row: icon + content */
+.card-top-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.card-icon-box {
+  flex-shrink: 0;
+  width: 78px;
+  height: 68px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--border);
+  background: var(--surface-muted);
+  margin-top: 2px;
+}
+.card-icon-box svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.card-content { flex: 1; min-width: 0; }
+
+/* Section headers */
+.sec-head {
+  font-size: 10px;
+  font-weight: 800;
+  margin-top: 8px;
+  margin-bottom: 3px;
+  letter-spacing: 0.1px;
+  padding-bottom: 2px;
+  border-bottom: 1.5px solid currentColor;
+  display: inline-block;
+  text-underline-offset: 2px;
+}
+.sec-head:first-child { margin-top: 0; }
+
+.head-theme { color: var(--thm-dk); border-color: var(--thm); }
+
+/* Body text */
+.btext {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.6;
+  text-align: justify;
+}
+
+/* Bullet list */
+.blist {
+  list-style: none;
+  margin: 3px 0 0;
+  padding: 0;
+}
+.blist li {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.6;
+  padding-right: 13px;
+  position: relative;
+  margin-bottom: 1px;
+  text-align: justify;
+}
+.blist li::before {
+  content: "▸";
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 9px;
+  line-height: 1.7;
+  color: var(--text-sm);
+}
+
+/* Warning / note head */
+.note-head {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
+/* Dosage lines */
+.dosage-line {
+  font-size: 11px;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 1px;
+}
+
+/* ── Dosage Table ── */
+.dose-table {
+  width: 100%;
+  max-width: 260px;
+  border-collapse: collapse;
+  font-size: 9.5px;
+  margin-top: 4px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.dose-table thead tr th {
+  padding: 4px 8px;
+  font-weight: 700;
+  color: var(--theme-fill-text);
+  text-align: right;
+}
+.dose-table thead tr th:last-child { text-align: left; direction: ltr; }
+.dose-table tbody tr td {
+  padding: 3px 8px;
+  text-align: right;
+  color: var(--text);
+  border-bottom: 1px solid var(--line-soft);
+}
+.dose-table tbody tr td:last-child { text-align: left; direction: ltr; }
+.dose-table tbody tr:nth-child(odd)  { background: var(--overlay-soft); }
+.dose-table tbody tr:last-child td   { border-bottom: none; }
+
+.th-theme thead { background: var(--thm-dk); }
+
+/* ── Technical Data Table ── */
+.tech-section {
+  margin-top: 10px;
+  padding: 0 14px;
+}
+.tech-table-enhanced {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.tech-table-enhanced thead th {
+  padding: 5px 8px;
+  color: var(--theme-fill-text);
+  font-weight: 700;
+  text-align: right;
+}
+.tech-table-enhanced tbody td {
+  padding: 4px 8px;
+  color: var(--text);
+  vertical-align: top;
+}
+.tech-table-enhanced tbody td.lbl {
+  font-weight: 600;
+  text-align: right;
+  width: 36%;
+  border-left: 3px solid var(--line-soft);
+}
+.tech-table-enhanced tbody td.val {
+  text-align: left;
+  direction: ltr;
+  width: 14%;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+}
+.tech-table-enhanced tbody tr:nth-child(odd) td { background: var(--overlay-soft); }
+
+.tt-theme thead { background: var(--thm-dk); }
+
+.tech-note {
+  font-size: 8.5px;
+  color: var(--text-sm);
+  font-style: italic;
+  padding: 3px 0 0;
+  line-height: 1.4;
+}
+
+/* ── Safe Handling Footer ── */
+.card-safe {
+  margin-top: 10px;
+  padding: 6px 14px 7px;
+}
+.card-safe-head {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: var(--theme-fill-text);
+  padding: 4px 14px;
+  margin: 0 -14px;
+  display: block;
+}
+.safe-theme { background: var(--thm-dk); }
+.safe-body-theme { background: var(--thm-lt); }
+
+.card-safe-text {
+  font-size: 9px;
+  color: var(--text);
+  line-height: 1.55;
+  text-align: justify;
+  padding: 5px 0 0;
+}

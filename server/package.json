@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch-path=./routes --watch-path=./middleware --watch-path=./utils --watch-path=./index.js index.js"
+    "dev": "node --watch-path=./routes --watch-path=./middleware --watch-path=./utils --watch-path=./index.js index.js",
+    "reset-admin-password": "node scripts/reset-admin-password.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

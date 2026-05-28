@@ -1,4 +1,4 @@
-(function (global) {
+h(function (global) {
   function getEl(id) { return document.getElementById(id); }
 
   function toggleMobMenu(forceOpen) {
@@ -10,6 +10,9 @@
     var open = typeof forceOpen === 'boolean' ? forceOpen : !drawer.classList.contains('open');
     drawer.classList.toggle('open', open);
     backdrop.classList.toggle('show', open);
+    backdrop.classList.toggle('open', open);
+    backdrop.classList.toggle('visible', open);
+    if (toggle) toggle.classList.toggle('active', open);
     drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
     if (toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     document.body.classList.toggle('no-scroll', open);

@@ -1,14 +1,39 @@
-const CACHE_NAME = "triumph-laundry-guide-v4";
+const CACHE_NAME = "triumph-laundry-guide-v5";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css",
-  "./script.js",
+  "./css/tokens.css",
+  "./css/base.css",
+  "./css/layout.css",
+  "./css/components.css",
+  "./css/sections.css",
+  "./css/landing.css",
+  "./css/intro.css",
+  "./css/hero.css",
+  "./css/footer.css",
+  "./css/nav.css",
+  "./css/darkmode.css",
+  "./css/programs.css",
+  "./css/landing_hub.css",
+  "./css/tips.css",
+  "./css/schedule.css",
+  "./css/print.css",
+  "./js/search.js",
+  "./js/print.js",
+  "./js/bubbles.js",
+  "./js/schedule.js",
+  "./js/app.js",
+  "./js/intro.js",
+  "./js/navigation.js",
+  "./js/report.js",
   "./js/renderer.js",
+  "./js/services/ChemicalService.js",
+  "./js/services/ProgramService.js",
   "./data/chemicals.json",
   "./data/programs.json",
   "./logo.png",
-  "./manifest.webmanifest"
+  "./manifest.webmanifest",
+  "https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;700;800;900&display=swap"
 ];
 
 self.addEventListener("install", (event) => {

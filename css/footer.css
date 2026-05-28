@@ -1,0 +1,25 @@
+/*    FOOTER
+═══════════════════════════════════════ */
+.site-footer {
+  background: #0f1e42;
+  padding: 28px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-brand { display: flex; align-items: center; gap: 14px; }
+.footer-mono {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, #c5a05a, #f0d080);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.footer-mono span {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 16px; font-weight: 900; color: #0f1e42;
+}
+.footer-name {
+  font-family: 'Outfit', Arial, sans-serif;
+  font-size: 17px; font-weight: 800; color: #fff;
+}
+.footer-name .fp { color: #c5a05a; }
+.footer-role { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+.footer-copy { font-size: 11px; color: rgba(255,255,255,0.3); text-align: left; line-height: 1.7; }

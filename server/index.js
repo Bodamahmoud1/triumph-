@@ -8,13 +8,34 @@ const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const cron = require('node-cron');
+const crypto = require('crypto');
 
 // Initialize Express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+if (!process.env.JWT_SECRET) {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('JWT_SECRET must be set in production');
+  }
+  process.env.JWT_SECRET = crypto.randomBytes(32).toString('hex');
+  console.warn('WARNING: JWT_SECRET is not set. Using a temporary development secret; sessions will expire when the server restarts.');
+}
+
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      connectSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "blob:", "https:"]
+    }
+  }
+}));
 
 // HTTPS redirect in production
 app.use((req, res, next) => {
@@ -57,7 +78,8 @@ const loginLimiter = rateLimit({
 
 // Initialize Database
 const dbPath = process.env.DB_PATH || './triumph_laundry.db';
-const db = new Database(dbPath, { verbose: console.log });
+const dbOpts = process.env.NODE_ENV !== 'production' ? { verbose: console.log } : {};
+const db = new Database(dbPath, dbOpts);
 
 // Expose DB to routes
 app.locals.db = db;
@@ -70,13 +92,24 @@ runMigrations(db);
 const adminCount = db.prepare('SELECT COUNT(*) as count FROM admins').get();
 if (adminCount.count === 0) {
   const defaultUser = process.env.ADMIN_USERNAME || 'admin';
-  const defaultPass = process.env.ADMIN_PASSWORD || Math.random().toString(36).slice(-10);
+  let defaultPass = process.env.ADMIN_PASSWORD;
+  
+  if (!defaultPass || defaultPass === 'admin123' || defaultPass === 'change_this_password_immediately') {
+    defaultPass = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+    console.warn('\n======================================================');
+    console.warn('WARNING: No secure ADMIN_PASSWORD provided in .env');
+    console.warn(`A random password has been generated: ${defaultPass}`);
+    console.warn('Please login and change this immediately!');
+    console.warn('======================================================\n');
+  } else {
+    console.log(`Default admin seeded. Username: ${defaultUser} (Please change password immediately if not secure)`);
+  }
+
   const salt = bcrypt.genSaltSync(12);
   const hash = bcrypt.hashSync(defaultPass, salt);
   
   db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)')
     .run(defaultUser, hash);
-  console.log(`Default admin seeded. Username: ${defaultUser}, Password: ${defaultPass} (Please change immediately)`);
 }
 
 // Daily database backup at 2 AM
@@ -96,13 +129,20 @@ const scheduleRoutes = require('./routes/schedule');
 const contentRoutes = require('./routes/content');
 const staffRoutes = require('./routes/staff');
 const auditRoutes = require('./routes/audit');
+const dataFilesRoutes = require('./routes/data-files');
 
-app.use(express.static(path.join(__dirname, '../')));
+// Serve the admin entry without relying on a trailing-slash redirect.
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '../admin/index.html'));
+});
+
+app.use(express.static(path.join(__dirname, '../'), { dotfiles: 'deny' }));
 
 
 app.use('/api/admin/login', loginLimiter, authRoutes);
 app.use('/api', scheduleRoutes); // Note: schedule includes both public GET and protected POST
 app.use('/api/admin/content', contentRoutes);
+app.use('/api/admin/data', dataFilesRoutes);
 app.use('/api/admin/staff', staffRoutes);
 app.use('/api/admin/audit', auditRoutes);
 

@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <base href="/">
+  <base href="./">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-site-verification" content="RBBIpvIyso6E7QYUfqXsxnEM9s3WZaeW5c7_bVvmvps" />
 
@@ -70,7 +70,21 @@
     }
     document.documentElement.setAttribute('data-scheme', theme);
   </script>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/intro.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/chemicals.css">
+  <link rel="stylesheet" href="css/programs.css">
+  <link rel="stylesheet" href="css/landing.css">
+  <link rel="stylesheet" href="css/landing_hub.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/tips.css">
+  <link rel="stylesheet" href="css/schedule.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/darkmode.css">
   <link rel="stylesheet" href="css/print.css" media="print" />
 </head>
 
@@ -79,16 +93,16 @@
   <svg width="0" height="0" style="display: none;" aria-hidden="true">
     <defs>
       <marker id="arr-gray" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
-        <path d="M0,0 L5,2.5 L0,5Z" fill="#444" />
+        <path d="M0,0 L5,2.5 L0,5Z" fill="var(--text-sm)" />
       </marker>
       <marker id="arr-pink" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
-        <path d="M0,0 L5,2.5 L0,5Z" fill="#c22882" />
+        <path d="M0,0 L5,2.5 L0,5Z" fill="var(--pink)" />
       </marker>
       <marker id="arr-blue" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
-        <path d="M0,0 L5,2.5 L0,5Z" fill="#2b52a8" />
+        <path d="M0,0 L5,2.5 L0,5Z" fill="var(--blue)" />
       </marker>
       <marker id="arr-red" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
-        <path d="M0,0 L5,2.5 L0,5Z" fill="#cc2200" />
+        <path d="M0,0 L5,2.5 L0,5Z" fill="var(--red)" />
       </marker>
     </defs>
   </svg>
@@ -176,11 +190,10 @@
 
   <header class="masthead">
     <div class="masthead-brand">
-      <div class="logo-pill"
-        style="background: linear-gradient(135deg, var(--gold), #f0d080, var(--gold)); color: #0f1e42; padding: 4px 14px; border-radius: 30px; font-family: 'Outfit', sans-serif; font-weight: 800; display: flex; align-items: center; gap: 6px;">
-        <span style="font-size: 15px; letter-spacing: 1px;">TRIUMPH</span>
+      <div class="logo-pill">
+        <span>TRIUMPH</span>
       </div>
-      <span class="masthead-title" style="font-size: 13px; font-weight: 700; opacity: 0.85;">LAUNDRY DEPARTMENT</span>
+      <span class="masthead-title">LAUNDRY DEPARTMENT</span>
     </div>
     <nav class="prod-nav">
       <!-- Chemicals nav group: only visible on chemicals page -->
@@ -308,7 +321,7 @@
       </button>
     </div>
 
-    <div class="mob-drawer-foot">Diversey Clax · دليل التشغيل</div>
+    <div class="mob-drawer-foot">دليل التشغيل</div>
   </div>
 
 
@@ -361,7 +374,7 @@
               <div class="landing-card-content">
                 <h2 class="landing-card-title">Chemicals / الكيماويات</h2>
                 <p class="landing-card-title-ar">Reference by product, code, function, and dose.</p>
-                <p class="landing-card-desc">دليل تشغيلي لكيماويات Diversey Clax — الجرعات، البيانات الفنية، وتعليمات
+                <p class="landing-card-desc">دليل تشغيلي للكيماويات — الجرعات، البيانات الفنية، وتعليمات
                   الاستخدام</p>
               </div>
               <div class="landing-card-stats">
@@ -735,28 +748,33 @@
   <!-- ═══ BOTTOM NAVIGATION BAR ═══ -->
   <nav class="bottom-nav" id="bottom-nav" aria-label="Primary sections" role="tablist">
     <button class="bnav-item is-active" type="button" role="tab" aria-selected="true" data-section="landing" onclick="switchSection('landing')" aria-label="Home / الرئيسية">
-      <span class="bnav-icon">🏠</span>
-      <span class="bnav-label">Home / الرئيسية</span>
+      <span class="bnav-icon" aria-hidden="true">🏠</span>
+      <span class="bnav-label">الرئيسية</span>
+      <span class="bnav-sub">Home</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="chemicals" onclick="switchSection('chemicals')" aria-label="Chemicals / الكيماويات">
-      <span class="bnav-icon">🧪</span>
-      <span class="bnav-label">Chemicals / الكيماويات</span>
+      <span class="bnav-icon" aria-hidden="true">🧪</span>
+      <span class="bnav-label">الكيماويات</span>
+      <span class="bnav-sub">Chemicals</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="programs" onclick="switchSection('programs')" aria-label="Programs / البرامج">
-      <span class="bnav-icon">⚙️</span>
-      <span class="bnav-label">Programs / البرامج</span>
+      <span class="bnav-icon" aria-hidden="true">🧺</span>
+      <span class="bnav-label">البرامج</span>
+      <span class="bnav-sub">Programs</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="schedule" onclick="switchSection('schedule')" aria-label="Schedule / جدول العمل">
-      <span class="bnav-icon">📅</span>
-      <span class="bnav-label">Schedule / الجدول</span>
+      <span class="bnav-icon" aria-hidden="true">📅</span>
+      <span class="bnav-label">الجدول</span>
+      <span class="bnav-sub">Schedule</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tips" onclick="switchSection('tips')" aria-label="Tips / النصائح">
-      <span class="bnav-icon">💡</span>
-      <span class="bnav-label">Tips / النصائح</span>
+      <span class="bnav-icon" aria-hidden="true">💡</span>
+      <span class="bnav-label">النصائح</span>
+      <span class="bnav-sub">Tips</span>
       <span class="bnav-indicator"></span>
     </button>
   </nav>
@@ -781,12 +799,19 @@
   <script src="js/intro.js" defer></script>
   <script src="js/navigation.js" defer></script>
   <script src="js/report.js" defer></script>
-  <script src="js/simulator.js" defer></script>
-  <script src="js/calculator.js" defer></script>
   <script src="js/services/ChemicalService.js" defer></script>
   <script src="js/services/ProgramService.js" defer></script>
   <script src="js/renderer.js" defer></script>
-  <script src="script.js" defer></script>
+  <script src="js/search.js" defer></script>
+  <script src="js/print.js" defer></script>
+  <script src="js/bubbles.js" defer></script>
+  <script src="js/schedule.js" defer></script>
+  <script src="js/app.js" defer></script>
+  <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
 </body>
 
 </html>

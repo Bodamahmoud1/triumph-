@@ -1,0 +1,101 @@
+.card-animate {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-animate.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+.print-mini-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 30px;
+    padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #17346f;
+    box-shadow:
+        0 8px 18px rgba(15, 30, 66, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    font-family: 'Outfit', 'Noto Sans Arabic', Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.2px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.print-mini-btn::before {
+    content: "🖨";
+    font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+    font-size: 13px;
+    line-height: 1;
+}
+
+.print-mini-btn:hover,
+.print-mini-btn:focus-visible {
+    background: #17346f;
+    border-color: #17346f;
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(15, 30, 66, 0.24);
+    outline: none;
+    transform: translateY(-1px);
+}
+
+html[data-scheme="dark"] .print-mini-btn {
+    background: rgba(248, 250, 252, 0.94);
+    color: #0f1e42;
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+html[data-scheme="dark"] .print-mini-btn:hover,
+html[data-scheme="dark"] .print-mini-btn:focus-visible {
+    background: #fcd34d;
+    border-color: #fcd34d;
+    color: #0f172a;
+}
+
+.back-to-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dk));
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 99;
+    box-shadow: 0 4px 12px rgba(197, 160, 90, 0.3);
+    border: none;
+    cursor: pointer;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(197, 160, 90, 0.4);
+}
+
+.back-to-top svg {
+    width: 20px;
+    height: 20px;
+}

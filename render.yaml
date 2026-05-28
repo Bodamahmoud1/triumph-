@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: triumph-laundry-app
+    env: node
+    buildCommand: npm install && cd server && npm install
+    startCommand: cd server && npm start
+    disk:
+      name: sqlite-data
+      mountPath: /opt/render/project/src/server/db
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_PATH
+        value: /opt/render/project/src/server/db/triumph_laundry.db
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        generateValue: true
