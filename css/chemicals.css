@@ -4,7 +4,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 22px;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* ═══════════════════════════════════════
@@ -21,6 +21,7 @@
   scroll-margin-top: 85px;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   will-change: transform, box-shadow;
+  height: 100%;
 }
 .product-card:hover {
   transform: translateY(-6px);
