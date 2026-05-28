@@ -13,9 +13,8 @@ const {
 } = require('../utils/uploadSecurity');
 const { body, query, param, validationResult } = require('express-validator');
 
-// Multer setup for temporary Excel uploads
-const isVercel = process.env.VERCEL === '1';
-const uploadDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
+// Multer setup for temporary Excel uploads. This API is deployed on persistent Node hosts, not Vercel serverless.
+const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 const storage = multer.diskStorage({

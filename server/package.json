@@ -8,8 +8,9 @@
     "dev": "node --watch-path=./routes --watch-path=./middleware --watch-path=./utils --watch-path=./index.js index.js",
     "reset-admin-password": "node scripts/reset-admin-password.js",
     "test": "node --test ../tests",
-    "lint": "node ../scripts/lint.js",
-    "format": "node ../scripts/format-check.js"
+    "lint": "node ../scripts/run-eslint.js && node ../scripts/lint.js",
+    "format": "node ../scripts/run-prettier-check.js && node ../scripts/format-check.js",
+    "migrate": "node scripts/migrate.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

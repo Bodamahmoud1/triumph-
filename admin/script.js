@@ -35,6 +35,32 @@ const sidebar      = $('#admin-sidebar');
 const mobileMenuBtn= $('#mobile-menu-btn');
 const modalOverlay = $('#modal-overlay');
 
+function handleDelegatedAdminAction(event) {
+  const target = event.target.closest('[data-action]');
+  if (!target) return;
+  const action = target.dataset.action;
+
+  if (action === 'close-modal') return closeModal();
+  if (action === 'remove-schedule-file') return window._removeScheduleFile();
+  if (action === 'restore-schedule') return window._restoreSchedule(target.dataset.id);
+  if (action === 'download-schedule') return window._downloadSchedule(target.dataset.id);
+  if (action === 'select-json-item') return window._selectJsonItem(target.dataset.id);
+  if (action === 'add-chemical') return window._addChemical();
+  if (action === 'delete-chemical') return window._deleteChemical(target.dataset.id);
+  if (action === 'remove-builder-row') return target.closest('[data-builder-row]')?.remove();
+  if (action === 'add-program') return window._addProgram();
+  if (action === 'add-program-step') return window._addProgStep();
+  if (action === 'delete-program') return window._deleteProgram(target.dataset.id);
+  if (action === 'select-tip-card') return window._selectTipCard(Number(target.dataset.index));
+  if (action === 'add-tip-card') return window._addTipCard();
+  if (action === 'delete-tip-card') return window._deleteTipCard(Number(target.dataset.index));
+  if (action === 'edit-staff') return window._editStaff(Number(target.dataset.index));
+  if (action === 'archive-staff') return window._archiveStaff(Number(target.dataset.index));
+  if (action === 'audit-page') return window._auditPage(Number(target.dataset.page));
+}
+
+document.addEventListener('click', handleDelegatedAdminAction);
+
 /* ═══════════════════════════════════════════════
    TOAST SYSTEM
    ═══════════════════════════════════════════════ */
@@ -53,7 +79,7 @@ function toast(msg, type='info', duration=4000){
     el.classList.add('toast-exit');
     setTimeout(() => el.remove(), 300);
   };
-  el.querySelector('.toast-close').onclick = remove;
+  el.querySelector('.toast-close').addEventListener('click', remove);
   setTimeout(remove, duration);
 }
 
@@ -253,7 +279,7 @@ changePasswordBtn.addEventListener('click', ()=>{
       <label>تأكيد كلمة المرور الجديدة</label>
       <input type="password" class="form-control" id="cp-confirm" autocomplete="new-password">
     </div>
-  `, '<button class="btn btn-gold" id="cp-save">حفظ كلمة المرور</button><button class="btn btn-outline" onclick="window._closeModal()">إلغاء</button>');
+  `, '<button class="btn btn-gold" id="cp-save">حفظ كلمة المرور</button><button class="btn btn-outline" data-action="close-modal">إلغاء</button>');
   setTimeout(()=>{
     const btn = $('#cp-save');
     if(btn) btn.addEventListener('click', changePassword);
@@ -470,7 +496,7 @@ function handleScheduleFile(file){
       <span>📄</span>
       <span class="file-name">${file.name}</span>
       <span style="color:#999;font-size:.8rem">${(file.size/1024).toFixed(1)} KB</span>
-      <button class="file-remove" onclick="window._removeScheduleFile()">✕</button>
+      <button class="file-remove" data-action="remove-schedule-file">✕</button>
     </div>
   `;
   uploadScheduleFile(file);
@@ -618,8 +644,8 @@ async function loadScheduleHistory(){
         <td style="font-size:.8rem">${escHtml(filename)}</td>
         <td><span class="status-badge ${isActive ? 'status-published' : 'status-resigned'}">${isActive ? '✓ نشط' : 'نسخة محفوظة'}</span></td>
         <td>
-          <button class="btn btn-outline btn-sm" onclick="window._restoreSchedule('${id}')" ${isActive ? 'disabled' : ''}>🔄 استعادة</button>
-          <button class="btn btn-outline btn-sm" onclick="window._downloadSchedule('${id}')" style="margin-right:4px">📥 تحميل</button>
+          <button class="btn btn-outline btn-sm" data-action="restore-schedule" data-id="${id}" ${isActive ? 'disabled' : ''}>🔄 استعادة</button>
+          <button class="btn btn-outline btn-sm" data-action="download-schedule" data-id="${id}" style="margin-right:4px">📥 تحميل</button>
         </td>
       </tr>`;
     });
@@ -715,7 +741,7 @@ function renderJsonList(items, activeId){
   if(!items.length) return '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">لا توجد عناصر</div><div class="empty-hint">اضغط إضافة لإنشاء عنصر جديد</div></div>';
   return `<div class="table-wrap"><table class="data-table"><thead><tr><th>ID</th><th>الاسم</th><th>كود</th><th></th></tr></thead><tbody>` +
     items.map(it=>`
-      <tr style="cursor:pointer" onclick="window._selectJsonItem('${escAttr(it.id)}')">
+      <tr style="cursor:pointer" data-action="select-json-item" data-id="${escAttr(it.id)}">
         <td><code style="background:#f5f5f5;padding:2px 8px;border-radius:4px;font-size:.8rem">${escHtml(it.id)}</code></td>
         <td>${escHtml(it.name || it.name_ar || it.name_en || '—')}</td>
         <td>${escHtml(it.code || it.number || '—')}</td>
@@ -733,7 +759,7 @@ function renderChemicalsEditor(activeId){
       <div class="card" style="margin:0;">
         <div class="card-header"><div class="card-title"><span class="icon">🧪</span> عناصر الكيماويات</div></div>
         <div style="padding:14px;">
-          <button class="btn btn-gold btn-sm" type="button" onclick="window._addChemical()">➕ إضافة كيميكل</button>
+          <button class="btn btn-gold btn-sm" type="button" data-action="add-chemical">➕ إضافة كيميكل</button>
           <div style="margin-top:12px;">${renderJsonList(_chemicalsJson, id)}</div>
         </div>
       </div>
@@ -742,7 +768,7 @@ function renderChemicalsEditor(activeId){
         <div style="padding:14px;">
           ${active ? `
           <form id="chem-json-form">
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:1">
                 <label>ID</label>
                 <input class="form-control" name="id" value="${escAttr(active.id)}" disabled>
@@ -756,7 +782,7 @@ function renderChemicalsEditor(activeId){
                 <input class="form-control" name="code" value="${escAttr(active.code||'')}">
               </div>
             </div>
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:1">
                 <label>الاسم</label>
                 <input class="form-control" name="name" value="${escAttr(active.name||'')}">
@@ -782,7 +808,7 @@ function renderChemicalsEditor(activeId){
               <label>المميزات (كل سطر ميزة)</label>
               <textarea class="form-control" name="features" rows="3" dir="rtl">${escHtml((active.contentSections && active.contentSections[2] && active.contentSections[2].items) ? active.contentSections[2].items.join('\n') : (active.features ? active.features.join('\n') : ''))}</textarea>
             </div>
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:1">
                 <label>الجرعة</label>
                 <input class="form-control" name="dosage" value="${escAttr((active.usage && active.usage.dosage) || '')}">
@@ -792,7 +818,7 @@ function renderChemicalsEditor(activeId){
               <label>ملاحظات الاستخدام (كل سطر ملاحظة)</label>
               <textarea class="form-control" name="usageNotes" rows="3" dir="rtl">${escHtml((active.usage && active.usage.blocks && active.usage.blocks.find(b=>b.kind==='list')) ? active.usage.blocks.find(b=>b.kind==='list').items.join('\n') : '')}</textarea>
             </div>
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:1">
                 <label>الشكل (Appearance)</label>
                 <input class="form-control" name="appearance" value="${escAttr((active.technical && active.technical.appearance) || '')}">
@@ -816,7 +842,7 @@ function renderChemicalsEditor(activeId){
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
               <button type="submit" class="btn btn-gold">💾 حفظ الكيميكل</button>
-              <button type="button" class="btn btn-outline" onclick="window._deleteChemical('${escAttr(active.id)}')">🗑️ حذف</button>
+              <button type="button" class="btn btn-outline" data-action="delete-chemical" data-id="${escAttr(active.id)}">🗑️ حذف</button>
             </div>
           </form>
           ` : '<div class="empty-state"><div class="empty-icon">🧪</div><div class="empty-text">لا توجد كيماويات</div></div>'}
@@ -919,7 +945,7 @@ window._addProgStep = function(btn) {
     <div class="form-group" style="flex:2"><input class="form-control" name="step_chems" placeholder="كيماويات"></div>
     <div class="form-group" style="flex:1"><input class="form-control" name="step_dose_kg" placeholder="مل/كجم"></div>
     <div class="form-group" style="flex:1"><input class="form-control" name="step_dose_mac" placeholder="مل/ماكينة"></div>
-    <div class="form-group" style="flex:0; display:flex; align-items:flex-end;"><button type="button" class="btn btn-outline" style="padding:10px" onclick="this.parentElement.parentElement.remove()">X</button></div>
+    <div class="form-group" style="flex:0; display:flex; align-items:flex-end;"><button type="button" class="btn btn-outline" style="padding:10px" data-action="remove-builder-row">X</button></div>
   `;
   container.appendChild(div);
 };
@@ -939,7 +965,7 @@ function renderProgramsEditor(activeId){
       <div class="form-group" style="flex:2"><input class="form-control" name="step_chems" value="${escAttr(s.chemicals||'')}" placeholder="كيماويات"></div>
       <div class="form-group" style="flex:1"><input class="form-control" name="step_dose_kg" value="${escAttr(s.dose_kg||'')}" placeholder="مل/كجم"></div>
       <div class="form-group" style="flex:1"><input class="form-control" name="step_dose_mac" value="${escAttr(s.dose_mac||'')}" placeholder="مل/ماكينة"></div>
-      <div class="form-group" style="flex:0; display:flex; align-items:flex-end;"><button type="button" class="btn btn-outline" style="padding:10px" onclick="this.parentElement.parentElement.remove()">X</button></div>
+      <div class="form-group" style="flex:0; display:flex; align-items:flex-end;"><button type="button" class="btn btn-outline" style="padding:10px" data-action="remove-builder-row">X</button></div>
     </div>
   `).join('');
 
@@ -948,7 +974,7 @@ function renderProgramsEditor(activeId){
       <div class="card" style="margin:0;">
         <div class="card-header"><div class="card-title"><span class="icon">⚙️</span> عناصر البرامج</div></div>
         <div style="padding:14px;">
-          <button class="btn btn-gold btn-sm" type="button" onclick="window._addProgram()">➕ إضافة برنامج</button>
+          <button class="btn btn-gold btn-sm" type="button" data-action="add-program">➕ إضافة برنامج</button>
           <div style="margin-top:12px;">${renderJsonList(_programsJson, id)}</div>
         </div>
       </div>
@@ -957,7 +983,7 @@ function renderProgramsEditor(activeId){
         <div style="padding:14px;">
           ${active ? `
           <form id="prog-json-form">
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:1">
                 <label>ID</label>
                 <input class="form-control" name="id" value="${escAttr(active.id)}" disabled>
@@ -971,7 +997,7 @@ function renderProgramsEditor(activeId){
                 <input class="form-control" name="number" value="${escAttr(active.number||'')}">
               </div>
             </div>
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:1">
                 <label>الاسم (EN)</label>
                 <input class="form-control" name="name_en" value="${escAttr(active.name_en||'')}">
@@ -981,7 +1007,7 @@ function renderProgramsEditor(activeId){
                 <input class="form-control" name="name_ar" value="${escAttr(active.name_ar||'')}">
               </div>
             </div>
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:1">
                 <label>الحرارة الكلية (Temp)</label>
                 <input class="form-control" name="temp" value="${escAttr(active.temp||'')}">
@@ -999,7 +1025,7 @@ function renderProgramsEditor(activeId){
             <div class="form-group" style="margin-top:15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:15px;">
               <label style="display:flex; justify-content:space-between; align-items:center;">
                 خطوات البرنامج (الجدول)
-                <button type="button" class="btn btn-sm btn-outline" onclick="window._addProgStep()">➕ إضافة خطوة</button>
+                <button type="button" class="btn btn-sm btn-outline" data-action="add-program-step">➕ إضافة خطوة</button>
               </label>
               <div id="prog-steps-container" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
                 ${stepsHtml}
@@ -1008,7 +1034,7 @@ function renderProgramsEditor(activeId){
             
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
               <button type="submit" class="btn btn-gold">💾 حفظ البرنامج</button>
-              <button type="button" class="btn btn-outline" onclick="window._deleteProgram('${escAttr(active.id)}')">🗑️ حذف</button>
+              <button type="button" class="btn btn-outline" data-action="delete-program" data-id="${escAttr(active.id)}">🗑️ حذف</button>
             </div>
           </form>
           ` : '<div class="empty-state"><div class="empty-icon">⚙️</div><div class="empty-text">لا توجد برامج</div></div>'}
@@ -1167,7 +1193,7 @@ function renderTipsCardsList(){
   }
   return `<div class="table-wrap"><table class="data-table"><thead><tr><th>الأيقونة</th><th>العنوان</th><th></th></tr></thead><tbody>` +
     _tipsCardsJson.map((tip, idx)=>`
-      <tr style="cursor:pointer" onclick="window._selectTipCard(${idx})">
+      <tr style="cursor:pointer" data-action="select-tip-card" data-index="${idx}">
         <td>${escHtml(tip.icon || '💡')}</td>
         <td>${escHtml(tip.title_ar || tip.title_en || 'نصيحة بدون عنوان')}</td>
         <td>${idx===_activeTipIndex?'✓':''}</td>
@@ -1188,7 +1214,7 @@ function renderTipsCardsEditor(data){
       <div class="card" style="margin:0;">
         <div class="card-header"><div class="card-title"><span class="icon">💡</span> مربعات النصائح</div></div>
         <div style="padding:14px;">
-          <button class="btn btn-gold btn-sm" type="button" onclick="window._addTipCard()">➕ إضافة نصيحة</button>
+          <button class="btn btn-gold btn-sm" type="button" data-action="add-tip-card">➕ إضافة نصيحة</button>
           <div style="margin-top:12px;">${renderTipsCardsList()}</div>
         </div>
       </div>
@@ -1200,7 +1226,7 @@ function renderTipsCardsEditor(data){
           </div>
           ${active ? `
           <form id="tips-card-form">
-            <div class="form-row">
+            <div class="form-row" data-builder-row="true">
               <div class="form-group" style="flex:0 0 120px">
                 <label>الأيقونة</label>
                 <input class="form-control" name="icon" value="${escAttr(active.icon || '💡')}" placeholder="💡">
@@ -1224,7 +1250,7 @@ function renderTipsCardsEditor(data){
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
               <button type="submit" class="btn btn-gold">💾 حفظ النصائح</button>
-              <button type="button" class="btn btn-outline" onclick="window._deleteTipCard(${_activeTipIndex})">🗑️ حذف هذا المربع</button>
+              <button type="button" class="btn btn-outline" data-action="delete-tip-card" data-index="${_activeTipIndex}">🗑️ حذف هذا المربع</button>
             </div>
           </form>` : '<div class="empty-state"><div class="empty-icon">💡</div><div class="empty-text">اضغط إضافة نصيحة للبدء</div></div>'}
         </div>
@@ -1397,8 +1423,8 @@ function renderStaffTable(){
       <td dir="ltr" style="text-align:right">${escHtml(emp.phone||'—')}</td>
       <td><span class="status-badge ${statusClass}">${statusText}</span></td>
       <td>
-        <button class="btn btn-outline btn-sm" onclick="window._editStaff(${i})">✏️</button>
-        <button class="btn btn-outline btn-sm" onclick="window._archiveStaff(${i})" style="margin-right:4px;color:var(--danger)">أرشفة</button>
+        <button class="btn btn-outline btn-sm" data-action="edit-staff" data-index="${i}">✏️</button>
+        <button class="btn btn-outline btn-sm" data-action="archive-staff" data-index="${i}" style="margin-right:4px;color:var(--danger)">أرشفة</button>
       </td>
     </tr>`;
   });
@@ -1463,7 +1489,7 @@ const statusOptions = `
 
 function staffFormHtml(emp={}){
   return `
-    <div class="form-row">
+    <div class="form-row" data-builder-row="true">
       <div class="form-group">
         <label>الاسم الكامل (عربي) *</label>
         <input type="text" class="form-control" id="sf-name-ar" value="${escAttr(emp.name_ar||emp.nameAr||'')}" required>
@@ -1473,7 +1499,7 @@ function staffFormHtml(emp={}){
         <input type="text" class="form-control" id="sf-name-en" value="${escAttr(emp.name_en||emp.nameEn||'')}" required dir="ltr">
       </div>
     </div>
-    <div class="form-row">
+    <div class="form-row" data-builder-row="true">
       <div class="form-group">
         <label>رقم الموظف *</label>
         <input type="text" class="form-control" id="sf-empid" value="${escAttr(emp.employeeId||emp.employee_id||'')}" required>
@@ -1483,7 +1509,7 @@ function staffFormHtml(emp={}){
         <select class="form-control" id="sf-dept">${deptOptions}</select>
       </div>
     </div>
-    <div class="form-row">
+    <div class="form-row" data-builder-row="true">
       <div class="form-group">
         <label>رقم الهاتف</label>
         <input type="tel" class="form-control" id="sf-phone" value="${escAttr(emp.phone||'')}" dir="ltr">
@@ -1500,7 +1526,7 @@ onReady(()=>{
   const staffAddBtn = $('#staff-add-btn');
   if(staffAddBtn) staffAddBtn.addEventListener('click', ()=>{
     openModal('➕ إضافة موظف جديد', staffFormHtml(),
-      '<button class="btn btn-gold" id="staff-save-new">💾 حفظ</button><button class="btn btn-outline" onclick="window._closeModal()">إلغاء</button>'
+      '<button class="btn btn-gold" id="staff-save-new">💾 حفظ</button><button class="btn btn-outline" data-action="close-modal">إلغاء</button>'
     );
     setTimeout(()=>{
       const saveBtn = $('#staff-save-new');
@@ -1533,7 +1559,7 @@ window._editStaff = function(index){
   const emp = staffData[index];
   if(!emp) return;
   openModal('✏️ تعديل بيانات الموظف', staffFormHtml(emp),
-    `<button class="btn btn-gold" id="staff-save-edit">💾 حفظ التعديلات</button><button class="btn btn-outline" onclick="window._closeModal()">إلغاء</button>`
+    `<button class="btn btn-gold" id="staff-save-edit">💾 حفظ التعديلات</button><button class="btn btn-outline" data-action="close-modal">إلغاء</button>`
   );
   setTimeout(()=>{
     // Set select values
@@ -1573,7 +1599,7 @@ window._archiveStaff = function(index) {
   
   openModal('تأكيد أرشفة الموظف', 
     `<p>هل تريد أرشفة الموظف <strong>${escHtml(name)}</strong>؟</p><p class="form-hint">سيتم إخفاؤه من قائمة الموظفين النشطة مع بقاء بيانات الجداول القديمة محفوظة.</p>`,
-    `<button class="btn btn-danger" id="staff-confirm-archive">تأكيد الأرشفة</button><button class="btn btn-outline" onclick="window._closeModal()">إلغاء</button>`
+    `<button class="btn btn-danger" id="staff-confirm-archive">تأكيد الأرشفة</button><button class="btn btn-outline" data-action="close-modal">إلغاء</button>`
   );
   
   setTimeout(()=>{
@@ -1665,15 +1691,15 @@ async function loadAudit(page=1){
 function renderAuditPagination(){
   const container = $('#audit-pagination');
   if(auditTotalPages <= 1){container.innerHTML='';return;}
-  let html = `<button ${auditPage<=1?'disabled':''} onclick="window._auditPage(${auditPage-1})">‹</button>`;
+  let html = `<button ${auditPage<=1?'disabled':''} data-action="audit-page" data-page="${auditPage-1}">‹</button>`;
   for(let i=1;i<=auditTotalPages;i++){
     if(auditTotalPages>7 && Math.abs(i-auditPage)>2 && i!==1 && i!==auditTotalPages){
       if(i===2||i===auditTotalPages-1) html+='<button disabled>…</button>';
       continue;
     }
-    html += `<button class="${i===auditPage?'active':''}" onclick="window._auditPage(${i})">${i}</button>`;
+    html += `<button class="${i===auditPage?'active':''}" data-action="audit-page" data-page="${i}">${i}</button>`;
   }
-  html += `<button ${auditPage>=auditTotalPages?'disabled':''} onclick="window._auditPage(${auditPage+1})">›</button>`;
+  html += `<button ${auditPage>=auditTotalPages?'disabled':''} data-action="audit-page" data-page="${auditPage+1}">›</button>`;
   container.innerHTML = html;
 }
 window._auditPage = function(p){loadAudit(p)};

@@ -64,12 +64,21 @@ CREATE TABLE IF NOT EXISTS sessions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   admin_id INTEGER NOT NULL,
   refresh_token TEXT NOT NULL,
+  token_family TEXT,
+  replaced_by INTEGER,
+  revoked_reason TEXT,
+  user_agent TEXT,
+  ip_address TEXT,
+  last_used_at DATETIME,
   expires_at DATETIME NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   is_revoked BOOLEAN DEFAULT 0,
-  FOREIGN KEY(admin_id) REFERENCES admins(id)
+  FOREIGN KEY(admin_id) REFERENCES admins(id),
+  FOREIGN KEY(replaced_by) REFERENCES sessions(id)
 );
 CREATE INDEX IF NOT EXISTS idx_sessions_refresh_token ON sessions(refresh_token);
+CREATE INDEX IF NOT EXISTS idx_sessions_admin_id ON sessions(admin_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_token_family ON sessions(token_family);
 
 CREATE TABLE IF NOT EXISTS schedule_previews (
   id TEXT PRIMARY KEY,

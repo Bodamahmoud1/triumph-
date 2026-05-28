@@ -16,6 +16,13 @@ server/db/backups/
 uploads/
 server/uploads/
 
+
+# Exported office documents and local handoff files
+*.xlsx
+*.xls
+*.pdf
+*.pptx
+
 # OS / editor noise
 .DS_Store
 Thumbs.db
