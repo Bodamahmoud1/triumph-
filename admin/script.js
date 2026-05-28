@@ -673,6 +673,7 @@ async function loadContentSection(section){
 
     const res = await api(`/api/admin/content/${section}`);
     const data = (res && res.data) || res || {};
+    if(section === 'tips') return renderTipsCardsEditor(data);
     renderContentEditor(section, data);
   }catch(err){
     container.innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">لا يوجد محتوى بعد لهذا القسم</div><div class="empty-hint">ابدأ بإضافة محتوى جديد</div></div>`;
@@ -686,17 +687,13 @@ const sectionLabels = {
     {key:'title_en', label:'العنوان (إنجليزي)', type:'text'},
     {key:'body_ar', label:'المحتوى (عربي)', type:'textarea'},
     {key:'body_en', label:'المحتوى (إنجليزي)', type:'textarea'}
-  ]},
-  tips: {title:'النصائح', fields:[
-    {key:'title_ar', label:'العنوان (عربي)', type:'text'},
-    {key:'title_en', label:'العنوان (إنجليزي)', type:'text'},
-    {key:'content_ar', label:'المحتوى (عربي)', type:'textarea'},
-    {key:'content_en', label:'المحتوى (إنجليزي)', type:'textarea'}
   ]}
 };
 
 let _chemicalsJson = [];
 let _programsJson = [];
+let _tipsCardsJson = [];
+let _activeTipIndex = 0;
 
 function themeOptions(selected){
   const themes = ['gold','pink','blue','red','green'];
@@ -1123,6 +1120,157 @@ window._deleteProgram = function(id){
   api('/api/admin/data/programs',{method:'PUT', body: JSON.stringify(_programsJson)})
     .then(()=>{ toast('تم الحذف','success'); renderProgramsEditor((_programsJson[0]&&_programsJson[0].id)||''); })
     .catch(err=>toast('فشل الحذف: '+err.message,'error'));
+};
+
+function normalizeTipsCards(data){
+  let cards = [];
+  if(data && data.cards_json){
+    try{
+      const parsed = JSON.parse(data.cards_json);
+      if(Array.isArray(parsed)) cards = parsed;
+    }catch(e){ cards = []; }
+  }
+  if(!cards.length && data && (data.title_ar || data.title_en || data.content_ar || data.content_en)){
+    cards = [{
+      icon: data.icon || '💡',
+      title_ar: data.title_ar || '',
+      title_en: data.title_en || '',
+      content_ar: data.content_ar || '',
+      content_en: data.content_en || ''
+    }];
+  }
+  return cards
+    .filter(card => card && (card.title_ar || card.title_en || card.content_ar || card.content_en))
+    .map(card => ({
+      icon: card.icon || '💡',
+      title_ar: card.title_ar || '',
+      title_en: card.title_en || '',
+      content_ar: card.content_ar || '',
+      content_en: card.content_en || ''
+    }));
+}
+
+function renderTipsCardsList(){
+  if(!_tipsCardsJson.length){
+    return '<div class="empty-state"><div class="empty-icon">💡</div><div class="empty-text">لا توجد نصائح مضافة</div><div class="empty-hint">اضغط إضافة نصيحة لإنشاء مربع جديد</div></div>';
+  }
+  return `<div class="table-wrap"><table class="data-table"><thead><tr><th>الأيقونة</th><th>العنوان</th><th></th></tr></thead><tbody>` +
+    _tipsCardsJson.map((tip, idx)=>`
+      <tr style="cursor:pointer" onclick="window._selectTipCard(${idx})">
+        <td>${escHtml(tip.icon || '💡')}</td>
+        <td>${escHtml(tip.title_ar || tip.title_en || 'نصيحة بدون عنوان')}</td>
+        <td>${idx===_activeTipIndex?'✓':''}</td>
+      </tr>
+    `).join('') + `</tbody></table></div>`;
+}
+
+function renderTipsCardsEditor(data){
+  if(data){
+    _tipsCardsJson = normalizeTipsCards(data);
+    _activeTipIndex = Math.min(_activeTipIndex, Math.max(_tipsCardsJson.length - 1, 0));
+  }
+
+  const container = $('#content-editor-body');
+  const active = _tipsCardsJson[_activeTipIndex] || null;
+  const html = `
+    <div class="fade-in" style="display:grid;grid-template-columns: 1fr 2fr; gap:16px; align-items:start;">
+      <div class="card" style="margin:0;">
+        <div class="card-header"><div class="card-title"><span class="icon">💡</span> مربعات النصائح</div></div>
+        <div style="padding:14px;">
+          <button class="btn btn-gold btn-sm" type="button" onclick="window._addTipCard()">➕ إضافة نصيحة</button>
+          <div style="margin-top:12px;">${renderTipsCardsList()}</div>
+        </div>
+      </div>
+      <div class="card" style="margin:0;">
+        <div class="card-header"><div class="card-title"><span class="icon">✏️</span> ${active ? 'تعديل مربع النصيحة' : 'إضافة مربع نصيحة'}</div></div>
+        <div style="padding:14px;">
+          <div class="empty-hint" style="margin-bottom:14px;line-height:1.7">
+            العنوان والوصف العلوي لقسم النصائح ثابتين كما هما في التطبيق. أي بيانات تضيفها هنا ستظهر كمربع نصيحة جديد أسفلهم، ويمكنك اختيار أي مربع من القائمة لتعديله.
+          </div>
+          ${active ? `
+          <form id="tips-card-form">
+            <div class="form-row">
+              <div class="form-group" style="flex:0 0 120px">
+                <label>الأيقونة</label>
+                <input class="form-control" name="icon" value="${escAttr(active.icon || '💡')}" placeholder="💡">
+              </div>
+              <div class="form-group" style="flex:1">
+                <label>العنوان (عربي)</label>
+                <input class="form-control" name="title_ar" value="${escAttr(active.title_ar || '')}" dir="rtl">
+              </div>
+              <div class="form-group" style="flex:1">
+                <label>العنوان (إنجليزي/اختياري)</label>
+                <input class="form-control" name="title_en" value="${escAttr(active.title_en || '')}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>المحتوى (عربي)</label>
+              <textarea class="form-control" name="content_ar" rows="4" dir="rtl">${escHtml(active.content_ar || '')}</textarea>
+            </div>
+            <div class="form-group">
+              <label>المحتوى (إنجليزي/اختياري)</label>
+              <textarea class="form-control" name="content_en" rows="4">${escHtml(active.content_en || '')}</textarea>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+              <button type="submit" class="btn btn-gold">💾 حفظ النصائح</button>
+              <button type="button" class="btn btn-outline" onclick="window._deleteTipCard(${_activeTipIndex})">🗑️ حذف هذا المربع</button>
+            </div>
+          </form>` : '<div class="empty-state"><div class="empty-icon">💡</div><div class="empty-text">اضغط إضافة نصيحة للبدء</div></div>'}
+        </div>
+      </div>
+    </div>
+  `;
+  container.innerHTML = html;
+
+  const form = document.getElementById('tips-card-form');
+  if(form){
+    form.addEventListener('submit', async(e)=>{
+      e.preventDefault();
+      const tip = _tipsCardsJson[_activeTipIndex];
+      if(!tip) return;
+      tip.icon = form.elements.icon.value.trim() || '💡';
+      tip.title_ar = form.elements.title_ar.value.trim();
+      tip.title_en = form.elements.title_en.value.trim();
+      tip.content_ar = form.elements.content_ar.value.trim();
+      tip.content_en = form.elements.content_en.value.trim();
+      await saveTipsCards();
+    });
+  }
+}
+
+async function saveTipsCards(){
+  const payload = {
+    cards_json: JSON.stringify(_tipsCardsJson),
+    title_ar: '',
+    title_en: '',
+    content_ar: '',
+    content_en: ''
+  };
+  try{
+    await api('/api/admin/content/tips',{method:'PATCH',body:JSON.stringify(payload)});
+    toast('تم حفظ مربعات النصائح بنجاح','success');
+    renderTipsCardsEditor(null);
+  }catch(err){
+    toast('فشل في الحفظ: '+err.message,'error');
+  }
+}
+
+window._selectTipCard = function(index){
+  _activeTipIndex = index;
+  renderTipsCardsEditor(null);
+};
+
+window._addTipCard = function(){
+  _tipsCardsJson.push({icon:'💡', title_ar:'نصيحة جديدة', title_en:'', content_ar:'اكتب محتوى النصيحة هنا', content_en:''});
+  _activeTipIndex = _tipsCardsJson.length - 1;
+  renderTipsCardsEditor(null);
+};
+
+window._deleteTipCard = async function(index){
+  if(!confirm('حذف مربع النصيحة هذا؟')) return;
+  _tipsCardsJson.splice(index, 1);
+  _activeTipIndex = Math.min(index, Math.max(_tipsCardsJson.length - 1, 0));
+  await saveTipsCards();
 };
 
 function renderContentEditor(section, data){
