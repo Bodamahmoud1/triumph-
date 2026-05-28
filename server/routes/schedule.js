@@ -36,63 +36,77 @@ const upload = multer({
 });
 
 // Helper to cleanup old previews from DB and filesystem
-function cleanupPreviews(db) {
-  const oldPreviews = db.prepare("SELECT * FROM schedule_previews WHERE created_at < datetime('now', '-1 hour')").all();
-  for (const p of oldPreviews) {
-    try { fs.unlinkSync(p.file_path); } catch(e){}
+async function cleanupPreviews(db) {
+  try {
+    const oldPreviewsResult = await db.execute("SELECT * FROM schedule_previews WHERE created_at < datetime('now', '-1 hour')");
+    for (const p of oldPreviewsResult.rows) {
+      try { fs.unlinkSync(p.file_path); } catch(e){}
+    }
+    await db.execute("DELETE FROM schedule_previews WHERE created_at < datetime('now', '-1 hour')");
+  } catch (err) {
+    console.error('Cleanup previews error:', err);
   }
-  db.prepare("DELETE FROM schedule_previews WHERE created_at < datetime('now', '-1 hour')").run();
 }
 
 // GET /api/schedule - PUBLIC (No Auth)
 router.get('/schedule', [
   query('week').optional().trim().escape()
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
   const db = req.app.locals.db;
   let weekKey = req.query.week;
   
-  let scheduleRow;
-  if (weekKey) {
-    scheduleRow = db.prepare('SELECT * FROM schedules WHERE week_key = ? AND is_active = 1 ORDER BY id DESC LIMIT 1').get(weekKey);
-  } else {
-    scheduleRow = db.prepare('SELECT * FROM schedules WHERE is_active = 1 ORDER BY id DESC LIMIT 1').get();
-  }
-
-  if (!scheduleRow) {
-    return res.json({ data: null, message: 'لا يوجد جدول منشور لهذا الأسبوع' });
-  }
-
-  const shifts = db.prepare(`
-    SELECT ss.day, ss.shift, e.name_ar, e.name_en, e.department, e.employee_id 
-    FROM schedule_shifts ss
-    JOIN employees e ON ss.employee_id = e.id
-    WHERE ss.schedule_id = ?
-  `).all(scheduleRow.id);
-
-  const employeesMap = {};
-  shifts.forEach(row => {
-    const key = row.employee_id || row.name_ar;
-    if (!employeesMap[key]) {
-      employeesMap[key] = {
-        name_ar: row.name_ar,
-        name_en: row.name_en,
-        department: row.department,
-        shifts: {}
-      };
+  try {
+    let scheduleRow;
+    if (weekKey) {
+      const resData = await db.execute({ sql: 'SELECT * FROM schedules WHERE week_key = ? AND is_active = 1 ORDER BY id DESC LIMIT 1', args: [weekKey] });
+      scheduleRow = resData.rows[0];
+    } else {
+      const resData = await db.execute('SELECT * FROM schedules WHERE is_active = 1 ORDER BY id DESC LIMIT 1');
+      scheduleRow = resData.rows[0];
     }
-    employeesMap[key].shifts[row.day] = row.shift;
-  });
 
-  res.json({
-    data: {
-      week_key: scheduleRow.week_key,
-      week_start: scheduleRow.week_start,
-      employees: Object.values(employeesMap)
+    if (!scheduleRow) {
+      return res.json({ data: null, message: 'لا يوجد جدول منشور لهذا الأسبوع' });
     }
-  });
+
+    const shiftsResult = await db.execute({
+      sql: `
+        SELECT ss.day, ss.shift, e.name_ar, e.name_en, e.department, e.employee_id 
+        FROM schedule_shifts ss
+        JOIN employees e ON ss.employee_id = e.id
+        WHERE ss.schedule_id = ?
+      `,
+      args: [scheduleRow.id]
+    });
+
+    const employeesMap = {};
+    shiftsResult.rows.forEach(row => {
+      const key = row.employee_id || row.name_ar;
+      if (!employeesMap[key]) {
+        employeesMap[key] = {
+          name_ar: row.name_ar,
+          name_en: row.name_en,
+          department: row.department,
+          shifts: {}
+        };
+      }
+      employeesMap[key].shifts[row.day] = row.shift;
+    });
+
+    res.json({
+      data: {
+        week_key: scheduleRow.week_key,
+        week_start: scheduleRow.week_start,
+        employees: Object.values(employeesMap)
+      }
+    });
+  } catch (err) {
+    console.error('Get schedule error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 // POST /api/admin/schedule/upload - AUTH REQUIRED
@@ -108,19 +122,22 @@ router.post('/admin/schedule/upload', authenticateToken, (req, res) => {
       
       const previewId = Date.now().toString() + Math.floor(Math.random()*1000);
       
-      db.prepare('INSERT INTO schedule_previews (id, file_path, original_name, data_json) VALUES (?, ?, ?, ?)')
-        .run(previewId, req.file.path, req.file.originalname, JSON.stringify(parseResult.data));
+      await db.execute({
+        sql: 'INSERT INTO schedule_previews (id, file_path, original_name, data_json) VALUES (?, ?, ?, ?)',
+        args: [previewId, req.file.path, req.file.originalname, JSON.stringify(parseResult.data)]
+      });
 
-      cleanupPreviews(db);
+      cleanupPreviews(db); // Fire and forget async cleanup
 
       res.json({
         previewId,
         valid: parseResult.valid,
         errors: parseResult.errors,
-        previewData: parseResult.data.slice(0, 5) // Return top 5 for preview UI
+        // Send a preview of the first week to the UI
+        previewData: parseResult.data[0] ? parseResult.data[0].scheduleData.slice(0, 5) : [] 
       });
     } catch (e) {
-      console.error(e);
+      console.error('Upload error:', e);
       res.status(500).json({ error: 'Error parsing Excel file' });
     }
   });
@@ -131,7 +148,7 @@ router.post('/admin/schedule/publish', authenticateToken, [
   body('previewId').trim().notEmpty().withMessage('Preview ID required'),
   body('week_key').trim().notEmpty().withMessage('Week key required'),
   body('week_start').trim().notEmpty().withMessage('Week start required')
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -139,63 +156,87 @@ router.post('/admin/schedule/publish', authenticateToken, [
   const db = req.app.locals.db;
   const adminId = req.user.id;
 
-  const previewRecord = db.prepare('SELECT * FROM schedule_previews WHERE id = ?').get(previewId);
-
-  if (!previewRecord) {
-    return res.status(400).json({ error: 'Invalid or expired preview ID' });
-  }
-
-  const scheduleData = JSON.parse(previewRecord.data_json);
-
   try {
-    const insertTransaction = db.transaction(() => {
-      // 1. Deactivate existing schedules for this week
-      db.prepare('UPDATE schedules SET is_active = 0 WHERE week_key = ?').run(week_key);
+    const previewResult = await db.execute({ sql: 'SELECT * FROM schedule_previews WHERE id = ?', args: [previewId] });
+    const previewRecord = previewResult.rows[0];
 
-      // 2. Insert new schedule
-      const schedResult = db.prepare(`
-        INSERT INTO schedules (week_key, week_start, published_by, is_active, original_filename) 
-        VALUES (?, ?, ?, 1, ?)
-      `).run(week_key, week_start || week_key, adminId, previewRecord.original_name);
+    if (!previewRecord) {
+      return res.status(400).json({ error: 'Invalid or expired preview ID' });
+    }
+
+    const scheduleDataArray = JSON.parse(previewRecord.data_json);
+
+    const tx = await db.transaction('write');
+    try {
+      let insertedCount = 0;
       
-      const newSchedId = schedResult.lastInsertRowid;
-
-      // 3. Process employees and shifts
-      const insertEmp = db.prepare('INSERT INTO employees (name_ar, department) VALUES (?, ?)');
-      const getEmp = db.prepare('SELECT id FROM employees WHERE name_ar = ?');
-      const insertShift = db.prepare('INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)');
-
-      for (const row of scheduleData) {
-        let empId;
-        const existingEmp = getEmp.get(row.name);
+      // We expect scheduleDataArray to be an array of 2 weeks: [{ week_start, scheduleData }, ...]
+      for (let i = 0; i < scheduleDataArray.length; i++) {
+        const weekObj = scheduleDataArray[i];
+        if (!weekObj || !weekObj.scheduleData || weekObj.scheduleData.length === 0) continue;
         
-        if (existingEmp) {
-          empId = existingEmp.id;
-        } else {
-          const empResult = insertEmp.run(row.name, row.department);
-          empId = empResult.lastInsertRowid;
-        }
+        // Suffix the base week_key provided by the user
+        const suffix = (scheduleDataArray.length > 1) ? ` - W${i + 1}` : '';
+        const currentWeekKey = week_key + suffix;
+        const currentWeekStart = weekObj.week_start || week_start;
 
-        // Insert shifts
-        for (const [day, shiftVal] of Object.entries(row.shifts)) {
-          insertShift.run(newSchedId, empId, day, shiftVal);
+        // 1. Deactivate existing schedules for this week
+        await tx.execute({ sql: 'UPDATE schedules SET is_active = 0 WHERE week_key = ?', args: [currentWeekKey] });
+
+        // 2. Insert new schedule
+        const schedResult = await tx.execute({
+          sql: `
+            INSERT INTO schedules (week_key, week_start, published_by, is_active, original_filename) 
+            VALUES (?, ?, ?, 1, ?)
+          `,
+          args: [currentWeekKey, currentWeekStart, adminId, previewRecord.original_name]
+        });
+        
+        const newSchedId = Number(schedResult.lastInsertRowid);
+
+        // 3. Process employees and shifts
+        for (const row of weekObj.scheduleData) {
+          let empId;
+          const existingEmpResult = await tx.execute({ sql: 'SELECT id FROM employees WHERE name_ar = ?', args: [row.name] });
+          const existingEmp = existingEmpResult.rows[0];
+          
+          if (existingEmp) {
+            empId = existingEmp.id;
+          } else {
+            const empResult = await tx.execute({ sql: 'INSERT INTO employees (name_ar, department) VALUES (?, ?)', args: [row.name, row.department] });
+            empId = Number(empResult.lastInsertRowid);
+          }
+
+          // Insert shifts
+          for (const [day, shiftVal] of Object.entries(row.shifts)) {
+            await tx.execute({
+              sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)',
+              args: [newSchedId, empId, day, shiftVal]
+            });
+          }
+          insertedCount++;
         }
       }
 
       // 4. Log Audit
-      db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-        .run(adminId, 'Publish Schedule', JSON.stringify({ week: week_key, rows: scheduleData.length }));
-    });
+      await tx.execute({
+        sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+        args: [adminId, 'Publish Schedule', JSON.stringify({ base_week: week_key, total_rows: insertedCount })]
+      });
 
-    insertTransaction();
-    
+      await tx.commit();
+    } catch (e) {
+      await tx.rollback();
+      throw e;
+    }
+
     // Cleanup preview
-    db.prepare('DELETE FROM schedule_previews WHERE id = ?').run(previewId);
+    await db.execute({ sql: 'DELETE FROM schedule_previews WHERE id = ?', args: [previewId] });
     try { fs.unlinkSync(previewRecord.file_path); } catch(e){}
     
     res.json({ success: true, message: 'Schedule published successfully' });
   } catch (e) {
-    console.error(e);
+    console.error('Publish error:', e);
     res.status(500).json({ error: 'Database error during publish' });
   }
 });
@@ -204,7 +245,7 @@ router.post('/admin/schedule/publish', authenticateToken, [
 router.get('/admin/schedule/history', authenticateToken, [
   query('page').optional().isInt({ min: 1 }).toInt(),
   query('limit').optional().isInt({ min: 1, max: 100 }).toInt()
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -213,30 +254,39 @@ router.get('/admin/schedule/history', authenticateToken, [
   const limit = req.query.limit || 10;
   const offset = (page - 1) * limit;
 
-  const total = db.prepare('SELECT COUNT(*) as total FROM schedules').get().total;
+  try {
+    const totalResult = await db.execute('SELECT COUNT(*) as total FROM schedules');
+    const total = totalResult.rows[0].total;
 
-  const history = db.prepare(`
-    SELECT s.id, s.week_key, s.published_at, s.is_active, s.original_filename, a.username as publisher
-    FROM schedules s
-    LEFT JOIN admins a ON s.published_by = a.id
-    ORDER BY s.id DESC LIMIT ? OFFSET ?
-  `).all(limit, offset);
-  
-  res.json({ 
-    data: history,
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    }
-  });
+    const historyResult = await db.execute({
+      sql: `
+        SELECT s.id, s.week_key, s.published_at, s.is_active, s.original_filename, a.username as publisher
+        FROM schedules s
+        LEFT JOIN admins a ON s.published_by = a.id
+        ORDER BY s.id DESC LIMIT ? OFFSET ?
+      `,
+      args: [limit, offset]
+    });
+    
+    res.json({ 
+      data: historyResult.rows,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (err) {
+    console.error('History error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 // POST /api/admin/schedule/restore/:id - AUTH REQUIRED
 router.post('/admin/schedule/restore/:id', authenticateToken, [
   param('id').isInt().toInt()
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -244,20 +294,28 @@ router.post('/admin/schedule/restore/:id', authenticateToken, [
   const idToRestore = req.params.id;
   const adminId = req.user.id;
 
-  const targetSched = db.prepare('SELECT * FROM schedules WHERE id = ?').get(idToRestore);
-  if (!targetSched) return res.status(404).json({ error: 'Schedule not found' });
-
   try {
-    const restoreTx = db.transaction(() => {
-      db.prepare('UPDATE schedules SET is_active = 0 WHERE week_key = ?').run(targetSched.week_key);
-      db.prepare('UPDATE schedules SET is_active = 1 WHERE id = ?').run(idToRestore);
-      
-      db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-        .run(adminId, 'Restore Schedule', JSON.stringify({ week: targetSched.week_key, id: idToRestore }));
-    });
-    restoreTx();
+    const targetSchedResult = await db.execute({ sql: 'SELECT * FROM schedules WHERE id = ?', args: [idToRestore] });
+    const targetSched = targetSchedResult.rows[0];
+    
+    if (!targetSched) return res.status(404).json({ error: 'Schedule not found' });
+
+    const tx = await db.transaction('write');
+    try {
+      await tx.execute({ sql: 'UPDATE schedules SET is_active = 0 WHERE week_key = ?', args: [targetSched.week_key] });
+      await tx.execute({ sql: 'UPDATE schedules SET is_active = 1 WHERE id = ?', args: [idToRestore] });
+      await tx.execute({
+        sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+        args: [adminId, 'Restore Schedule', JSON.stringify({ week: targetSched.week_key, id: idToRestore })]
+      });
+      await tx.commit();
+    } catch (e) {
+      await tx.rollback();
+      throw e;
+    }
     res.json({ success: true, message: 'Schedule restored' });
   } catch(e) {
+    console.error('Restore error:', e);
     res.status(500).json({ error: 'Database error' });
   }
 });
@@ -265,7 +323,7 @@ router.post('/admin/schedule/restore/:id', authenticateToken, [
 // GET /api/admin/schedule/download/:id - AUTH via query token or header
 router.get('/admin/schedule/download/:id', [
   param('id').isInt().toInt()
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -281,53 +339,65 @@ router.get('/admin/schedule/download/:id', [
   }
 
   const db = req.app.locals.db;
-  const schedule = db.prepare('SELECT * FROM schedules WHERE id = ?').get(req.params.id);
-  if (!schedule) return res.status(404).json({ error: 'Schedule not found' });
-
-  // Build an Excel file from the schedule data
-  const shifts = db.prepare(`
-    SELECT ss.day, ss.shift, e.name_ar, e.name_en, e.department
-    FROM schedule_shifts ss
-    JOIN employees e ON ss.employee_id = e.id
-    WHERE ss.schedule_id = ?
-  `).all(schedule.id);
-
-  const ExcelJS = require('exceljs');
-  const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet('Schedule ' + schedule.week_key);
   
-  // Group shifts by employee
-  const empMap = {};
-  shifts.forEach(s => {
-    const key = s.name_ar;
-    if (!empMap[key]) empMap[key] = { name_ar: s.name_ar, name_en: s.name_en, department: s.department, shifts: {} };
-    empMap[key].shifts[s.day] = s.shift;
-  });
+  try {
+    const scheduleResult = await db.execute({ sql: 'SELECT * FROM schedules WHERE id = ?', args: [req.params.id] });
+    const schedule = scheduleResult.rows[0];
+    if (!schedule) return res.status(404).json({ error: 'Schedule not found' });
 
-  sheet.columns = [
-    { header: 'Name', key: 'name_ar', width: 25 },
-    { header: 'Department', key: 'department', width: 15 },
-    { header: 'Saturday', key: 'Saturday', width: 12 },
-    { header: 'Sunday', key: 'Sunday', width: 12 },
-    { header: 'Monday', key: 'Monday', width: 12 },
-    { header: 'Tuesday', key: 'Tuesday', width: 12 },
-    { header: 'Wednesday', key: 'Wednesday', width: 12 },
-    { header: 'Thursday', key: 'Thursday', width: 12 },
-    { header: 'Friday', key: 'Friday', width: 12 },
-  ];
-
-  Object.values(empMap).forEach(emp => {
-    sheet.addRow({
-      name_ar: emp.name_ar,
-      department: emp.department,
-      ...emp.shifts
+    // Build an Excel file from the schedule data
+    const shiftsResult = await db.execute({
+      sql: `
+        SELECT ss.day, ss.shift, e.name_ar, e.name_en, e.department
+        FROM schedule_shifts ss
+        JOIN employees e ON ss.employee_id = e.id
+        WHERE ss.schedule_id = ?
+      `,
+      args: [schedule.id]
     });
-  });
+    const shifts = shiftsResult.rows;
 
-  const filename = `schedule_${schedule.week_key}.xlsx`;
-  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  workbook.xlsx.write(res).then(() => res.end());
+    const ExcelJS = require('exceljs');
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Schedule ' + schedule.week_key);
+    
+    // Group shifts by employee
+    const empMap = {};
+    shifts.forEach(s => {
+      const key = s.name_ar;
+      if (!empMap[key]) empMap[key] = { name_ar: s.name_ar, name_en: s.name_en, department: s.department, shifts: {} };
+      empMap[key].shifts[s.day] = s.shift;
+    });
+
+    sheet.columns = [
+      { header: 'Name', key: 'name_ar', width: 25 },
+      { header: 'Department', key: 'department', width: 15 },
+      { header: 'Saturday', key: 'Saturday', width: 12 },
+      { header: 'Sunday', key: 'Sunday', width: 12 },
+      { header: 'Monday', key: 'Monday', width: 12 },
+      { header: 'Tuesday', key: 'Tuesday', width: 12 },
+      { header: 'Wednesday', key: 'Wednesday', width: 12 },
+      { header: 'Thursday', key: 'Thursday', width: 12 },
+      { header: 'Friday', key: 'Friday', width: 12 },
+    ];
+
+    Object.values(empMap).forEach(emp => {
+      sheet.addRow({
+        name_ar: emp.name_ar,
+        department: emp.department,
+        ...emp.shifts
+      });
+    });
+
+    const filename = `schedule_${schedule.week_key}.xlsx`;
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (e) {
+    console.error('Download error:', e);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 module.exports = router;

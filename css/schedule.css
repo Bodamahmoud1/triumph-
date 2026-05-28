@@ -198,10 +198,11 @@
 .sched-emp-dept { font-size: 9px; font-weight: 600; color: var(--gold-dk); background: var(--gold-lt); padding: 1px 6px; border-radius: 10px; display: inline-block; margin-top: 2px; }
 
 .shift-cell { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; min-width: 64px; }
-.shift-Morning { background: var(--gold-lt); color: var(--gold-dk); border: 1px solid var(--thm-bd, var(--gold)); }
-.shift-Evening { background: var(--blue-lt); color: var(--blue-dk); border: 1px solid var(--border); }
-.shift-Night { background: var(--shift-night-bg); color: var(--shift-night-text); border: 1px solid var(--shift-night-border); }
+.shift-Morning { background: var(--blue-lt); color: var(--blue-dk); border: 1px solid rgba(0,86,179,0.2); }
+.shift-Evening { background: var(--gold-lt); color: var(--gold-dk); border: 1px solid rgba(224,168,0,0.2); }
+.shift-Night { background: var(--violet-lt); color: var(--violet-dk); border: 1px solid rgba(111,66,193,0.2); }
 .shift-Off { background: var(--chip-muted-bg); color: var(--chip-muted-text); border: 1px solid var(--line-soft); }
+.shift-Vacation { background: var(--green-lt); color: var(--green-dk); border: 1px solid rgba(40,167,69,0.2); }
 .shift-Holiday { background: var(--red-lt); color: var(--red-dk); border: 1px solid var(--border); }
 
 .schedule-card-list { display: none; padding: 12px; gap: 12px; }
