@@ -28,8 +28,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrcAttr: ["'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      scriptSrcAttr: ["'none'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
@@ -50,26 +50,35 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
 function getAllowedOrigins() {
-  const configuredOrigins = (process.env.CORS_ORIGIN || 'https://triumph-laundry.vercel.app')
+  const configuredOrigins = (process.env.CORS_ORIGIN || '')
     .split(',')
     .map(origin => origin.trim())
     .filter(Boolean);
 
-  return [
-    ...configuredOrigins,
-    /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
-  ];
+  if (process.env.NODE_ENV === 'production' && configuredOrigins.length === 0) {
+    throw new Error('CORS_ORIGIN must be set in production. Use a comma-separated list for multiple allowed origins.');
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    configuredOrigins.push(/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/);
+  }
+
+  return configuredOrigins;
 }
 
 const allowedOrigins = getAllowedOrigins();
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, file://)
     if (!origin) return callback(null, true);
     const isAllowed = allowedOrigins.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
-    callback(null, isAllowed || process.env.NODE_ENV !== 'production');
+    callback(null, isAllowed);
   },
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
   credentials: true
@@ -143,7 +152,7 @@ const staffRoutes = require('./routes/staff');
 const auditRoutes = require('./routes/audit');
 const dataFilesRoutes = require('./routes/data-files');
 
-// Serve the admin entry without relying on a trailing-slash redirect.
+// Serve static assets. Admin routes are static-only; API hosting should run on Render/Railway.
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../admin/index.html'));
 });
@@ -166,8 +175,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something broke on the server!' });
 });
 
-// Start server or export for Serverless
-if (process.env.VERCEL !== '1') {
+// Start server when executed directly; tests and adapters can still import the app.
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

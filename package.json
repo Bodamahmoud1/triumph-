@@ -4,10 +4,12 @@
   "description": "Triumph Laundry App",
   "scripts": {
     "start": "node server/index.js",
-    "postinstall": "cd server && npm install",
+    "postinstall": "cd server && npm install --ignore-scripts",
     "test": "node --test",
-    "lint": "node scripts/lint.js",
-    "format": "node scripts/format-check.js"
+    "lint": "node scripts/run-eslint.js && node scripts/lint.js",
+    "format": "node scripts/run-prettier-check.js && node scripts/format-check.js",
+    "build:sw": "node scripts/generate-sw-app-shell.js",
+    "migrate": "node server/scripts/migrate.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

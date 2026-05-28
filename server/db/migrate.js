@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 function getTableColumns(db, tableName) {
   return new Set(db.prepare(`PRAGMA table_info(${tableName})`).all().map(column => column.name));
@@ -12,9 +13,15 @@ function addColumnIfMissing(db, tableName, columnName, definition) {
   }
 }
 
-function ensureCompatibilitySchema(db) {
-  addColumnIfMissing(db, 'employees', 'status', "TEXT DEFAULT 'Active'");
-  addColumnIfMissing(db, 'employees', 'is_deleted', 'BOOLEAN DEFAULT 0');
+function getMigrationChecksums(files, migrationsDir) {
+  return files.map((file) => {
+    const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
+    return {
+      file,
+      sql,
+      checksum: crypto.createHash('sha256').update(sql).digest('hex')
+    };
+  });
 }
 
 function runMigrations(db) {
@@ -22,38 +29,42 @@ function runMigrations(db) {
     CREATE TABLE IF NOT EXISTS migrations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT UNIQUE NOT NULL,
+      checksum TEXT,
       executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
 
+  addColumnIfMissing(db, 'migrations', 'checksum', 'TEXT');
+
   const migrationsDir = path.join(__dirname, 'migrations');
   if (!fs.existsSync(migrationsDir)) {
-    fs.mkdirSync(migrationsDir);
-    // Copy schema.sql to 001_initial.sql if it exists
-    const schemaPath = path.join(__dirname, 'schema.sql');
-    if (fs.existsSync(schemaPath)) {
-      fs.copyFileSync(schemaPath, path.join(migrationsDir, '001_initial.sql'));
-    }
+    throw new Error(`Tracked migrations directory is missing: ${migrationsDir}`);
   }
 
   const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
+  const migrations = getMigrationChecksums(files, migrationsDir);
   
-  for (const file of files) {
-    const isMigrated = db.prepare('SELECT id FROM migrations WHERE name = ?').get(file);
-    if (!isMigrated) {
-      console.log(`Running migration: ${file}`);
-      const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
-      try {
-        db.exec(sql);
-        db.prepare('INSERT INTO migrations (name) VALUES (?)').run(file);
-      } catch (err) {
-        console.error(`Migration ${file} failed:`, err);
-        throw err;
+  for (const migration of migrations) {
+    const existing = db.prepare('SELECT id, checksum FROM migrations WHERE name = ?').get(migration.file);
+    if (existing) {
+      if (existing.checksum && existing.checksum !== migration.checksum) {
+        throw new Error(`Migration ${migration.file} has changed since it was applied. Create a new migration instead of editing old migrations.`);
       }
+      if (!existing.checksum) {
+        db.prepare('UPDATE migrations SET checksum = ? WHERE id = ?').run(migration.checksum, existing.id);
+      }
+      continue;
+    }
+
+    console.log(`Running migration: ${migration.file}`);
+    try {
+      db.exec(migration.sql);
+      db.prepare('INSERT INTO migrations (name, checksum) VALUES (?, ?)').run(migration.file, migration.checksum);
+    } catch (err) {
+      console.error(`Migration ${migration.file} failed:`, err);
+      throw err;
     }
   }
-
-  ensureCompatibilitySchema(db);
 }
 
 module.exports = runMigrations;

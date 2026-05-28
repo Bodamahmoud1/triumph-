@@ -2,46 +2,68 @@
 
 Static guide and admin-backed schedule management app for the Triumph Luxury Hotel laundry team.
 
-## Project layout
+## Architecture
 
-- `index.html`, `css/`, `js/`, `data/`: public guide UI, PWA service worker, and editable catalogue data.
-- `admin/`: browser admin panel for staff, content, data files, schedules, and audit logs.
-- `server/`: Express API backed by SQLite and JWT authentication.
-- `api/index.js`: Vercel compatibility entry point for preview/static deployments; do not rely on it for durable production SQLite writes.
+- **Frontend/PWA:** `index.html`, `css/`, `js/`, `data/`, `sw.js`, and generated `sw-app-shell.js` are served as static files.
+- **Admin UI:** `admin/` is a static browser admin panel that calls the backend API.
+- **Backend API:** `server/` is an Express app backed by SQLite, versioned migrations, JWT access tokens, and rotating refresh-token sessions.
+- **Database:** SQLite is supported only on a persistent filesystem volume in production. Runtime DB files, backups, uploads, and office documents are intentionally ignored and must not be committed.
+
+## Deployment decision
+
+Use **Vercel for static frontend/admin assets only** and deploy `server/` as a separate Node service on Render or Railway with a persistent volume mounted at `DB_PATH`.
+
+The repository intentionally does **not** rewrite `/api/*` to Vercel serverless functions because local SQLite in `/tmp` is ephemeral and unsafe for production data.
 
 ## Local development
 
 ```bash
 npm install
-cp server/.env.example server/.env
+cp _env.example server/.env
+npm run migrate
 npm run start
 ```
 
-The app runs on `http://localhost:3000` by default. Local development uses `./triumph_laundry.db` unless `DB_PATH` is set.
-
-## Production persistence
-
-Production must use storage that survives process restarts, redeployments, and serverless instance recycling. Supported options are:
-
-1. **SQLite on a persistent platform volume** (current backend): set `DB_PATH` to an absolute path on the mounted volume, such as `/app/data/triumph.db` on Railway/Render/Fly.io with persistent disk enabled.
-2. **Managed database service** (future/adapter-based): use only after adding and configuring a database adapter for that service. The current server uses `better-sqlite3` and does not consume `DATABASE_URL` by itself.
-
-Do **not** set production `DB_PATH` to `/tmp` or any other ephemeral filesystem. Startup fails in production if `DB_PATH` is missing or points under `/tmp`.
-
-### Vercel support
-
-Vercel is supported for the static frontend only. The repository keeps `api/index.js` as a compatibility entry point for previews, but Vercel serverless functions do not provide durable local SQLite storage. Do not deploy the admin API on Vercel for production writes unless you first add a managed database adapter and update the API to use it.
+The app runs on `http://localhost:3000` by default.
 
 ## Checks
 
 ```bash
+npm ci
+npm test
 npm run lint
 npm run format
-npm test
 ```
 
-These checks validate JavaScript syntax, JSON manifests, service-worker cached assets, CSP hardening, CORS configuration, refresh-token hashing, database path selection, and that runtime SQLite/upload files are not tracked by Git.
+These checks validate JavaScript, JSON manifests, service-worker cached assets, CSP hardening, CORS configuration, refresh-token hashing/rotation, migrations, upload security, content validation, and that runtime/binary production files are not tracked by Git.
 
-## Runtime files
+## Environment variables
 
-Do not commit generated SQLite databases or uploaded schedule files. The repository ignores `*.db` and `uploads/`; production deployments must persist SQLite via a platform volume or move to a managed database adapter.
+| Variable         | Required      | Notes                                                                                                                        |
+| ---------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`       | Production    | Set to `production` on the API host.                                                                                         |
+| `PORT`           | API host      | Provided by Render/Railway.                                                                                                  |
+| `DB_PATH`        | Production    | Absolute path on a persistent volume, e.g. `/opt/render/project/src/server/db/triumph_laundry.db` or `/app/data/triumph.db`. |
+| `JWT_SECRET`     | Production    | Secure random string.                                                                                                        |
+| `ADMIN_USERNAME` | Initial setup | Username seeded when no admins exist.                                                                                        |
+| `ADMIN_PASSWORD` | Initial setup | Strong initial password; change after first login.                                                                           |
+| `CORS_ORIGIN`    | Production    | Comma-separated allowed frontend/admin origins. No production default is allowed.                                            |
+
+## Admin setup
+
+1. Configure `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `JWT_SECRET`, `DB_PATH`, and `CORS_ORIGIN` before first production start.
+2. Run `npm run migrate` from the repository root or `npm run migrate` inside `server/`.
+3. Start the API service.
+4. Sign in at `/admin` and change the seeded password.
+
+## Backups and restore
+
+- The server writes scheduled SQLite backups under `server/db/backups/`; keep that directory on persistent storage and outside Git.
+- To restore, stop the API process, copy the selected backup to `DB_PATH`, run `npm run migrate`, then restart the service.
+- Uploaded schedule preview files are transient and should not be backed up as application state.
+
+## Runtime files and repository hygiene
+
+Do not commit generated SQLite databases, DB WAL/SHM files, backup databases, uploaded schedule files, exported Excel/PDF/PPTX documents, or local handoff files. The `.gitignore` blocks these, and CI fails if runtime/binary production documents are tracked.
+
+If sensitive files have already been pushed to a shared remote, remove them from Git history with a tool such as `git filter-repo` or BFG, rotate any exposed secrets, and force-push only after coordinating with collaborators.

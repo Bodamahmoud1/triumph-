@@ -6,8 +6,77 @@ const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const authenticateToken = require('../middleware/auth');
 
+const REFRESH_COOKIE_NAME = 'triumph_admin_refresh';
+const REFRESH_TOKEN_DAYS = 7;
+
 function hashRefreshToken(refreshToken) {
   return crypto.createHash('sha256').update(String(refreshToken)).digest('hex');
+}
+
+function createAccessToken(admin) {
+  return jwt.sign(
+    { id: admin.id, username: admin.username },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+}
+
+function createRefreshToken() {
+  return crypto.randomBytes(40).toString('hex');
+}
+
+function getRefreshExpiry() {
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + REFRESH_TOKEN_DAYS);
+  return expiresAt;
+}
+
+function getClientIp(req) {
+  const forwarded = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return forwarded || req.ip || req.socket?.remoteAddress || null;
+}
+
+function getUserAgent(req) {
+  return String(req.headers['user-agent'] || '').slice(0, 500) || null;
+}
+
+function setRefreshCookie(res, refreshToken, expiresAt) {
+  res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    expires: expiresAt,
+    path: '/api/admin/login'
+  });
+}
+
+function clearRefreshCookie(res) {
+  res.clearCookie(REFRESH_COOKIE_NAME, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/api/admin/login'
+  });
+}
+
+function readRefreshToken(req) {
+  if (req.body && req.body.refreshToken) return req.body.refreshToken;
+  const cookieHeader = String(req.headers.cookie || '');
+  const cookie = cookieHeader
+    .split(';')
+    .map(part => part.trim())
+    .find(part => part.startsWith(`${REFRESH_COOKIE_NAME}=`));
+  return cookie ? decodeURIComponent(cookie.slice(REFRESH_COOKIE_NAME.length + 1)) : '';
+}
+
+function revokeSessionFamily(db, session, reason) {
+  if (session.token_family) {
+    db.prepare('UPDATE sessions SET is_revoked = 1, revoked_reason = ? WHERE token_family = ?')
+      .run(reason, session.token_family);
+  } else {
+    db.prepare('UPDATE sessions SET is_revoked = 1, revoked_reason = ? WHERE id = ?')
+      .run(reason, session.id);
+  }
 }
 
 // POST /api/admin/login
@@ -26,69 +95,81 @@ router.post('/', [
   const admin = db.prepare('SELECT * FROM admins WHERE username = ?').get(username);
   
   if (!admin || !bcrypt.compareSync(password, admin.password_hash)) {
-    return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' }); // Invalid credentials
+    return res.status(401).json({ error: 'بيانات الدخول غير صحيحة' });
   }
 
-  // Generate tokens
-  const token = jwt.sign(
-    { id: admin.id, username: admin.username },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+  const token = createAccessToken(admin);
+  const refreshToken = createRefreshToken();
+  const refreshTokenHash = hashRefreshToken(refreshToken);
+  const tokenFamily = crypto.randomUUID();
+  const expiresAt = getRefreshExpiry();
 
-  const refreshToken = crypto.randomBytes(40).toString('hex');
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+  db.prepare(`
+    INSERT INTO sessions (admin_id, refresh_token, token_family, expires_at, user_agent, ip_address, last_used_at)
+    VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+  `).run(admin.id, refreshTokenHash, tokenFamily, expiresAt.toISOString(), getUserAgent(req), getClientIp(req));
 
-  db.prepare('INSERT INTO sessions (admin_id, refresh_token, expires_at) VALUES (?, ?, ?)')
-    .run(admin.id, hashRefreshToken(refreshToken), expiresAt.toISOString());
-
-  // Log audit
   db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-    .run(admin.id, 'Login', JSON.stringify({ ip: req.ip }));
+    .run(admin.id, 'Login', JSON.stringify({ ip: getClientIp(req), userAgent: getUserAgent(req) }));
 
+  setRefreshCookie(res, refreshToken, expiresAt);
   res.json({ token, refreshToken });
 });
 
 // POST /api/admin/refresh
-router.post('/refresh', [
-  body('refreshToken').notEmpty().withMessage('Refresh token required')
-], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ error: errors.array()[0].msg });
+router.post('/refresh', (req, res) => {
+  const refreshToken = readRefreshToken(req);
+  if (!refreshToken) {
+    return res.status(400).json({ error: 'Refresh token required' });
   }
 
-  const { refreshToken } = req.body;
   const db = req.app.locals.db;
-
   const refreshTokenHash = hashRefreshToken(refreshToken);
+  const anySession = db.prepare('SELECT * FROM sessions WHERE refresh_token = ?').get(refreshTokenHash);
+
+  if (anySession && anySession.is_revoked) {
+    revokeSessionFamily(db, anySession, 'refresh_token_reuse_detected');
+    clearRefreshCookie(res);
+    return res.status(403).json({ error: 'Refresh token reuse detected; session family revoked' });
+  }
 
   const session = db.prepare('SELECT * FROM sessions WHERE refresh_token = ? AND is_revoked = 0 AND expires_at > CURRENT_TIMESTAMP').get(refreshTokenHash);
-
   if (!session) {
+    clearRefreshCookie(res);
     return res.status(403).json({ error: 'Invalid or expired refresh token' });
   }
 
   const admin = db.prepare('SELECT * FROM admins WHERE id = ?').get(session.admin_id);
   if (!admin) {
+    clearRefreshCookie(res);
     return res.status(403).json({ error: 'Invalid user' });
   }
 
-  // Generate new tokens
-  const token = jwt.sign(
-    { id: admin.id, username: admin.username },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
+  const token = createAccessToken(admin);
+  const newRefreshToken = createRefreshToken();
+  const newRefreshTokenHash = hashRefreshToken(newRefreshToken);
+  const expiresAt = getRefreshExpiry();
 
-  const newRefreshToken = crypto.randomBytes(40).toString('hex');
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 7);
+  const rotate = db.transaction(() => {
+    const newSession = db.prepare(`
+      INSERT INTO sessions (admin_id, refresh_token, token_family, expires_at, user_agent, ip_address, last_used_at)
+      VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+    `).run(admin.id, newRefreshTokenHash, session.token_family || crypto.randomUUID(), expiresAt.toISOString(), getUserAgent(req), getClientIp(req));
 
-  const stmt = db.prepare('UPDATE sessions SET refresh_token = ?, expires_at = ? WHERE id = ?');
-  stmt.run(hashRefreshToken(newRefreshToken), expiresAt.toISOString(), session.id);
+    db.prepare(`
+      UPDATE sessions
+      SET is_revoked = 1,
+          revoked_reason = 'rotated',
+          replaced_by = ?,
+          last_used_at = CURRENT_TIMESTAMP,
+          user_agent = COALESCE(user_agent, ?),
+          ip_address = COALESCE(ip_address, ?)
+      WHERE id = ?
+    `).run(newSession.lastInsertRowid, getUserAgent(req), getClientIp(req), session.id);
+  });
 
+  rotate();
+  setRefreshCookie(res, newRefreshToken, expiresAt);
   res.json({ token, refreshToken: newRefreshToken });
 });
 
@@ -116,26 +197,33 @@ router.post('/change-password', authenticateToken, [
   const hash = bcrypt.hashSync(newPassword, salt);
 
   db.prepare('UPDATE admins SET password_hash = ? WHERE id = ?').run(hash, adminId);
-  
-  // Revoke all existing sessions for security
-  db.prepare('UPDATE sessions SET is_revoked = 1 WHERE admin_id = ?').run(adminId);
+  db.prepare("UPDATE sessions SET is_revoked = 1, revoked_reason = 'password_changed' WHERE admin_id = ?").run(adminId);
 
   db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-    .run(adminId, 'Password Change', JSON.stringify({ ip: req.ip }));
+    .run(adminId, 'Password Change', JSON.stringify({ ip: getClientIp(req), userAgent: getUserAgent(req) }));
 
+  clearRefreshCookie(res);
   res.json({ message: 'تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مرة أخرى.' });
 });
 
 // POST /api/admin/logout
-router.post('/logout', authenticateToken, [
-  body('refreshToken').notEmpty().withMessage('Refresh token required')
-], (req, res) => {
-  const { refreshToken } = req.body;
+router.post('/logout', authenticateToken, (req, res) => {
+  const refreshToken = readRefreshToken(req);
   const db = req.app.locals.db;
   
-  db.prepare('UPDATE sessions SET is_revoked = 1 WHERE refresh_token = ?').run(hashRefreshToken(refreshToken));
-  
+  if (refreshToken) {
+    db.prepare("UPDATE sessions SET is_revoked = 1, revoked_reason = 'logout' WHERE refresh_token = ?")
+      .run(hashRefreshToken(refreshToken));
+  }
+
+  clearRefreshCookie(res);
   res.json({ message: 'Logged out successfully' });
 });
 
 module.exports = router;
+module.exports._private = {
+  REFRESH_COOKIE_NAME,
+  hashRefreshToken,
+  readRefreshToken,
+  setRefreshCookie
+};
