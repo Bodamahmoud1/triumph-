@@ -179,10 +179,10 @@ router.post('/admin/schedule/publish', authenticateToken, [
 
   try {
     const insertTransaction = db.transaction(() => {
-      const insertEmp = db.prepare('INSERT INTO employees (name_ar, employee_id, department) VALUES (?, ?, ?)');
-      const updateEmp = db.prepare('UPDATE employees SET name_ar = ?, department = ? WHERE id = ?');
-      const getEmpByCode = db.prepare('SELECT id FROM employees WHERE employee_id = ?');
-      const getEmpByName = db.prepare(`SELECT id FROM employees WHERE name_ar = ? AND (employee_id IS NULL OR employee_id = '')`);
+      const insertEmp = db.prepare('INSERT INTO employees (name_ar, employee_id, department, status, is_deleted) VALUES (?, ?, ?, ?, 0)');
+      const updateEmp = db.prepare('UPDATE employees SET name_ar = ?, department = ?, status = ?, is_deleted = 0 WHERE id = ?');
+      const getEmpByCode = db.prepare('SELECT id, name_ar, employee_id, department, status, is_deleted FROM employees WHERE employee_id = ?');
+      const getEmpByName = db.prepare(`SELECT id, name_ar, employee_id, department, status, is_deleted FROM employees WHERE name_ar = ? AND (employee_id IS NULL OR employee_id = '') ORDER BY is_deleted ASC, id ASC`);
       const insertShift = db.prepare('INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)');
 
       for (const week of weeksToPublish) {
@@ -205,6 +205,7 @@ router.post('/admin/schedule/publish', authenticateToken, [
         const newSchedId = schedResult.lastInsertRowid;
 
         // 3. Process employees and shifts
+        const employeeAuditEvents = [];
         for (const row of week.rows || []) {
           let empId;
           const employeeCode = row.employeeId || row.employee_id || null;
@@ -212,9 +213,29 @@ router.post('/admin/schedule/publish', authenticateToken, [
 
           if (existingEmp) {
             empId = existingEmp.id;
-            updateEmp.run(row.name, row.department, empId);
+            updateEmp.run(row.name, row.department, 'Active', empId);
+
+            if (existingEmp.is_deleted) {
+              employeeAuditEvents.push({
+                action: 'restored',
+                id: empId,
+                employee_id: employeeCode,
+                previous: {
+                  name_ar: existingEmp.name_ar,
+                  department: existingEmp.department,
+                  status: existingEmp.status,
+                  is_deleted: Boolean(existingEmp.is_deleted)
+                },
+                current: {
+                  name_ar: row.name,
+                  department: row.department,
+                  status: 'Active',
+                  is_deleted: false
+                }
+              });
+            }
           } else {
-            const empResult = insertEmp.run(row.name, employeeCode, row.department);
+            const empResult = insertEmp.run(row.name, employeeCode, row.department, 'Active');
             empId = empResult.lastInsertRowid;
           }
 
@@ -225,7 +246,11 @@ router.post('/admin/schedule/publish', authenticateToken, [
 
         // 4. Log Audit
         db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-          .run(adminId, 'Publish Schedule', JSON.stringify({ week: resolvedWeekKey, rows: (week.rows || []).length }));
+          .run(adminId, 'Publish Schedule', JSON.stringify({
+            week: resolvedWeekKey,
+            rows: (week.rows || []).length,
+            employeeEvents: employeeAuditEvents
+          }));
       }
     });
 
