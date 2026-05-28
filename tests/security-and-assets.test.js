@@ -4,6 +4,15 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 
+function getOptionalBetterSqlite3() {
+  try {
+    return require('better-sqlite3');
+  } catch (error) {
+    if (error.code === 'MODULE_NOT_FOUND') return null;
+    throw error;
+  }
+}
+
 test('service worker precache assets exist locally', () => {
   const source = readFileSync('sw.js', 'utf8');
   const sandbox = {
@@ -75,4 +84,57 @@ test('admin schedule downloads use header-authenticated blob fetch with useful f
   assert.match(downloadHandler[0], /toast\('فشل تحميل الجدول: '\+err\.message,'error'\)/);
   assert.equal(downloadHandler[0].includes('?token='), false);
   assert.equal(downloadHandler[0].includes('window.open'), false);
+test('catalogue data reads seed JSON into SQLite when no persisted row exists', (t) => {
+  const Database = getOptionalBetterSqlite3();
+  if (!Database) return t.skip('better-sqlite3 is not installed in this environment');
+  const runMigrations = require('../server/db/migrate');
+  const { _private: catalogue } = require('../server/routes/data-files');
+  const db = new Database(':memory:');
+  try {
+    runMigrations(db);
+    const expected = JSON.parse(readFileSync('data/chemicals.json', 'utf8'));
+
+    const data = catalogue.getCatalogueData(db, 'chemicals');
+    const row = db.prepare('SELECT payload FROM catalogue_data WHERE kind = ?').get('chemicals');
+
+    assert.deepEqual(data, expected);
+    assert.deepEqual(JSON.parse(row.payload), expected);
+  } finally {
+    db.close();
+  }
+});
+
+test('catalogue data updates persisted SQLite payload and writes audit details', (t) => {
+  const Database = getOptionalBetterSqlite3();
+  if (!Database) return t.skip('better-sqlite3 is not installed in this environment');
+  const runMigrations = require('../server/db/migrate');
+  const { _private: catalogue } = require('../server/routes/data-files');
+  const db = new Database(':memory:');
+  try {
+    runMigrations(db);
+    const adminId = db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run('catalogue-admin', 'hash').lastInsertRowid;
+    const replacement = [
+      {
+        id: 'test-chemical',
+        theme: 'blue',
+        name: 'Test Chemical',
+        code: 'TC-1'
+      }
+    ];
+
+    catalogue.replaceCatalogueData(db, 'chemicals', replacement, adminId);
+
+    assert.deepEqual(catalogue.getCatalogueData(db, 'chemicals'), replacement);
+
+    const audit = db.prepare('SELECT admin_id, action, details FROM audit_log ORDER BY id DESC LIMIT 1').get();
+    assert.equal(audit.admin_id, adminId);
+    assert.equal(audit.action, 'Update Catalogue Data');
+    assert.deepEqual(JSON.parse(audit.details), {
+      kind: 'chemicals',
+      itemCount: 1,
+      adminId
+    });
+  } finally {
+    db.close();
+  }
 });
