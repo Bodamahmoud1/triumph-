@@ -72,6 +72,90 @@
     return value ? ' ' + name + '="' + escapeHtml(value) + '"' : '';
   }
 
+  function displayChemicalName(chem) {
+    if (chem.navName || chem.displayName) return chem.navName || chem.displayName;
+    var name = chem.name_en || chem.name || chem.code || chem.id || 'Chemical';
+    var brand = chem.brand || '';
+    if (brand && name.toLowerCase().indexOf(brand.toLowerCase()) !== 0) {
+      return brand + ' ' + name;
+    }
+    return name;
+  }
+
+  function displayProgramName(prog) {
+    var number = prog.number || '';
+    var name = prog.name_en || prog.name || prog.name_ar || prog.id || 'Program';
+    return number ? number + ' — ' + name : name;
+  }
+
+  function renderNavLink(item, options) {
+    return '<a href="#' + escapeHtml(item.id || '') + '" class="' + options.className + '"' +
+      (item.theme ? ' data-theme="' + escapeHtml(item.theme) + '"' : '') +
+      ' data-nav-section="' + escapeHtml(options.section) + '"' +
+      (options.closeMobile ? ' data-close-mobile="true"' : '') + '>' +
+      escapeHtml(options.label(item)) +
+      '</a>';
+  }
+
+  function renderDynamicNavigation(chemicals, programs) {
+    var chemGroup = document.getElementById('nav-chemicals-group');
+    var mobChem = document.getElementById('mob-chemicals');
+    var mobProg = document.getElementById('mob-programs');
+
+    if (chemGroup) {
+      chemGroup.innerHTML = chemicals.map(function (chem) {
+        return renderNavLink(chem, {
+          section: 'chemicals',
+          className: 'nav-theme',
+          closeMobile: false,
+          label: displayChemicalName
+        });
+      }).join('');
+    }
+
+    if (mobChem) {
+      mobChem.innerHTML = chemicals.map(function (chem) {
+        return renderNavLink(chem, {
+          section: 'chemicals',
+          className: '',
+          closeMobile: true,
+          label: displayChemicalName
+        });
+      }).join('');
+    }
+
+    if (mobProg) {
+      mobProg.innerHTML = programs.map(function (prog) {
+        return renderNavLink(prog, {
+          section: 'programs',
+          className: '',
+          closeMobile: true,
+          label: displayProgramName
+        });
+      }).join('');
+    }
+  }
+
+  function setStatValue(name, value) {
+    var nodes = document.querySelectorAll('[data-stat="' + name + '"]');
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].textContent = value;
+    }
+  }
+
+  function updateDynamicStats(chemicals, programs) {
+    var bleachCount = chemicals.filter(function (chem) {
+      var haystack = [chem.theme, chem.type, chem.name, chem.name_en, chem.description, chem.howItWorks]
+        .join(' ')
+        .toLowerCase();
+      return chem.theme === 'gold' || haystack.indexOf('bleach') !== -1 || haystack.indexOf('مبيض') !== -1 || haystack.indexOf('تبييض') !== -1;
+    }).length;
+
+    setStatValue('chemicals-total', chemicals.length);
+    setStatValue('programs-total', programs.length);
+    setStatValue('bleach-total', bleachCount);
+  }
+
   function buildContentSections(sections) {
     return (sections || []).map(function (section) {
       var html = '<div class="sec-head head-theme">' + escapeHtml(section.title) + '</div>';
@@ -305,6 +389,8 @@
       .then(function (payload) {
         renderChemicals(payload[0]);
         renderPrograms(payload[1]);
+        renderDynamicNavigation(payload[0], payload[1]);
+        updateDynamicStats(payload[0], payload[1]);
         document.dispatchEvent(new CustomEvent('laundry:data-ready'));
       })
       .catch(function (err) {

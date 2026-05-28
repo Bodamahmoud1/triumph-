@@ -4,7 +4,12 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
+<<<<<<< HEAD
 const { createClient } = require('@libsql/client');
+=======
+const Database = require('better-sqlite3');
+const { resolveDatabasePath } = require('./db/config');
+>>>>>>> c9251826d2e634acb03ab8b0655b798f714a4149
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const cron = require('node-cron');
@@ -27,12 +32,14 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      scriptSrcAttr: ["'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      scriptSrcAttr: ["'none'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", "https:"]
+      imgSrc: ["'self'", "data:", "blob:", "https:"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'self'"]
     }
   }
 }));
@@ -47,19 +54,42 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
+function getAllowedOrigins() {
+  const configuredOrigins = (process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+
+  if (process.env.NODE_ENV === 'production' && configuredOrigins.length === 0) {
+    throw new Error('CORS_ORIGIN must be set in production. Use a comma-separated list for multiple allowed origins.');
+  }
+
+  if (process.env.NODE_ENV !== 'production') {
+    configuredOrigins.push(/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/);
+  }
+
+  return configuredOrigins;
+}
+
+const allowedOrigins = getAllowedOrigins();
+
 app.use(cors({
+<<<<<<< HEAD
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, file://)
+=======
+  origin: function(origin, callback) {
+>>>>>>> c9251826d2e634acb03ab8b0655b798f714a4149
     if (!origin) return callback(null, true);
-    // In production, restrict to your domain
-    const allowed = [
-      'https://triumph-laundry.vercel.app',
-      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
-    ];
-    const isAllowed = allowed.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
-    callback(null, isAllowed || process.env.NODE_ENV !== 'production');
+    const isAllowed = allowedOrigins.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
+    callback(null, isAllowed);
   },
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
   credentials: true
 }));
 
@@ -77,6 +107,7 @@ const loginLimiter = rateLimit({
 });
 
 // Initialize Database
+<<<<<<< HEAD
 const dbUrl = process.env.TURSO_DATABASE_URL || 'file:./triumph_laundry.db';
 const dbAuthToken = process.env.TURSO_AUTH_TOKEN || '';
 
@@ -84,6 +115,11 @@ const db = createClient({
   url: dbUrl,
   authToken: dbAuthToken
 });
+=======
+const dbPath = resolveDatabasePath(process.env);
+const dbOpts = process.env.NODE_ENV !== 'production' ? { verbose: console.log } : {};
+const db = new Database(dbPath, dbOpts);
+>>>>>>> c9251826d2e634acb03ab8b0655b798f714a4149
 
 // Expose DB to routes
 app.locals.db = db;
@@ -137,7 +173,7 @@ const staffRoutes = require('./routes/staff');
 const auditRoutes = require('./routes/audit');
 const dataFilesRoutes = require('./routes/data-files');
 
-// Serve the admin entry without relying on a trailing-slash redirect.
+// Serve static assets. Admin routes are static-only; API hosting should run on Render/Railway.
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../admin/index.html'));
 });
@@ -147,7 +183,9 @@ app.use(express.static(path.join(__dirname, '../'), { dotfiles: 'deny' }));
 
 app.use('/api/admin/login', loginLimiter, authRoutes);
 app.use('/api', scheduleRoutes); // Note: schedule includes both public GET and protected POST
+app.use('/api/content', contentRoutes);
 app.use('/api/admin/content', contentRoutes);
+app.use('/api/data', dataFilesRoutes);
 app.use('/api/admin/data', dataFilesRoutes);
 app.use('/api/admin/staff', staffRoutes);
 app.use('/api/admin/audit', auditRoutes);
@@ -158,8 +196,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something broke on the server!' });
 });
 
-// Start server or export for Serverless
-if (process.env.VERCEL !== '1') {
+// Start server when executed directly; tests and adapters can still import the app.
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

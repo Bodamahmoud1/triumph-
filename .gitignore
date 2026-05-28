@@ -10,9 +10,18 @@ _env
 *.db-shm
 *.db-wal
 db/backups/
+server/db/backups/
 
 # Uploaded files (transient, may contain PII)
 uploads/
+server/uploads/
+
+
+# Exported office documents and local handoff files
+*.xlsx
+*.xls
+*.pdf
+*.pptx
 
 # OS / editor noise
 .DS_Store

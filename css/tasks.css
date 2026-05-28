@@ -1,0 +1,296 @@
+/* Job Tasks / المهام الوظيفية */
+.tasks-section {
+  position: relative;
+  padding: 12px 0 36px;
+}
+
+.tasks-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+  padding: 34px;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(168, 85, 247, 0.14), transparent 30%),
+    radial-gradient(circle at 95% 12%, rgba(197, 160, 90, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(255,255,255,0.96), rgba(248,250,252,0.93));
+  border: 1px solid rgba(15, 30, 66, 0.08);
+  box-shadow: 0 26px 70px rgba(15, 30, 66, 0.14);
+}
+
+.tasks-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.tasks-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(109, 40, 217, 0.1);
+  color: #6d28d9;
+  font-family: 'Outfit', 'Noto Sans Arabic', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.tasks-badge span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c5a05a;
+  box-shadow: 0 0 10px rgba(197,160,90,0.55);
+}
+
+.tasks-title {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.tasks-subtitle {
+  margin: 8px auto 0;
+  max-width: 720px;
+  color: var(--text-sm);
+  font-family: 'Outfit', 'Noto Sans Arabic', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.tasks-overview {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 720px;
+  margin: 0 auto 26px;
+}
+
+.tasks-overview div {
+  padding: 15px 16px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(109, 40, 217, 0.1);
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.86), 0 10px 24px rgba(15,30,66,0.06);
+}
+
+.tasks-overview strong {
+  display: block;
+  color: #6d28d9;
+  font-family: 'Outfit', 'Noto Sans Arabic', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.tasks-overview span {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-sm);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.task-role-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  padding: 22px;
+  background: rgba(255,255,255,0.86);
+  border: 1px solid rgba(15, 30, 66, 0.08);
+  box-shadow: 0 16px 42px rgba(15, 30, 66, 0.10);
+}
+
+.task-role-card::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(180deg, #6d28d9, #c5a05a);
+}
+
+.task-role-card-wide {
+  grid-column: 1 / -1;
+}
+
+.task-role-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.task-role-icon {
+  width: 62px;
+  height: 62px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #0f1e42, #6d28d9);
+  box-shadow: 0 14px 30px rgba(109, 40, 217, 0.2);
+  font-size: 30px;
+}
+
+.task-role-kicker {
+  margin: 0 0 4px;
+  color: #8b6914;
+  font-family: 'Outfit', 'Noto Sans Arabic', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.task-role-head h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 23px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.task-stage-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.task-stage {
+  padding: 16px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(248,250,252,0.9), rgba(255,255,255,0.84));
+  border: 1px solid rgba(15, 30, 66, 0.07);
+}
+
+.task-stage + .task-stage {
+  margin-top: 14px;
+}
+
+.task-stage-grid .task-stage + .task-stage {
+  margin-top: 0;
+}
+
+.task-stage h4 {
+  margin: 0 0 10px;
+  color: #17346f;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.task-stage ul,
+.task-numbered {
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  color: #243044;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.85;
+}
+
+.task-stage li + li {
+  margin-top: 6px;
+}
+
+.task-stage li::marker {
+  color: #6d28d9;
+  font-weight: 900;
+}
+
+html[data-scheme="dark"] .tasks-shell {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(168, 85, 247, 0.17), transparent 30%),
+    radial-gradient(circle at 95% 12%, rgba(197, 160, 90, 0.14), transparent 28%),
+    linear-gradient(135deg, rgba(8,17,33,0.98), rgba(15,23,42,0.96));
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 26px 70px rgba(0,0,0,0.35);
+}
+
+html[data-scheme="dark"] .tasks-badge {
+  background: rgba(216, 180, 254, 0.12);
+  color: #d8b4fe;
+}
+
+html[data-scheme="dark"] .task-role-card,
+html[data-scheme="dark"] .tasks-overview div {
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: 0 16px 42px rgba(0,0,0,0.26);
+}
+
+html[data-scheme="dark"] .task-stage {
+  background: rgba(15, 30, 66, 0.56);
+  border-color: rgba(255,255,255,0.08);
+}
+
+html[data-scheme="dark"] .task-stage h4 {
+  color: #bfdbfe;
+}
+
+html[data-scheme="dark"] .task-stage ul,
+html[data-scheme="dark"] .task-numbered {
+  color: rgba(255,255,255,0.76);
+}
+
+html[data-scheme="dark"] .task-role-kicker {
+  color: #fcd34d;
+}
+
+@media (max-width: 980px) {
+  .tasks-grid,
+  .task-stage-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .tasks-shell {
+    padding: 24px 14px;
+    border-radius: 24px;
+  }
+
+  .tasks-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .task-role-card {
+    padding: 18px 14px;
+    border-radius: 22px;
+  }
+
+  .task-role-head {
+    align-items: flex-start;
+  }
+
+  .task-role-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    font-size: 25px;
+  }
+
+  .task-role-head h3 {
+    font-size: 19px;
+  }
+
+  .task-stage ul,
+  .task-numbered {
+    font-size: 13px;
+    line-height: 1.75;
+  }
+}
