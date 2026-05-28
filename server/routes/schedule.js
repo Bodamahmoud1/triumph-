@@ -5,6 +5,12 @@ const path = require('path');
 const fs = require('fs');
 const authenticateToken = require('../middleware/auth');
 const { parseScheduleExcel } = require('../utils/excel');
+const {
+  sanitizeUploadedFilename,
+  createStoredXlsxFilename,
+  validateXlsxUploadMetadata,
+  validateXlsxBuffer
+} = require('../utils/uploadSecurity');
 const { body, query, param, validationResult } = require('express-validator');
 
 // Multer setup for temporary Excel uploads
@@ -17,7 +23,7 @@ const storage = multer.diskStorage({
     cb(null, uploadDir)
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname)
+    cb(null, createStoredXlsxFilename(file.originalname))
   }
 });
 
@@ -25,12 +31,12 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
   fileFilter: (req, file, cb) => {
-    // Strictly accept only xlsx
-    if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
-        file.originalname.match(/\.xlsx$/)) {
+    try {
+      file.safeOriginalName = sanitizeUploadedFilename(file.originalname);
+      validateXlsxUploadMetadata(file);
       cb(null, true);
-    } else {
-      cb(new Error('Only .xlsx format allowed!'), false);
+    } catch (e) {
+      cb(e, false);
     }
   }
 });
@@ -107,12 +113,20 @@ router.post('/admin/schedule/upload', authenticateToken, (req, res) => {
     const db = req.app.locals.db;
 
     try {
+      validateXlsxBuffer(fs.readFileSync(req.file.path));
+    } catch (e) {
+      console.error(e);
+      try { fs.unlinkSync(req.file.path); } catch (cleanupError) {}
+      return res.status(400).json({ error: e.message });
+    }
+
+    try {
       const parseResult = await parseScheduleExcel(req.file.path);
 
       const previewId = Date.now().toString() + Math.floor(Math.random()*1000);
 
       db.prepare('INSERT INTO schedule_previews (id, file_path, original_name, data_json) VALUES (?, ?, ?, ?)')
-        .run(previewId, req.file.path, req.file.originalname, JSON.stringify({ weeks: parseResult.weeks, data: parseResult.data }));
+        .run(previewId, req.file.path, req.file.safeOriginalName || sanitizeUploadedFilename(req.file.originalname), JSON.stringify({ weeks: parseResult.weeks, data: parseResult.data }));
 
       cleanupPreviews(db);
 
@@ -125,6 +139,7 @@ router.post('/admin/schedule/upload', authenticateToken, (req, res) => {
       });
     } catch (e) {
       console.error(e);
+      try { fs.unlinkSync(req.file.path); } catch (cleanupError) {}
       res.status(500).json({ error: 'Error parsing Excel file' });
     }
   });
