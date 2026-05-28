@@ -63,13 +63,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;700;800;900&display=swap"
     rel="stylesheet">
-  <script>
-    let theme = localStorage.getItem('clax_theme');
-    if (!theme) {
-      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    document.documentElement.setAttribute('data-scheme', theme);
-  </script>
+  <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -124,7 +118,7 @@
     <div class="intro-corner intro-corner-br"></div>
 
     <div class="intro-card">
-      <button class="intro-close-x" type="button" onclick="closeIntro()" aria-label="Close intro">&times;</button>
+      <button class="intro-close-x" type="button" data-action="close-intro" aria-label="Close intro">&times;</button>
 
       <!-- Hotel Crest Emblem -->
       <div class="intro-crest">
@@ -179,7 +173,7 @@
         <div class="intro-prog-bar"></div>
       </div>
 
-      <button class="intro-skip" type="button" onclick="closeIntro()">Enter Guide / دخول المغسلة ›</button>
+      <button class="intro-skip" type="button" data-action="close-intro">Enter Guide / دخول المغسلة ›</button>
     </div>
   </div>
 
@@ -205,7 +199,7 @@
     </nav>
 
     <button class="theme-btn" id="theme-btn" type="button" aria-label="Toggle dark mode / تبديل الوضع الليلي"
-      onclick="toggleTheme()">
+      data-action="toggle-theme">
       <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round">
         <circle cx="12" cy="12" r="5" />
@@ -219,24 +213,24 @@
     </button>
 
     <button class="mob-toggle" id="mob-toggle" type="button" aria-label="Open menu / فتح القائمة"
-      aria-controls="mob-drawer" aria-expanded="false" onclick="toggleMobMenu()">
+      aria-controls="mob-drawer" aria-expanded="false" data-action="toggle-mobile-menu">
       <span></span><span></span><span></span>
     </button>
   </header>
 
   <!-- Mobile backdrop -->
-  <div class="mob-backdrop" id="mob-backdrop" onclick="closeMobMenu()" aria-hidden="true"></div>
+  <div class="mob-backdrop" id="mob-backdrop" data-action="close-mobile-menu" aria-hidden="true"></div>
 
   <!-- Mobile slide-in drawer -->
   <div class="mob-nav-drawer" id="mob-drawer" aria-label="Mobile navigation">
     <div class="mob-drawer-head">
       <div class="mob-drawer-title">دليل المغسلة — <span>Clax</span></div>
-      <button class="mob-drawer-close" type="button" onclick="closeMobMenu()" aria-label="Close menu">&times;</button>
+      <button class="mob-drawer-close" type="button" data-action="close-mobile-menu" aria-label="Close menu">&times;</button>
     </div>
 
     <!-- Chemicals Category -->
     <div class="mob-category">
-      <button class="mob-cat-btn" type="button" onclick="toggleMobCat(this)" aria-expanded="false"
+      <button class="mob-cat-btn" type="button" data-action="toggle-mobile-category" aria-expanded="false"
         aria-controls="mob-chemicals">
         <span class="mob-cat-icon">🧪</span>
         <span class="mob-cat-label">Chemicals / الكيماويات</span>
@@ -249,7 +243,7 @@
 
     <!-- Programs Category -->
     <div class="mob-category">
-      <button class="mob-cat-btn" type="button" onclick="toggleMobCat(this)" aria-expanded="false"
+      <button class="mob-cat-btn" type="button" data-action="toggle-mobile-category" aria-expanded="false"
         aria-controls="mob-programs">
         <span class="mob-cat-icon">⚙️</span>
         <span class="mob-cat-label">Programs / البرامج</span>
@@ -262,7 +256,7 @@
 
     <!-- Schedule Category -->
     <div class="mob-category">
-      <button class="mob-cat-btn" type="button" onclick="switchSection('schedule'); closeMobMenu()"
+      <button class="mob-cat-btn" type="button" data-nav-section="schedule" data-close-mobile="true"
         data-nav-section="schedule">
         <span class="mob-cat-icon">📅</span>
         <span class="mob-cat-label">Schedule / جدول العمل</span>
@@ -272,7 +266,7 @@
 
     <!-- Job Tasks Category -->
     <div class="mob-category">
-      <button class="mob-cat-btn" type="button" onclick="switchSection('tasks'); closeMobMenu()" data-nav-section="tasks">
+      <button class="mob-cat-btn" type="button" data-nav-section="tasks" data-close-mobile="true" data-nav-section="tasks">
         <span class="mob-cat-icon">📋</span>
         <span class="mob-cat-label">Job Tasks / المهام الوظيفية</span>
         <span class="mob-cat-arrow">›</span>
@@ -281,7 +275,7 @@
 
     <!-- Tips Category -->
     <div class="mob-category">
-      <button class="mob-cat-btn" type="button" onclick="switchSection('tips'); closeMobMenu()" data-nav-section="tips">
+      <button class="mob-cat-btn" type="button" data-nav-section="tips" data-close-mobile="true" data-nav-section="tips">
         <span class="mob-cat-icon">💡</span>
         <span class="mob-cat-label">Tips / النصائح</span>
         <span class="mob-cat-arrow">›</span>
@@ -322,7 +316,7 @@
 
             <!-- Chemicals Card -->
             <button class="landing-card landing-card-chem" id="landing-goto-chem" type="button"
-              onclick="switchSection('chemicals')">
+              data-nav-section="chemicals">
               <div class="landing-card-glow"></div>
               <div class="landing-card-icon">
                 <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -358,7 +352,7 @@
 
             <!-- Programs Card -->
             <button class="landing-card landing-card-prog" id="landing-goto-prog" type="button"
-              onclick="switchSection('programs')">
+              data-nav-section="programs">
               <div class="landing-card-glow"></div>
               <div class="landing-card-icon">
                 <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -396,7 +390,7 @@
 
             <!-- Tips Card -->
             <button class="landing-card landing-card-tips" id="landing-goto-tips" type="button"
-              onclick="switchSection('tips')">
+              data-nav-section="tips">
               <div class="landing-card-glow"></div>
               <div class="landing-card-icon">
                 <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -428,7 +422,7 @@
 
             <!-- Job Tasks Card -->
             <button class="landing-card landing-card-tasks" id="landing-goto-tasks" type="button"
-              onclick="switchSection('tasks')">
+              data-nav-section="tasks">
               <div class="landing-card-glow"></div>
               <div class="landing-card-icon">
                 <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -488,7 +482,7 @@
               <a class="hero-btn hero-btn-primary" href="#hypo">Chemical Reference / دليل الكيماويات</a>
               <button class="hero-btn hero-btn-secondary" type="button" id="print-chemicals">Print Visible / طباعة
                 المعروض</button>
-              <button class="hero-btn hero-btn-secondary" type="button" onclick="switchSection('programs')">
+              <button class="hero-btn hero-btn-secondary" type="button" data-nav-section="programs">
                 Programs / برامج الغسيل
               </button>
             </div>
@@ -956,19 +950,19 @@
 
   <!-- ═══ BOTTOM NAVIGATION BAR ═══ -->
   <nav class="bottom-nav" id="bottom-nav" aria-label="Primary sections" role="tablist">
-    <button class="bnav-item is-active" type="button" role="tab" aria-selected="true" data-section="landing" onclick="switchSection('landing')" aria-label="Home / الرئيسية">
+    <button class="bnav-item is-active" type="button" role="tab" aria-selected="true" data-section="landing" data-nav-section="landing" aria-label="Home / الرئيسية">
       <span class="bnav-icon" aria-hidden="true">🏠</span>
       <span class="bnav-label">الرئيسية</span>
       <span class="bnav-sub">Home</span>
       <span class="bnav-indicator"></span>
     </button>
-    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="chemicals" onclick="switchSection('chemicals')" aria-label="Chemicals / الكيماويات">
+    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="chemicals" data-nav-section="chemicals" aria-label="Chemicals / الكيماويات">
       <span class="bnav-icon" aria-hidden="true">🧪</span>
       <span class="bnav-label">الكيماويات</span>
       <span class="bnav-sub">Chemicals</span>
       <span class="bnav-indicator"></span>
     </button>
-    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="programs" onclick="switchSection('programs')" aria-label="Programs / البرامج">
+    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="programs" data-nav-section="programs" aria-label="Programs / البرامج">
       <span class="bnav-icon" aria-hidden="true">
         <svg class="washer-icon" viewBox="0 0 64 64" role="img" focusable="false">
           <rect x="14" y="7" width="36" height="50" rx="7" fill="none" stroke="currentColor" stroke-width="4"/>
@@ -982,19 +976,19 @@
       <span class="bnav-sub">Programs</span>
       <span class="bnav-indicator"></span>
     </button>
-    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="schedule" onclick="switchSection('schedule')" aria-label="Schedule / جدول العمل">
+    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="schedule" data-nav-section="schedule" aria-label="Schedule / جدول العمل">
       <span class="bnav-icon" aria-hidden="true">📅</span>
       <span class="bnav-label">الجدول</span>
       <span class="bnav-sub">Schedule</span>
       <span class="bnav-indicator"></span>
     </button>
-    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tasks" onclick="switchSection('tasks')" aria-label="Job Tasks / المهام الوظيفية">
+    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tasks" data-nav-section="tasks" aria-label="Job Tasks / المهام الوظيفية">
       <span class="bnav-icon" aria-hidden="true">📋</span>
       <span class="bnav-label">المهام</span>
       <span class="bnav-sub">Tasks</span>
       <span class="bnav-indicator"></span>
     </button>
-    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tips" onclick="switchSection('tips')" aria-label="Tips / النصائح">
+    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tips" data-nav-section="tips" aria-label="Tips / النصائح">
       <span class="bnav-icon" aria-hidden="true">💡</span>
       <span class="bnav-label">النصائح</span>
       <span class="bnav-sub">Tips</span>

@@ -10,9 +10,11 @@ _env
 *.db-shm
 *.db-wal
 db/backups/
+server/db/backups/
 
 # Uploaded files (transient, may contain PII)
 uploads/
+server/uploads/
 
 # OS / editor noise
 .DS_Store

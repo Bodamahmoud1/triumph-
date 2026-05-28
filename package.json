@@ -4,7 +4,10 @@
   "description": "Triumph Laundry App",
   "scripts": {
     "start": "node server/index.js",
-    "postinstall": "cd server && npm install"
+    "postinstall": "cd server && npm install",
+    "test": "node --test",
+    "lint": "node scripts/lint.js",
+    "format": "node scripts/format-check.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
