@@ -513,6 +513,8 @@ function renderSchedulePreview(data){
   const rows = rawRows.map(r => {
     if(r.shifts) {
        return { 
+         'الأسبوع': r.week_key || '',
+         'كود الموظف': r.employeeId || '',
          'الاسم': r.name, 
          'الوظيفة': r.job || r.department, 
          ...r.shifts 
@@ -554,8 +556,12 @@ $('#schedule-publish-btn').addEventListener('click', async()=>{
     return;
   }
   
-  const weekKey = prompt("أدخل مفتاح الأسبوع (مثال: 2026-W21):", "2026-W21");
-  if(!weekKey) return;
+  const hasWorkbookWeeks = Array.isArray(schedulePreviewData.weeks) && schedulePreviewData.weeks.length > 0;
+  let weekKey = '';
+  if(!hasWorkbookWeeks){
+    weekKey = prompt("أدخل مفتاح الأسبوع (مثال: 2026-W21):", "2026-W21");
+    if(!weekKey) return;
+  }
 
   const btn = $('#schedule-publish-btn');
   btn.disabled = true;
@@ -569,7 +575,7 @@ $('#schedule-publish-btn').addEventListener('click', async()=>{
         week_start: weekKey
       })
     });
-    toast('تم نشر الجدول بنجاح','success');
+    toast(hasWorkbookWeeks ? 'تم نشر أسبوعين من الملف بنجاح' : 'تم نشر الجدول بنجاح','success');
     window._removeScheduleFile();
     loadScheduleHistory();
   }catch(err){

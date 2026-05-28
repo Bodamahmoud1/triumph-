@@ -176,6 +176,38 @@
     currentScheduleData = null;
   }
 
+  function renderNoMatches(msg) {
+    tbody.innerHTML = '';
+    mobileList.innerHTML = '';
+    if (emptyState) emptyState.style.display = 'block';
+    if (emptyState) emptyState.textContent = msg;
+    setStatus(msg, true);
+  }
+
+  function normaliseText(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9؀-ۿ]+/g, ' ').trim();
+  }
+
+  function departmentMatchesFilter(department, filter) {
+    if (filter === 'all') return true;
+
+    var dept = normaliseText(department);
+    var selected = normaliseText(filter);
+    if (!dept) return false;
+    if (dept === selected || dept.indexOf(selected) !== -1) return true;
+
+    var departmentAliases = {
+      Washing: ['wash', 'washer', 'dry clean', 'ass laundry', 'shift leader', 'غسيل', 'مغسلة'],
+      Ironing: ['iron', 'ironing', 'presser', 'press', 'كي'],
+      Folding: ['fold', 'folding', 'laundry attendant', 'attendant', 'تطبيق'],
+      Delivery: ['delivery', 'valet', 'tailor', 'توصيل']
+    };
+
+    return (departmentAliases[filter] || []).some(function(alias) {
+      return dept.indexOf(normaliseText(alias)) !== -1;
+    });
+  }
+
   function renderSchedule(data) {
     currentWeekKey = data.week_key;
     currentScheduleData = data.employees;
@@ -192,16 +224,17 @@
   function filterAndRender() {
     if (!currentScheduleData) return;
     
-    var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    var query = searchInput ? normaliseText(searchInput.value) : '';
     
     var filtered = currentScheduleData.filter(function(emp) {
       var job = getEmployeeJob(emp);
       var matchJob = activeFilter === 'all' || job === activeFilter;
       var matchName = true;
       if (query) {
-        var nAr = (emp.name_ar || '').toLowerCase();
-        var nEn = (emp.name_en || '').toLowerCase();
-        matchName = nAr.indexOf(query) !== -1 || nEn.indexOf(query) !== -1;
+        var nAr = normaliseText(emp.name_ar);
+        var nEn = normaliseText(emp.name_en);
+        var employeeId = normaliseText(emp.employee_id || emp.employeeId);
+        matchName = nAr.indexOf(query) !== -1 || nEn.indexOf(query) !== -1 || employeeId.indexOf(query) !== -1;
       }
       return matchJob && matchName;
     });
@@ -230,6 +263,7 @@
         var shiftLabel = shift === 'Morning' ? 'صباحي' : 
                          shift === 'Evening' ? 'مسائي' : 
                          shift === 'Night' ? 'ليلي' : 
+                         shift === 'Vacation' ? 'إجازة' :
                          shift === 'Holiday' ? 'عطلة' : 'راحة';
 
         // Table cell

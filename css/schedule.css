@@ -252,3 +252,4 @@
 }
 
 .is-hidden { display: none !important; }
+.shift-Vacation { background: var(--red-lt); color: var(--red-dk); border: 1px solid var(--border); }
