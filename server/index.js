@@ -27,12 +27,14 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", "https:"]
+      imgSrc: ["'self'", "data:", "blob:", "https:"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'self'"]
     }
   }
 }));
@@ -47,19 +49,28 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+function getAllowedOrigins() {
+  const configuredOrigins = (process.env.CORS_ORIGIN || 'https://triumph-laundry.vercel.app')
+    .split(',')
+    .map(origin => origin.trim())
+    .filter(Boolean);
+
+  return [
+    ...configuredOrigins,
+    /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
+  ];
+}
+
+const allowedOrigins = getAllowedOrigins();
+
 app.use(cors({
   origin: function(origin, callback) {
     // Allow requests with no origin (mobile apps, curl, file://)
     if (!origin) return callback(null, true);
-    // In production, restrict to your domain
-    const allowed = [
-      'https://triumph-laundry.vercel.app',
-      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
-    ];
-    const isAllowed = allowed.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
+    const isAllowed = allowedOrigins.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
     callback(null, isAllowed || process.env.NODE_ENV !== 'production');
   },
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT'],
   credentials: true
 }));
 

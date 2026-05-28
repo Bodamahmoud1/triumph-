@@ -6,6 +6,10 @@ const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const authenticateToken = require('../middleware/auth');
 
+function hashRefreshToken(refreshToken) {
+  return crypto.createHash('sha256').update(String(refreshToken)).digest('hex');
+}
+
 // POST /api/admin/login
 router.post('/', [
   body('username').trim().notEmpty().withMessage('Username is required'),
@@ -37,7 +41,7 @@ router.post('/', [
   expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
   db.prepare('INSERT INTO sessions (admin_id, refresh_token, expires_at) VALUES (?, ?, ?)')
-    .run(admin.id, refreshToken, expiresAt.toISOString());
+    .run(admin.id, hashRefreshToken(refreshToken), expiresAt.toISOString());
 
   // Log audit
   db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
@@ -58,7 +62,9 @@ router.post('/refresh', [
   const { refreshToken } = req.body;
   const db = req.app.locals.db;
 
-  const session = db.prepare('SELECT * FROM sessions WHERE refresh_token = ? AND is_revoked = 0 AND expires_at > CURRENT_TIMESTAMP').get(refreshToken);
+  const refreshTokenHash = hashRefreshToken(refreshToken);
+
+  const session = db.prepare('SELECT * FROM sessions WHERE refresh_token = ? AND is_revoked = 0 AND expires_at > CURRENT_TIMESTAMP').get(refreshTokenHash);
 
   if (!session) {
     return res.status(403).json({ error: 'Invalid or expired refresh token' });
@@ -81,7 +87,7 @@ router.post('/refresh', [
   expiresAt.setDate(expiresAt.getDate() + 7);
 
   const stmt = db.prepare('UPDATE sessions SET refresh_token = ?, expires_at = ? WHERE id = ?');
-  stmt.run(newRefreshToken, expiresAt.toISOString(), session.id);
+  stmt.run(hashRefreshToken(newRefreshToken), expiresAt.toISOString(), session.id);
 
   res.json({ token, refreshToken: newRefreshToken });
 });
@@ -127,7 +133,7 @@ router.post('/logout', authenticateToken, [
   const { refreshToken } = req.body;
   const db = req.app.locals.db;
   
-  db.prepare('UPDATE sessions SET is_revoked = 1 WHERE refresh_token = ?').run(refreshToken);
+  db.prepare('UPDATE sessions SET is_revoked = 1 WHERE refresh_token = ?').run(hashRefreshToken(refreshToken));
   
   res.json({ message: 'Logged out successfully' });
 });

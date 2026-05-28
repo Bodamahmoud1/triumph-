@@ -28,6 +28,39 @@
     try { localStorage.setItem('clax_theme', next); } catch (e) {}
   }
 
+
+  function handleNavigationClick(event) {
+    var target = event.target.closest('[data-action], [data-nav-section]');
+    if (!target) return;
+
+    var action = target.getAttribute('data-action');
+    var section = target.getAttribute('data-nav-section');
+
+    if (section && typeof global.switchSection === 'function') {
+      event.preventDefault();
+      global.switchSection(section);
+      if (target.getAttribute('data-close-mobile') === 'true') closeMobMenu();
+      return;
+    }
+
+    if (!action) return;
+    event.preventDefault();
+
+    if (action === 'close-intro' && typeof global.closeIntro === 'function') {
+      global.closeIntro();
+    } else if (action === 'toggle-theme') {
+      toggleTheme();
+    } else if (action === 'toggle-mobile-menu') {
+      toggleMobMenu();
+    } else if (action === 'close-mobile-menu') {
+      closeMobMenu();
+    } else if (action === 'toggle-mobile-category' && typeof global.toggleMobCat === 'function') {
+      global.toggleMobCat(target);
+    }
+  }
+
+  document.addEventListener('click', handleNavigationClick);
+
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') closeMobMenu();
   });

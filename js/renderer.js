@@ -91,7 +91,8 @@
   function renderNavLink(item, options) {
     return '<a href="#' + escapeHtml(item.id || '') + '" class="' + options.className + '"' +
       (item.theme ? ' data-theme="' + escapeHtml(item.theme) + '"' : '') +
-      ' onclick="switchSection(\'' + options.section + '\')' + (options.closeMobile ? '; closeMobMenu()' : '') + '">' +
+      ' data-nav-section="' + escapeHtml(options.section) + '"' +
+      (options.closeMobile ? ' data-close-mobile="true"' : '') + '>' +
       escapeHtml(options.label(item)) +
       '</a>';
   }

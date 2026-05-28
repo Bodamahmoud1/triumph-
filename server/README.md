@@ -21,6 +21,12 @@ This is the backend for the Triumph Laundry schedule and management app.
    ```
 4. The server runs on `http://localhost:3000`.
 
+## Security notes
+
+- Refresh tokens are returned to the admin client once and stored as SHA-256 hashes in SQLite.
+- `JWT_SECRET` is mandatory in production.
+- Runtime uploads and SQLite database files must be kept on persistent storage and out of Git.
+
 ## Deployment
 
 ### Frontend (Vercel)
@@ -34,7 +40,7 @@ Deploy the `server` directory as a Node.js web service.
 - `JWT_SECRET` (Generate a secure random string)
 - `ADMIN_USERNAME` (For initial seeding)
 - `ADMIN_PASSWORD` (For initial seeding)
-- `CORS_ORIGIN` (Set to `https://triumph-laundry.vercel.app`)
+- `CORS_ORIGIN` (Set to `https://triumph-laundry.vercel.app`; comma-separated origins are supported)
 
 **Important Notes for SQLite:**
 Since this uses SQLite, the database file must persist across deployments. If deploying on Railway, attach a Persistent Volume to the `/app/data` path and set `DB_PATH=/app/data/triumph.db`.
