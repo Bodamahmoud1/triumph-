@@ -4,7 +4,7 @@ const ExcelJS = require('exceljs');
  * Parses the uploaded Schedule Excel file
  * Expected Format:
  * Col 1: Employee Name
- * Col 2: Department
+ * Col 2: Job
  * Col 3-9: Saturday through Friday
  */
 async function parseScheduleExcel(filePath) {
@@ -23,7 +23,7 @@ async function parseScheduleExcel(filePath) {
     
     // Get values
     const name = row.getCell(1).text?.trim();
-    const dept = row.getCell(2).text?.trim();
+    const job = row.getCell(2).text?.trim();
     const sat = row.getCell(3).text?.trim() || 'Off';
     const sun = row.getCell(4).text?.trim() || 'Off';
     const mon = row.getCell(5).text?.trim() || 'Off';
@@ -35,7 +35,7 @@ async function parseScheduleExcel(filePath) {
     // Validation
     const rowErrors = [];
     if (!name) rowErrors.push('Missing Employee Name');
-    if (!dept) rowErrors.push('Missing Department');
+    if (!job) rowErrors.push('Missing Job');
     
     const shifts = { Saturday: sat, Sunday: sun, Monday: mon, Tuesday: tue, Wednesday: wed, Thursday: thu, Friday: fri };
     
@@ -54,7 +54,8 @@ async function parseScheduleExcel(filePath) {
     } else if (name) {
       data.push({
         name,
-        department: dept,
+        job,
+        department: job,
         shifts
       });
     }

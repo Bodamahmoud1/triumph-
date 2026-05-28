@@ -10,6 +10,14 @@ const REFRESH_TOKEN_KEY = 'triumph_admin_refresh_token';
 const TOKEN_EXPIRY_KEY = 'triumph_admin_expiry';
 const TOKEN_TTL_MS = 55 * 60 * 1000;
 
+function onReady(fn){
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', fn, {once:true});
+  } else {
+    fn();
+  }
+}
+
 /* ═══════════════════════════════════════════════
    DOM REFS
    ═══════════════════════════════════════════════ */
@@ -506,7 +514,7 @@ function renderSchedulePreview(data){
     if(r.shifts) {
        return { 
          'الاسم': r.name, 
-         'القسم': r.department, 
+         'الوظيفة': r.job || r.department, 
          ...r.shifts 
        };
     }
@@ -639,12 +647,14 @@ window._downloadSchedule = function(id){
    ═══════════════════════════════════════════════ */
 let currentContentSection = 'intro';
 
-$$('#content-tabs .section-tab').forEach(tab=>{
-  tab.addEventListener('click', ()=>{
-    $$('#content-tabs .section-tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    currentContentSection = tab.dataset.section;
-    loadContentSection(tab.dataset.section);
+onReady(()=>{
+  $$('#content-tabs .section-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      $$('#content-tabs .section-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      currentContentSection = tab.dataset.section;
+      loadContentSection(tab.dataset.section);
+    });
   });
 });
 
@@ -1222,17 +1232,22 @@ const reloadStaffFromFilters = debounce(()=>{
   loadStaff();
 });
 
-['staff-search','staff-department-filter','staff-status-filter'].forEach(id=>{
-  const el = $('#'+id);
-  if(el) el.addEventListener(id === 'staff-search' ? 'input' : 'change', reloadStaffFromFilters);
+onReady(()=>{
+  ['staff-search','staff-department-filter','staff-status-filter'].forEach(id=>{
+    const el = $('#'+id);
+    if(el) el.addEventListener(id === 'staff-search' ? 'input' : 'change', reloadStaffFromFilters);
+  });
 });
 
-$('#staff-filter-reset').addEventListener('click', ()=>{
-  $('#staff-search').value = '';
-  $('#staff-department-filter').value = '';
-  $('#staff-status-filter').value = '';
-  staffFilters = {search:'', department:'', status:''};
-  loadStaff();
+onReady(()=>{
+  const staffFilterReset = $('#staff-filter-reset');
+  if(staffFilterReset) staffFilterReset.addEventListener('click', ()=>{
+    $('#staff-search').value = '';
+    $('#staff-department-filter').value = '';
+    $('#staff-status-filter').value = '';
+    staffFilters = {search:'', department:'', status:''};
+    loadStaff();
+  });
 });
 
 function deptLabel(d){
@@ -1290,14 +1305,17 @@ function staffFormHtml(emp={}){
   `;
 }
 
-$('#staff-add-btn').addEventListener('click', ()=>{
-  openModal('➕ إضافة موظف جديد', staffFormHtml(),
-    '<button class="btn btn-gold" id="staff-save-new">💾 حفظ</button><button class="btn btn-outline" onclick="window._closeModal()">إلغاء</button>'
-  );
-  setTimeout(()=>{
-    const saveBtn = $('#staff-save-new');
-    if(saveBtn) saveBtn.addEventListener('click', saveNewStaff);
-  },50);
+onReady(()=>{
+  const staffAddBtn = $('#staff-add-btn');
+  if(staffAddBtn) staffAddBtn.addEventListener('click', ()=>{
+    openModal('➕ إضافة موظف جديد', staffFormHtml(),
+      '<button class="btn btn-gold" id="staff-save-new">💾 حفظ</button><button class="btn btn-outline" onclick="window._closeModal()">إلغاء</button>'
+    );
+    setTimeout(()=>{
+      const saveBtn = $('#staff-save-new');
+      if(saveBtn) saveBtn.addEventListener('click', saveNewStaff);
+    },50);
+  });
 });
 window._closeModal = closeModal;
 
@@ -1400,7 +1418,9 @@ function getStaffFormData(){
 }
 
 // Export staff
-$('#staff-export-btn').addEventListener('click', async()=>{
+onReady(()=>{
+  const staffExportBtn = $('#staff-export-btn');
+  if(staffExportBtn) staffExportBtn.addEventListener('click', async()=>{
   try{
     const res = await fetch(API_BASE+'/api/admin/staff/export',{headers:authHeadersRaw()});
     if(res.status===401){clearToken();showLogin();return;}
@@ -1410,6 +1430,7 @@ $('#staff-export-btn').addEventListener('click', async()=>{
   }catch(err){
     toast('فشل في التصدير: '+err.message,'error');
   }
+  });
 });
 
 /* ═══════════════════════════════════════════════

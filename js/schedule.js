@@ -13,7 +13,8 @@
   var titleLabel = document.getElementById('schedule-active-week');
   var searchInput = document.getElementById('schedule-search');
   var statusLabel = document.getElementById('schedule-status');
-  var filterBtns = document.querySelectorAll('.schedule-filter');
+  var filterRow = document.querySelector('.schedule-filter-row');
+  var jobSelect = document.getElementById('schedule-job');
   var emptyState = document.getElementById('schedule-empty');
   
   var activeFilter = 'all';
@@ -23,6 +24,68 @@
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  function escapeAttr(str) {
+    return escapeHtml(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function getEmployeeJob(emp) {
+    return (emp && (emp.job || emp.position || emp.department || '')).trim();
+  }
+
+  function getJobLabel(job) {
+    return job || 'Unassigned / بدون وظيفة';
+  }
+
+  function getUniqueJobs(employees) {
+    var seen = {};
+    var jobs = [];
+    (employees || []).forEach(function(emp) {
+      var job = getEmployeeJob(emp);
+      if (!job || seen[job]) return;
+      seen[job] = true;
+      jobs.push(job);
+    });
+    return jobs;
+  }
+
+  function setActiveJobFilter(value) {
+    activeFilter = value || 'all';
+
+    if (filterRow) {
+      var buttons = filterRow.querySelectorAll('.schedule-filter');
+      buttons.forEach(function(btn) {
+        var isActive = btn.getAttribute('data-schedule-filter') === activeFilter;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    if (jobSelect) jobSelect.value = activeFilter;
+  }
+
+  function renderJobFilters(employees) {
+    var jobs = getUniqueJobs(employees);
+    if (activeFilter !== 'all' && jobs.indexOf(activeFilter) === -1) activeFilter = 'all';
+
+    if (filterRow) {
+      var html = '<button class="hero-filter schedule-filter" type="button" data-schedule-filter="all" aria-pressed="false">All / الكل</button>';
+      jobs.forEach(function(job) {
+        html += '<button class="hero-filter schedule-filter" type="button" data-schedule-filter="' + escapeAttr(job) + '" aria-pressed="false">' + escapeHtml(getJobLabel(job)) + '</button>';
+      });
+      filterRow.innerHTML = html;
+    }
+
+    if (jobSelect) {
+      var options = '<option value="all">All / الكل</option>';
+      jobs.forEach(function(job) {
+        options += '<option value="' + escapeAttr(job) + '">' + escapeHtml(getJobLabel(job)) + '</option>';
+      });
+      jobSelect.innerHTML = options;
+    }
+
+    setActiveJobFilter(activeFilter);
   }
 
   function setStatus(text, visible) {
@@ -116,6 +179,7 @@
   function renderSchedule(data) {
     currentWeekKey = data.week_key;
     currentScheduleData = data.employees;
+    renderJobFilters(currentScheduleData);
     
     if (titleLabel) titleLabel.textContent = data.week_key;
     if (weekLabel) weekLabel.textContent = formatWeekRange(data.week_key, data.week_start);
@@ -131,14 +195,15 @@
     var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
     
     var filtered = currentScheduleData.filter(function(emp) {
-      var matchDept = activeFilter === 'all' || emp.department === activeFilter;
+      var job = getEmployeeJob(emp);
+      var matchJob = activeFilter === 'all' || job === activeFilter;
       var matchName = true;
       if (query) {
         var nAr = (emp.name_ar || '').toLowerCase();
         var nEn = (emp.name_en || '').toLowerCase();
         matchName = nAr.indexOf(query) !== -1 || nEn.indexOf(query) !== -1;
       }
-      return matchDept && matchName;
+      return matchJob && matchName;
     });
 
     // Render Table
@@ -150,14 +215,14 @@
     filtered.forEach(function(emp) {
       var safeNameAr = escapeHtml(emp.name_ar);
       var safeNameEn = escapeHtml(emp.name_en || '');
-      var safeDept = escapeHtml(emp.department);
+      var safeJob = escapeHtml(getJobLabel(getEmployeeJob(emp)));
 
       // Table Row
       htmlTable += '<tr>';
-      htmlTable += '<td><div class="sched-emp-name"><span class="sched-emp-name-ar">' + safeNameAr + '</span><span class="sched-emp-name-en">' + safeNameEn + '</span><span class="sched-emp-dept">' + safeDept + '</span></div></td>';
+      htmlTable += '<td><div class="sched-emp-name"><span class="sched-emp-name-ar">' + safeNameAr + '</span><span class="sched-emp-name-en">' + safeNameEn + '</span><span class="sched-emp-dept">' + safeJob + '</span></div></td>';
       
       // Mobile Card
-      htmlMobile += '<div class="schedule-emp-card"><div class="schedule-emp-card-head"><span class="schedule-emp-card-name">' + safeNameAr + '</span><span class="schedule-emp-card-dept">' + safeDept + '</span></div><div class="schedule-emp-card-body">';
+      htmlMobile += '<div class="schedule-emp-card"><div class="schedule-emp-card-head"><span class="schedule-emp-card-name">' + safeNameAr + '</span><span class="schedule-emp-card-dept">' + safeJob + '</span></div><div class="schedule-emp-card-body">';
 
       days.forEach(function(d, idx) {
         var shift = emp.shifts[d] || 'Off';
@@ -179,7 +244,13 @@
     });
 
     if (filtered.length === 0) {
-      renderEmpty('لم يتم العثور على موظفين مطابقين للبحث.');
+      tbody.innerHTML = '';
+      mobileList.innerHTML = '';
+      if (emptyState) {
+        emptyState.style.display = 'block';
+        emptyState.textContent = 'لم يتم العثور على موظفين مطابقين للبحث.';
+      }
+      setStatus('لم يتم العثور على موظفين مطابقين للبحث.', true);
     } else {
       tbody.innerHTML = htmlTable;
       mobileList.innerHTML = htmlMobile;
@@ -193,14 +264,21 @@
     searchInput.addEventListener('input', filterAndRender);
   }
 
-  filterBtns.forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      filterBtns.forEach(function(b) { b.classList.remove('active'); });
-      this.classList.add('active');
-      activeFilter = this.getAttribute('data-schedule-filter') || 'all';
+  if (filterRow) {
+    filterRow.addEventListener('click', function(event) {
+      var btn = event.target.closest('.schedule-filter');
+      if (!btn || !filterRow.contains(btn)) return;
+      setActiveJobFilter(btn.getAttribute('data-schedule-filter') || 'all');
       filterAndRender();
     });
-  });
+  }
+
+  if (jobSelect) {
+    jobSelect.addEventListener('change', function() {
+      setActiveJobFilter(jobSelect.value || 'all');
+      filterAndRender();
+    });
+  }
 
   var btnPrev = document.getElementById('schedule-prev');
   var btnNext = document.getElementById('schedule-next');
