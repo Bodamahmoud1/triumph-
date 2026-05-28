@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
+const { resolveDatabasePath } = require('./db/config');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const cron = require('node-cron');
@@ -88,11 +89,7 @@ const loginLimiter = rateLimit({
 });
 
 // Initialize Database
-const isVercel = process.env.VERCEL === '1';
-const dbPath = process.env.DB_PATH || (isVercel ? '/tmp/triumph_laundry.db' : './triumph_laundry.db');
-
-// If on Vercel and db doesn't exist in /tmp, we might need to copy it from the repo, but for now we'll just let it create a new one.
-// However, the schema will be applied via runMigrations.
+const dbPath = resolveDatabasePath(process.env);
 const dbOpts = process.env.NODE_ENV !== 'production' ? { verbose: console.log } : {};
 const db = new Database(dbPath, dbOpts);
 
