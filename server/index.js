@@ -155,6 +155,7 @@ app.use('/api/admin/login', loginLimiter, authRoutes);
 app.use('/api', scheduleRoutes); // Note: schedule includes both public GET and protected POST
 app.use('/api/content', contentRoutes);
 app.use('/api/admin/content', contentRoutes);
+app.use('/api/data', dataFilesRoutes);
 app.use('/api/admin/data', dataFilesRoutes);
 app.use('/api/admin/staff', staffRoutes);
 app.use('/api/admin/audit', auditRoutes);
