@@ -198,33 +198,9 @@
     <nav class="prod-nav">
       <!-- Chemicals nav group: only visible on chemicals page -->
       <span id="nav-chemicals-group" class="nav-section-group" style="display:none;">
-        <a href="#hypo" class="nav-theme" data-theme="gold">CLAX Hypo</a>
-        <a href="#soft" class="nav-theme" data-theme="pink">Soft Extra</a>
-        <a href="#buildlite" class="nav-theme" data-theme="blue">Build Lite</a>
-        <a href="#sonril" class="nav-theme" data-theme="gold">Sonril Ultra</a>
-        <a href="#neutrapur" class="nav-theme" data-theme="red">Neutrapur</a>
-        <a href="#neutra3in1" class="nav-theme" data-theme="red">Neutra 3in1</a>
-        <a href="#clax200" class="nav-theme" data-theme="green">CLAX 200</a>
-        <a href="#clax100" class="nav-theme" data-theme="green">CLAX 100 Color</a>
+        <!-- Chemical links are injected from data/chemicals.json by js/renderer.js -->
       </span>
 
-      <!-- Programs nav group: only visible on programs page -->
-      <span id="nav-programs-group" class="nav-section-group" style="display:none;">
-        <a href="#prog1" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">1 — Bed Sheets</a>
-        <a href="#prog2" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">2 — Pillow Cases</a>
-        <a href="#prog3" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">3 — White Towels</a>
-        <a href="#prog4" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">4 — Pool Towels</a>
-        <a href="#prog5" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">5 — White Table Linen</a>
-        <a href="#prog6" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">6 — Colored Table
-          Linen</a>
-        <a href="#prog7" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">7 — Kitchen Jacket</a>
-        <a href="#prog8" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">8 — Light Uniform</a>
-        <a href="#prog9" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">9 — Dark Uniform</a>
-        <a href="#prog10" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">10 — Colored Towels</a>
-        <a href="#prog11" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">11 — Sour Bath</a>
-        <a href="#prog12" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">12 — Rinse Only</a>
-        <a href="#prog13" class="nav-theme nav-prog-theme" onclick="switchSection('programs')">13 — Light Colors</a>
-      </span>
     </nav>
 
     <button class="theme-btn" id="theme-btn" type="button" aria-label="Toggle dark mode / تبديل الوضع الليلي"
@@ -266,14 +242,7 @@
         <span class="mob-cat-arrow">›</span>
       </button>
       <div class="mob-cat-items" id="mob-chemicals">
-        <a href="#hypo" data-theme="gold" onclick="switchSection('chemicals'); closeMobMenu()">CLAX Hypo</a>
-        <a href="#soft" data-theme="pink" onclick="switchSection('chemicals'); closeMobMenu()">Soft Extra</a>
-        <a href="#buildlite" data-theme="blue" onclick="switchSection('chemicals'); closeMobMenu()">Build Lite</a>
-        <a href="#sonril" data-theme="gold" onclick="switchSection('chemicals'); closeMobMenu()">Sonril Ultra</a>
-        <a href="#neutrapur" data-theme="red" onclick="switchSection('chemicals'); closeMobMenu()">Neutrapur</a>
-        <a href="#neutra3in1" data-theme="red" onclick="switchSection('chemicals'); closeMobMenu()">Neutra 3in1</a>
-        <a href="#clax200" data-theme="green" onclick="switchSection('chemicals'); closeMobMenu()">CLAX 200</a>
-        <a href="#clax100" data-theme="green" onclick="switchSection('chemicals'); closeMobMenu()">CLAX 100 Color</a>
+        <!-- Chemical links are injected from data/chemicals.json by js/renderer.js -->
       </div>
     </div>
 
@@ -286,19 +255,7 @@
         <span class="mob-cat-arrow">›</span>
       </button>
       <div class="mob-cat-items" id="mob-programs">
-        <a href="#prog1" onclick="switchSection('programs'); closeMobMenu()">1 — Bed Sheets</a>
-        <a href="#prog2" onclick="switchSection('programs'); closeMobMenu()">2 — Pillow Cases</a>
-        <a href="#prog3" onclick="switchSection('programs'); closeMobMenu()">3 — White Towels</a>
-        <a href="#prog4" onclick="switchSection('programs'); closeMobMenu()">4 — Pool Towels</a>
-        <a href="#prog5" onclick="switchSection('programs'); closeMobMenu()">5 — White Table Linen</a>
-        <a href="#prog6" onclick="switchSection('programs'); closeMobMenu()">6 — Colored Table Linen</a>
-        <a href="#prog7" onclick="switchSection('programs'); closeMobMenu()">7 — Kitchen Jacket</a>
-        <a href="#prog8" onclick="switchSection('programs'); closeMobMenu()">8 — Light Uniform</a>
-        <a href="#prog9" onclick="switchSection('programs'); closeMobMenu()">9 — Dark Uniform</a>
-        <a href="#prog10" onclick="switchSection('programs'); closeMobMenu()">10 — Colored Towels</a>
-        <a href="#prog11" onclick="switchSection('programs'); closeMobMenu()">11 — Sour Bath</a>
-        <a href="#prog12" onclick="switchSection('programs'); closeMobMenu()">12 — Rinse Only</a>
-        <a href="#prog13" onclick="switchSection('programs'); closeMobMenu()">13 — Light Colors</a>
+        <!-- Program links are injected from data/programs.json by js/renderer.js -->
       </div>
     </div>
 
@@ -416,8 +373,8 @@
                   المستخدمة</p>
               </div>
               <div class="landing-card-stats">
-                <div class="landing-stat"><strong>13</strong><span>Programs</span></div>
-                <div class="landing-stat"><strong>8</strong><span>Chemicals</span></div>
+                <div class="landing-stat"><strong data-stat="programs-total">13</strong><span>Programs</span></div>
+                <div class="landing-stat"><strong data-stat="chemicals-total">8</strong><span>Chemicals</span></div>
               </div>
               <div class="landing-card-arrow">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
@@ -523,16 +480,16 @@
 
             <div class="hero-stats">
               <div class="hero-stat">
-                <strong>8</strong>
+                <strong data-stat="chemicals-total">8</strong>
                 <span>Chemicals in use</span>
               </div>
               <div class="hero-stat">
-                <strong>2</strong>
+                <strong data-stat="bleach-total">2</strong>
                 <span>Bleach systems</span>
               </div>
               <div class="hero-stat">
-                <strong>1</strong>
-                <span>Operations manual</span>
+                <strong data-stat="programs-total">13</strong>
+                <span>Wash programs</span>
               </div>
             </div>
           </div>
