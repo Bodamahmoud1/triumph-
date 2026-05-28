@@ -203,6 +203,80 @@ function applyTextContent(selector, value) {
   element.textContent = String(value);
 }
 
+function parseEditableTips(data) {
+  if (!data) return [];
+
+  if (data.cards_json) {
+    try {
+      var parsed = JSON.parse(data.cards_json);
+      if (Array.isArray(parsed)) {
+        return parsed.filter(function (tip) {
+          return tip && (tip.title_ar || tip.title_en || tip.content_ar || tip.content_en);
+        });
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
+  if (data.title_ar || data.title_en || data.content_ar || data.content_en) {
+    return [{
+      icon: data.icon || '💡',
+      title_ar: data.title_ar || '',
+      title_en: data.title_en || '',
+      content_ar: data.content_ar || '',
+      content_en: data.content_en || ''
+    }];
+  }
+
+  return [];
+}
+
+function renderEditableTips(data) {
+  var grid = document.querySelector('#section-tips .tips-grid');
+  if (!grid) return;
+
+  Array.prototype.slice.call(grid.querySelectorAll('[data-dynamic-tip-card="true"]')).forEach(function (card) {
+    card.remove();
+  });
+
+  parseEditableTips(data).forEach(function (tip) {
+    var titleAr = String(tip.title_ar || '').trim();
+    var titleEn = String(tip.title_en || '').trim();
+    var contentAr = String(tip.content_ar || '').trim();
+    var contentEn = String(tip.content_en || '').trim();
+    var title = titleAr || titleEn;
+
+    if (titleAr && titleEn && titleAr.toLowerCase() !== titleEn.toLowerCase()) {
+      title = titleAr + ' (' + titleEn + ')';
+    }
+
+    var text = contentAr || contentEn;
+    if (!title && !text) return;
+
+    var card = document.createElement('div');
+    card.className = 'tip-card';
+    card.setAttribute('data-dynamic-tip-card', 'true');
+
+    var icon = document.createElement('div');
+    icon.className = 'tip-card-icon';
+    icon.textContent = String(tip.icon || '💡').trim() || '💡';
+
+    var heading = document.createElement('h4');
+    heading.className = 'tip-card-title';
+    heading.textContent = title;
+
+    var paragraph = document.createElement('p');
+    paragraph.className = 'tip-card-text';
+    paragraph.textContent = text;
+
+    card.appendChild(icon);
+    card.appendChild(heading);
+    card.appendChild(paragraph);
+    grid.appendChild(card);
+  });
+}
+
 function loadEditablePageContent() {
   if (window.location.protocol === 'file:') return;
 
@@ -221,8 +295,7 @@ function loadEditablePageContent() {
     .then(function (res) { return res.ok ? res.json() : null; })
     .then(function (payload) {
       var data = payload && payload.data ? payload.data : {};
-      applyTextContent('[data-content-field="tips.title_ar"]', data.title_ar || data.title_en);
-      applyTextContent('[data-content-field="tips.content_ar"]', data.content_ar || data.content_en);
+      renderEditableTips(data);
     })
     .catch(function () {
       // Static fallback content remains visible when the API is unavailable.
