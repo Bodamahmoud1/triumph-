@@ -639,13 +639,19 @@ window._restoreSchedule = async function(id){
   }catch(err){toast('فشلت الاستعادة: '+err.message,'error')}
 };
 
-window._downloadSchedule = function(id){
-  const link = document.createElement('a');
-  link.href = API_BASE+`/api/admin/schedule/download/${id}`;
-  link.setAttribute('download','');
-  const token = getToken();
-  // For download we open in new tab with auth
-  window.open(API_BASE+`/api/admin/schedule/download/${id}?token=${token}`,'_blank');
+window._downloadSchedule = async function(id){
+  try{
+    const res = await requestWithAuth(`/api/admin/schedule/download/${id}`);
+    if(!res) throw new Error('تعذر تحميل الجدول');
+    const blob = await res.blob();
+    const disposition = res.headers.get('content-disposition') || '';
+    const filenameMatch = disposition.match(/filename\*=UTF-8''([^;]+)|filename=\"?([^\";]+)\"?/i);
+    const filename = filenameMatch ? decodeURIComponent(filenameMatch[1] || filenameMatch[2]) : `schedule_${id}.xlsx`;
+    downloadBlob(blob, filename);
+    toast('تم تحميل الجدول بنجاح','success');
+  }catch(err){
+    toast('فشل تحميل الجدول: '+err.message,'error');
+  }
 };
 
 /* ═══════════════════════════════════════════════
