@@ -677,17 +677,22 @@ async function loadContentSection(section){
     renderContentEditor(section, data);
   }catch(err){
     container.innerHTML = `<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">لا يوجد محتوى بعد لهذا القسم</div><div class="empty-hint">ابدأ بإضافة محتوى جديد</div></div>`;
+    if(section === 'tips') return renderTipsCardsEditor({});
     renderContentEditor(section, {});
   }
 }
 
 const sectionLabels = {
-  intro: {title:'المقدمة', fields:[
-    {key:'title_ar', label:'العنوان (عربي)', type:'text'},
-    {key:'title_en', label:'العنوان (إنجليزي)', type:'text'},
-    {key:'body_ar', label:'المحتوى (عربي)', type:'textarea'},
-    {key:'body_en', label:'المحتوى (إنجليزي)', type:'textarea'}
-  ]}
+  intro: {
+    title:'المقدمة',
+    description:'هذا الجزء اختياري لتعديل النص الصغير الذي يظهر في شاشة البداية فقط. لو تركت الحقول فارغة سيظل النص الافتراضي الموجود في الموقع كما هو.',
+    fields:[
+      {key:'title_ar', label:'عنوان شاشة البداية', type:'text', placeholder:'Laundry Guide / دليل المغسلة', help:'اكتب هنا العنوان العربي الذي تريد ظهوره في شاشة البداية.'},
+      {key:'body_ar', label:'الوصف المختصر', type:'textarea', placeholder:'Chemicals & Washing Programs Reference', help:'سطر قصير يشرح محتوى التطبيق تحت العنوان.'},
+      {key:'title_en', label:'العنوان الإنجليزي (اختياري)', type:'text', optional:true, placeholder:'Laundry Guide', help:'استخدمه فقط لو محتاج نسخة إنجليزية منفصلة.'},
+      {key:'body_en', label:'الوصف الإنجليزي (اختياري)', type:'textarea', optional:true, placeholder:'Chemicals & Washing Programs Reference', help:'اختياري، ويُستخدم كبديل لو العنوان أو الوصف العربي غير موجود.'}
+    ]
+  }
 };
 
 let _chemicalsJson = [];
@@ -1273,22 +1278,48 @@ window._deleteTipCard = async function(index){
   await saveTipsCards();
 };
 
+function renderContentField(f, value){
+  const placeholder = f.placeholder ? ` placeholder="${escAttr(f.placeholder)}"` : '';
+  let html = `<div class="form-group">
+    <label>${f.label}</label>`;
+  if(f.type === 'textarea'){
+    html += `<textarea class="form-control" name="${f.key}" rows="4"${placeholder}>${escHtml(String(value))}</textarea>`;
+  } else {
+    html += `<input type="text" class="form-control" name="${f.key}" value="${escAttr(String(value))}"${placeholder}>`;
+  }
+  if(f.help){
+    html += `<div class="empty-hint" style="margin-top:6px;line-height:1.6">${escHtml(f.help)}</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
 function renderContentEditor(section, data){
   const config = sectionLabels[section] || sectionLabels.intro;
   const container = $('#content-editor-body');
+  const mainFields = config.fields.filter(f=>!f.optional);
+  const optionalFields = config.fields.filter(f=>f.optional);
   let html = `<form id="content-form" class="fade-in">`;
-  config.fields.forEach(f=>{
+  if(config.description){
+    html += `<div class="empty-hint" style="margin-bottom:16px;line-height:1.8;padding:12px 14px;border:1px solid rgba(212,175,55,.28);border-radius:12px;background:rgba(212,175,55,.08)">
+      💡 ${escHtml(config.description)}
+    </div>`;
+  }
+  mainFields.forEach(f=>{
     const value = data && data[f.key] !== undefined ? data[f.key] : '';
-    html += `<div class="form-group">
-      <label>${f.label}</label>`;
-    if(f.type === 'textarea'){
-      html += `<textarea class="form-control" name="${f.key}" rows="4">${escHtml(String(value))}</textarea>`;
-    } else {
-      html += `<input type="text" class="form-control" name="${f.key}" value="${escAttr(String(value))}">`;
-    }
-    html += `</div>`;
+    html += renderContentField(f, value);
   });
-  html += `<div style="display:flex;gap:10px;margin-top:8px">
+  if(optionalFields.length){
+    html += `<details style="margin-top:10px">
+      <summary class="btn btn-outline btn-sm" style="display:inline-flex;cursor:pointer">إظهار الحقول الاختيارية / الإنجليزية</summary>
+      <div style="margin-top:14px">`;
+    optionalFields.forEach(f=>{
+      const value = data && data[f.key] !== undefined ? data[f.key] : '';
+      html += renderContentField(f, value);
+    });
+    html += `</div></details>`;
+  }
+  html += `<div style="display:flex;gap:10px;margin-top:18px">
     <button type="submit" class="btn btn-gold">💾 حفظ التعديلات</button>
   </div></form>`;
   container.innerHTML = html;
