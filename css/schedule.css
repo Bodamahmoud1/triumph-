@@ -253,3 +253,27 @@
 
 .is-hidden { display: none !important; }
 .shift-Vacation { background: var(--red-lt); color: var(--red-dk); border: 1px solid var(--border); }
+
+.schedule-filter.hero-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.schedule-job-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.schedule-job-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}

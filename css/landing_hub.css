@@ -959,6 +959,15 @@ html[data-scheme="dark"] .bnav-indicator {
   display: none;
 }
 
+.bnav-icon .washer-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
 .bnav-item.is-active .bnav-icon {
   transform: translateY(-2px) scale(1.08);
 }
