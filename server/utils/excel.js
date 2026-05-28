@@ -41,12 +41,28 @@ async function parseScheduleExcel(filePath) {
     week2_start = (d2 instanceof Date) ? d2.toISOString().split('T')[0] : d2.toString().trim();
   }
   
+  const getSafeText = (cell) => {
+    if (!cell) return '';
+    try {
+      if (cell.text) return cell.text.toString().trim();
+    } catch (e) {
+      // exceljs crashes on cell.text for some merged cells
+    }
+    if (cell.value === null || cell.value === undefined) return '';
+    if (typeof cell.value === 'object') {
+      if (cell.value.richText) return cell.value.richText.map(t => t.text).join('').trim();
+      if (cell.value.result !== undefined) return String(cell.value.result).trim();
+      return '';
+    }
+    return String(cell.value).trim();
+  };
+
   // Start reading from row 7
   worksheet.eachRow((row, rowNumber) => {
     if (rowNumber < 7) return; 
     
-    const name = row.getCell(4).text?.trim();
-    const dept = row.getCell(5).text?.trim();
+    const name = getSafeText(row.getCell(4));
+    const dept = getSafeText(row.getCell(5));
     
     // Check if this is a separator row (no name, but contains totals/formulas in the days columns)
     const col6Val = row.getCell(6).value;
@@ -65,13 +81,13 @@ async function parseScheduleExcel(filePath) {
     if (!name) return; // Skip entirely blank rows without triggering shift change
     
     // Week 1 (Cols 6-12)
-    const w1_sat = parseCell(row.getCell(6).text);
-    const w1_sun = parseCell(row.getCell(7).text);
-    const w1_mon = parseCell(row.getCell(8).text);
-    const w1_tue = parseCell(row.getCell(9).text);
-    const w1_wed = parseCell(row.getCell(10).text);
-    const w1_thu = parseCell(row.getCell(11).text);
-    const w1_fri = parseCell(row.getCell(12).text);
+    const w1_sat = parseCell(getSafeText(row.getCell(6)));
+    const w1_sun = parseCell(getSafeText(row.getCell(7)));
+    const w1_mon = parseCell(getSafeText(row.getCell(8)));
+    const w1_tue = parseCell(getSafeText(row.getCell(9)));
+    const w1_wed = parseCell(getSafeText(row.getCell(10)));
+    const w1_thu = parseCell(getSafeText(row.getCell(11)));
+    const w1_fri = parseCell(getSafeText(row.getCell(12)));
     
     week1_data.push({
       name,
@@ -80,13 +96,13 @@ async function parseScheduleExcel(filePath) {
     });
     
     // Week 2 (Cols 13-19)
-    const w2_sat = parseCell(row.getCell(13).text);
-    const w2_sun = parseCell(row.getCell(14).text);
-    const w2_mon = parseCell(row.getCell(15).text);
-    const w2_tue = parseCell(row.getCell(16).text);
-    const w2_wed = parseCell(row.getCell(17).text);
-    const w2_thu = parseCell(row.getCell(18).text);
-    const w2_fri = parseCell(row.getCell(19).text);
+    const w2_sat = parseCell(getSafeText(row.getCell(13)));
+    const w2_sun = parseCell(getSafeText(row.getCell(14)));
+    const w2_mon = parseCell(getSafeText(row.getCell(15)));
+    const w2_tue = parseCell(getSafeText(row.getCell(16)));
+    const w2_wed = parseCell(getSafeText(row.getCell(17)));
+    const w2_thu = parseCell(getSafeText(row.getCell(18)));
+    const w2_fri = parseCell(getSafeText(row.getCell(19)));
     
     week2_data.push({
       name,
