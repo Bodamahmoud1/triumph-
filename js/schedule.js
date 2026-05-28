@@ -113,6 +113,38 @@
     currentScheduleData = null;
   }
 
+  function renderNoMatches(msg) {
+    tbody.innerHTML = '';
+    mobileList.innerHTML = '';
+    if (emptyState) emptyState.style.display = 'block';
+    if (emptyState) emptyState.textContent = msg;
+    setStatus(msg, true);
+  }
+
+  function normaliseText(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9؀-ۿ]+/g, ' ').trim();
+  }
+
+  function departmentMatchesFilter(department, filter) {
+    if (filter === 'all') return true;
+
+    var dept = normaliseText(department);
+    var selected = normaliseText(filter);
+    if (!dept) return false;
+    if (dept === selected || dept.indexOf(selected) !== -1) return true;
+
+    var departmentAliases = {
+      Washing: ['wash', 'washer', 'dry clean', 'ass laundry', 'shift leader', 'غسيل', 'مغسلة'],
+      Ironing: ['iron', 'ironing', 'presser', 'press', 'كي'],
+      Folding: ['fold', 'folding', 'laundry attendant', 'attendant', 'تطبيق'],
+      Delivery: ['delivery', 'valet', 'tailor', 'توصيل']
+    };
+
+    return (departmentAliases[filter] || []).some(function(alias) {
+      return dept.indexOf(normaliseText(alias)) !== -1;
+    });
+  }
+
   function renderSchedule(data) {
     currentWeekKey = data.week_key;
     currentScheduleData = data.employees;
@@ -128,15 +160,16 @@
   function filterAndRender() {
     if (!currentScheduleData) return;
     
-    var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    var query = searchInput ? normaliseText(searchInput.value) : '';
     
     var filtered = currentScheduleData.filter(function(emp) {
-      var matchDept = activeFilter === 'all' || emp.department === activeFilter;
+      var matchDept = departmentMatchesFilter(emp.department, activeFilter);
       var matchName = true;
       if (query) {
-        var nAr = (emp.name_ar || '').toLowerCase();
-        var nEn = (emp.name_en || '').toLowerCase();
-        matchName = nAr.indexOf(query) !== -1 || nEn.indexOf(query) !== -1;
+        var nAr = normaliseText(emp.name_ar);
+        var nEn = normaliseText(emp.name_en);
+        var employeeId = normaliseText(emp.employee_id || emp.employeeId);
+        matchName = nAr.indexOf(query) !== -1 || nEn.indexOf(query) !== -1 || employeeId.indexOf(query) !== -1;
       }
       return matchDept && matchName;
     });
@@ -180,7 +213,7 @@
     });
 
     if (filtered.length === 0) {
-      renderEmpty('لم يتم العثور على موظفين مطابقين للبحث.');
+      renderNoMatches('لم يتم العثور على موظفين مطابقين للبحث.');
     } else {
       tbody.innerHTML = htmlTable;
       mobileList.innerHTML = htmlMobile;
@@ -196,8 +229,12 @@
 
   filterBtns.forEach(function(btn) {
     btn.addEventListener('click', function() {
-      filterBtns.forEach(function(b) { b.classList.remove('active'); });
+      filterBtns.forEach(function(b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       this.classList.add('active');
+      this.setAttribute('aria-pressed', 'true');
       activeFilter = this.getAttribute('data-schedule-filter') || 'all';
       filterAndRender();
     });

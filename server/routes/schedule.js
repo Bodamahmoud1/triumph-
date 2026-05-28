@@ -80,6 +80,7 @@ router.get('/schedule', [
       employeesMap.set(key, {
         name_ar: row.name_ar,
         name_en: row.name_en,
+        employee_id: row.employee_id,
         department: row.department,
         shifts: {}
       });
