@@ -164,35 +164,18 @@ router.post('/admin/schedule/publish', authenticateToken, [
 
   try {
     const insertTransaction = db.transaction(() => {
-      // 1. Deactivate existing schedules for this week
-      db.prepare('UPDATE schedules SET is_active = 0 WHERE week_key = ?').run(week_key);
-
-      // 2. Insert new schedule
-      const schedResult = db.prepare(`
-        INSERT INTO schedules (week_key, week_start, published_by, is_active, original_filename) 
-        VALUES (?, ?, ?, 1, ?)
-      `).run(week_key, week_start || week_key, adminId, previewRecord.original_name);
-      
-      const newSchedId = schedResult.lastInsertRowid;
-
-      // 3. Process employees and shifts
-      const insertEmp = db.prepare('INSERT INTO employees (name_ar, department) VALUES (?, ?)');
-      const updateEmpJob = db.prepare('UPDATE employees SET department = ? WHERE id = ?');
-      const getEmp = db.prepare('SELECT id FROM employees WHERE name_ar = ?');
+      const insertEmp = db.prepare('INSERT INTO employees (name_ar, employee_id, department) VALUES (?, ?, ?)');
+      const updateEmp = db.prepare('UPDATE employees SET name_ar = ?, department = ? WHERE id = ?');
+      const getEmpByCode = db.prepare('SELECT id FROM employees WHERE employee_id = ?');
+      const getEmpByName = db.prepare(`SELECT id FROM employees WHERE name_ar = ? AND (employee_id IS NULL OR employee_id = '')`);
       const insertShift = db.prepare('INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)');
 
-      for (const row of scheduleData) {
-        let empId;
-        const existingEmp = getEmp.get(row.name);
-        
-        const rowJob = row.job || row.department;
+      for (const week of weeksToPublish) {
+        const resolvedWeekKey = week.week_key || week_key;
+        const resolvedWeekStart = week.week_start || week_start || resolvedWeekKey;
 
-        if (existingEmp) {
-          empId = existingEmp.id;
-          if (rowJob) updateEmpJob.run(rowJob, empId);
-        } else {
-          const empResult = insertEmp.run(row.name, rowJob);
-          empId = empResult.lastInsertRowid;
+        if (!resolvedWeekKey || !resolvedWeekStart) {
+          throw new Error('Week key/start could not be determined from the uploaded file');
         }
 
         // 1. Deactivate existing schedules for this week
