@@ -144,8 +144,8 @@
       </div>
 
       <!-- Guide title -->
-      <div class="intro-guide-label" id="intro-title">Laundry Guide / دليل المغسلة</div>
-      <div class="intro-guide-sub">Chemicals & Washing Programs Reference</div>
+      <div class="intro-guide-label" id="intro-title" data-content-field="intro.title_ar">Laundry Guide / دليل المغسلة</div>
+      <div class="intro-guide-sub" data-content-field="intro.body_ar">Chemicals & Washing Programs Reference</div>
 
       <!-- Diamond divider -->
       <div class="intro-divider">
@@ -626,14 +626,10 @@
               <button class="schedule-nav-btn" id="schedule-next" type="button" aria-label="Next week">Next week
                 →</button>
             </div>
-            <label class="schedule-select-label" for="schedule-department">
-              <span>Department / القسم</span>
-              <select id="schedule-department" dir="auto">
+            <label class="schedule-select-label" for="schedule-job">
+              <span>Job / الوظيفة</span>
+              <select id="schedule-job" dir="auto">
                 <option value="all">All / الكل</option>
-                <option value="Washing">Washing / الغسيل</option>
-                <option value="Ironing">Ironing / الكي</option>
-                <option value="Folding">Folding / التطبيق</option>
-                <option value="Delivery">Delivery / التوصيل</option>
               </select>
             </label>
             <button class="schedule-print-btn" type="button" id="print-schedule">Print / طباعة</button>
@@ -650,18 +646,10 @@
               <div class="schedule-status" id="schedule-status">Loading schedule...</div>
             </div>
             <div class="schedule-filter-card">
-              <div class="schedule-toolbar-label">Filter by Department / تصفية حسب القسم</div>
-              <div class="schedule-filter-row" role="group" aria-label="Department filters">
+              <div class="schedule-toolbar-label">Filter by Job / تصفية حسب الوظيفة</div>
+              <div class="schedule-filter-row" role="group" aria-label="Job filters">
                 <button class="hero-filter schedule-filter active" type="button" data-schedule-filter="all"
                   aria-pressed="true">All / الكل</button>
-                <button class="hero-filter schedule-filter" type="button" data-schedule-filter="Washing"
-                  aria-pressed="false">Washing / الغسيل</button>
-                <button class="hero-filter schedule-filter" type="button" data-schedule-filter="Ironing"
-                  aria-pressed="false">Ironing / الكي</button>
-                <button class="hero-filter schedule-filter" type="button" data-schedule-filter="Folding"
-                  aria-pressed="false">Folding / التطبيق</button>
-                <button class="hero-filter schedule-filter" type="button" data-schedule-filter="Delivery"
-                  aria-pressed="false">Delivery / التوصيل</button>
               </div>
             </div>
           </div>
@@ -700,8 +688,8 @@
         <div class="tips-section-header">
           <div class="tips-badge"><span class="tips-badge-dot"></span>LAUNDRY TIPS<span class="tips-badge-dot"></span>
           </div>
-          <h2 class="tips-section-title">نصائح هامة</h2>
-          <p class="tips-section-sub">إرشادات أساسية لنجاح عملية الغسيل</p>
+          <h2 class="tips-section-title" data-content-field="tips.title_ar">نصائح هامة</h2>
+          <p class="tips-section-sub" data-content-field="tips.content_ar">إرشادات أساسية لنجاح عملية الغسيل</p>
         </div>
 
         <div class="tips-grid">

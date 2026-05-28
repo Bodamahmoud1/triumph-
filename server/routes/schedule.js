@@ -82,6 +82,7 @@ router.get('/schedule', [
         name_en: row.name_en,
         employee_id: row.employee_id,
         department: row.department,
+        job: row.department,
         shifts: {}
       });
     }
@@ -163,18 +164,35 @@ router.post('/admin/schedule/publish', authenticateToken, [
 
   try {
     const insertTransaction = db.transaction(() => {
-      const insertEmp = db.prepare('INSERT INTO employees (name_ar, employee_id, department) VALUES (?, ?, ?)');
-      const updateEmp = db.prepare('UPDATE employees SET name_ar = ?, department = ? WHERE id = ?');
-      const getEmpByCode = db.prepare('SELECT id FROM employees WHERE employee_id = ?');
-      const getEmpByName = db.prepare(`SELECT id FROM employees WHERE name_ar = ? AND (employee_id IS NULL OR employee_id = '')`);
+      // 1. Deactivate existing schedules for this week
+      db.prepare('UPDATE schedules SET is_active = 0 WHERE week_key = ?').run(week_key);
+
+      // 2. Insert new schedule
+      const schedResult = db.prepare(`
+        INSERT INTO schedules (week_key, week_start, published_by, is_active, original_filename) 
+        VALUES (?, ?, ?, 1, ?)
+      `).run(week_key, week_start || week_key, adminId, previewRecord.original_name);
+      
+      const newSchedId = schedResult.lastInsertRowid;
+
+      // 3. Process employees and shifts
+      const insertEmp = db.prepare('INSERT INTO employees (name_ar, department) VALUES (?, ?)');
+      const updateEmpJob = db.prepare('UPDATE employees SET department = ? WHERE id = ?');
+      const getEmp = db.prepare('SELECT id FROM employees WHERE name_ar = ?');
       const insertShift = db.prepare('INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)');
 
-      for (const week of weeksToPublish) {
-        const resolvedWeekKey = week.week_key || week_key;
-        const resolvedWeekStart = week.week_start || week_start || resolvedWeekKey;
+      for (const row of scheduleData) {
+        let empId;
+        const existingEmp = getEmp.get(row.name);
+        
+        const rowJob = row.job || row.department;
 
-        if (!resolvedWeekKey || !resolvedWeekStart) {
-          throw new Error('Week key/start could not be determined from the uploaded file');
+        if (existingEmp) {
+          empId = existingEmp.id;
+          if (rowJob) updateEmpJob.run(rowJob, empId);
+        } else {
+          const empResult = insertEmp.run(row.name, rowJob);
+          empId = empResult.lastInsertRowid;
         }
 
         // 1. Deactivate existing schedules for this week
@@ -326,13 +344,13 @@ router.get('/admin/schedule/download/:id', [
   const empMap = {};
   shifts.forEach(s => {
     const key = s.name_ar;
-    if (!empMap[key]) empMap[key] = { name_ar: s.name_ar, name_en: s.name_en, department: s.department, shifts: {} };
+    if (!empMap[key]) empMap[key] = { name_ar: s.name_ar, name_en: s.name_en, department: s.department, job: s.department, shifts: {} };
     empMap[key].shifts[s.day] = s.shift;
   });
 
   sheet.columns = [
     { header: 'Name', key: 'name_ar', width: 25 },
-    { header: 'Department', key: 'department', width: 15 },
+    { header: 'Job', key: 'department', width: 15 },
     { header: 'Saturday', key: 'Saturday', width: 12 },
     { header: 'Sunday', key: 'Sunday', width: 12 },
     { header: 'Monday', key: 'Monday', width: 12 },
