@@ -62,6 +62,28 @@ test('runtime database and upload files are not tracked by git', () => {
   assert.equal(trackedRuntimeFiles.length, 0, `Tracked runtime files: ${trackedRuntimeFiles.join(', ')}`);
 });
 
+
+test('schedule download route rejects query-string bearer tokens', () => {
+  const source = readFileSync('server/routes/schedule.js', 'utf8');
+  const downloadRoute = source.match(/router\.get\('\/admin\/schedule\/download\/:id'[\s\S]*?workbook\.xlsx\.write\(res\)\.then\(\(\) => res\.end\(\)\);/);
+
+  assert.ok(downloadRoute, 'download route should exist');
+  assert.match(downloadRoute[0], /authenticateToken/);
+  assert.equal(downloadRoute[0].includes('req.query.token'), false);
+  assert.equal(downloadRoute[0].includes('jsonwebtoken'), false);
+});
+
+test('admin schedule downloads use header-authenticated blob fetch with useful failure toast', () => {
+  const source = readFileSync('admin/script.js', 'utf8');
+  const downloadHandler = source.match(/window\._downloadSchedule = async function\(id\)[\s\S]*?\n};/);
+
+  assert.ok(downloadHandler, 'admin download handler should exist');
+  assert.match(downloadHandler[0], /requestWithAuth\(`\/api\/admin\/schedule\/download\/\$\{id\}`\)/);
+  assert.match(downloadHandler[0], /res\.blob\(\)/);
+  assert.match(downloadHandler[0], /downloadBlob\(blob, filename\)/);
+  assert.match(downloadHandler[0], /toast\('فشل تحميل الجدول: '\+err\.message,'error'\)/);
+  assert.equal(downloadHandler[0].includes('?token='), false);
+  assert.equal(downloadHandler[0].includes('window.open'), false);
 test('catalogue data reads seed JSON into SQLite when no persisted row exists', (t) => {
   const Database = getOptionalBetterSqlite3();
   if (!Database) return t.skip('better-sqlite3 is not installed in this environment');

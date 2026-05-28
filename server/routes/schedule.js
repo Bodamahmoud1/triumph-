@@ -304,23 +304,12 @@ router.post('/admin/schedule/restore/:id', authenticateToken, [
   }
 });
 
-// GET /api/admin/schedule/download/:id - AUTH via query token or header
-router.get('/admin/schedule/download/:id', [
+// GET /api/admin/schedule/download/:id - AUTH REQUIRED
+router.get('/admin/schedule/download/:id', authenticateToken, [
   param('id').isInt().toInt()
 ], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
-
-  // Support auth via query string for download links opened in new tabs
-  const token = req.query.token || (req.headers['authorization'] || '').replace('Bearer ', '');
-  if (!token) return res.status(401).json({ error: 'Authentication required' });
-
-  const jwt = require('jsonwebtoken');
-  try {
-    jwt.verify(token, process.env.JWT_SECRET);
-  } catch(e) {
-    return res.status(403).json({ error: 'Invalid or expired token' });
-  }
 
   const db = req.app.locals.db;
   const schedule = db.prepare('SELECT * FROM schedules WHERE id = ?').get(req.params.id);
