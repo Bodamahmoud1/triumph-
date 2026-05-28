@@ -77,7 +77,11 @@ const loginLimiter = rateLimit({
 });
 
 // Initialize Database
-const dbPath = process.env.DB_PATH || './triumph_laundry.db';
+const isVercel = process.env.VERCEL === '1';
+const dbPath = process.env.DB_PATH || (isVercel ? '/tmp/triumph_laundry.db' : './triumph_laundry.db');
+
+// If on Vercel and db doesn't exist in /tmp, we might need to copy it from the repo, but for now we'll just let it create a new one.
+// However, the schema will be applied via runMigrations.
 const dbOpts = process.env.NODE_ENV !== 'production' ? { verbose: console.log } : {};
 const db = new Database(dbPath, dbOpts);
 
@@ -152,7 +156,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something broke on the server!' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Start server or export for Serverless
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
