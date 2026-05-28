@@ -83,6 +83,7 @@
   <link rel="stylesheet" href="css/footer.css">
   <link rel="stylesheet" href="css/tips.css">
   <link rel="stylesheet" href="css/schedule.css">
+  <link rel="stylesheet" href="css/tasks.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/darkmode.css">
   <link rel="stylesheet" href="css/print.css" media="print" />
@@ -269,6 +270,15 @@
       </button>
     </div>
 
+    <!-- Job Tasks Category -->
+    <div class="mob-category">
+      <button class="mob-cat-btn" type="button" onclick="switchSection('tasks'); closeMobMenu()" data-nav-section="tasks">
+        <span class="mob-cat-icon">📋</span>
+        <span class="mob-cat-label">Job Tasks / المهام الوظيفية</span>
+        <span class="mob-cat-arrow">›</span>
+      </button>
+    </div>
+
     <!-- Tips Category -->
     <div class="mob-category">
       <button class="mob-cat-btn" type="button" onclick="switchSection('tips'); closeMobMenu()" data-nav-section="tips">
@@ -407,6 +417,39 @@
               <div class="landing-card-stats">
                 <div class="landing-stat"><strong>6</strong><span>Reminders</span></div>
                 <div class="landing-stat"><strong>24/7</strong><span>Staff Use</span></div>
+              </div>
+              <div class="landing-card-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </div>
+            </button>
+
+            <!-- Job Tasks Card -->
+            <button class="landing-card landing-card-tasks" id="landing-goto-tasks" type="button"
+              onclick="switchSection('tasks')">
+              <div class="landing-card-glow"></div>
+              <div class="landing-card-icon">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="18" y="12" width="44" height="56" rx="8" stroke="#fff" stroke-width="2.5"
+                    fill="rgba(255,255,255,0.08)" />
+                  <path d="M30 12h20l-2 8H32l-2-8Z" fill="rgba(255,255,255,0.18)" stroke="#fff"
+                    stroke-width="2.2" stroke-linejoin="round" />
+                  <path d="M30 34h4l4 4 10-12" stroke="rgba(255,255,255,0.82)" stroke-width="3"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M30 48h20M30 56h14" stroke="rgba(255,255,255,0.55)" stroke-width="2.4"
+                    stroke-linecap="round" />
+                </svg>
+              </div>
+              <div class="landing-card-content">
+                <h2 class="landing-card-title">Job Tasks / المهام الوظيفية</h2>
+                <p class="landing-card-title-ar">Role duties for laundry team members.</p>
+                <p class="landing-card-desc">مهام تشغيل يومية للغسال، الدراي كلين، الغلاية، والترزي/اليونيفورم.</p>
+              </div>
+              <div class="landing-card-stats">
+                <div class="landing-stat"><strong>4</strong><span>Roles</span></div>
+                <div class="landing-stat"><strong>SOP</strong><span>Daily Tasks</span></div>
               </div>
               <div class="landing-card-arrow">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
@@ -639,6 +682,227 @@
       </section>
     </div><!-- /section-schedule -->
 
+    <!-- ═══ SECTION: JOB TASKS ═══ -->
+    <div id="section-tasks" class="app-section">
+      <section class="tasks-section" aria-labelledby="tasks-title" dir="rtl">
+        <div class="tasks-shell">
+          <div class="tasks-header">
+            <div class="tasks-badge"><span></span>JOB TASKS<span></span></div>
+            <h2 class="tasks-title" id="tasks-title">المهام الوظيفية</h2>
+            <p class="tasks-subtitle">Standard operating responsibilities for Triumph Laundry team roles.</p>
+          </div>
+
+          <div class="tasks-overview" aria-label="Job task roles summary">
+            <div><strong>4</strong><span>أدوار تشغيلية</span></div>
+            <div><strong>75+</strong><span>نقطة متابعة</span></div>
+            <div><strong>Daily</strong><span>تطبيق يومي</span></div>
+          </div>
+
+          <div class="tasks-grid">
+            <article class="task-role-card card-animate">
+              <div class="task-role-head">
+                <span class="task-role-icon">🧺</span>
+                <div>
+                  <p class="task-role-kicker">Washer Duties</p>
+                  <h3>المهام الوظيفية للغسال</h3>
+                </div>
+              </div>
+
+              <div class="task-stage">
+                <h4>استلام وتجهيز الوردية</h4>
+                <ul>
+                  <li>يقوم بشفط الغسالات قبل بداية اليوم لسحب المياه الراكدة في المواسير وذلك في الوردية الصباحية فقط.</li>
+                  <li>استلام منطقة الغسالات نظيفة ومرتبة من الغسال السابق.</li>
+                  <li>التشييك على جهاز سحب المواد الكيميائية والمواد الموجودة فيه، وأي نقص يتم تغييره مباشرة.</li>
+                  <li>التشييك على مخزن المواد الكيميائية بصفة دورية، وأي نقص يتم إبلاغ المشرف مباشرة لعمل إذن صرف.</li>
+                  <li>التشييك على الغسالات، وأي عطل أو صوت غريب يتم إبلاغ المشرف لعمل اللازم.</li>
+                </ul>
+              </div>
+
+              <div class="task-stage">
+                <h4>الفرز والتعبئة</h4>
+                <ul>
+                  <li>يتم ارتداء القفازات قبل الفرز.</li>
+                  <li>فرز اللينن بحيث تكون الملاءات مع بعضها، وأكياس اللحاف مع بعضها، والوبريات مع بعضها، وأكياس المخدة مع بعضها، والأرواب مع بعضها.</li>
+                  <li>في قسم الأغذية والمشروبات يتم فرز التايبل الأبيض والمفارش البيضاء والنابكن الأبيض، والبيج المعالج ضد الكلور، وباقي الألوان كل لون على حدة.</li>
+                  <li>وزن الغسيل قبل تعبئته للمحافظة على الغسالات ودرجة نظافة الغسيل.</li>
+                  <li>تعبئة الغسالات حسب الأولوية وحاجة العمل واستخدام البرنامج المناسب لكل نوع غسيل.</li>
+                  <li>فرز ملابس النزلاء ومراجعتها قبل الغسيل، وفرز ملابس الموظفين وكل لون على حدة.</li>
+                </ul>
+              </div>
+
+              <div class="task-stage">
+                <h4>التشغيل والتسليم</h4>
+                <ul>
+                  <li>بعد تشغيل الغسيل تتم متابعة الغسالات باستمرار للتأكد من أنها تعمل جيداً ومتابعة منسوب المياه ودرجة الحرارة وسحب المواد الكيميائية.</li>
+                  <li>في حالة وجود أي خلل يتم إبلاغ المشرف لعمل اللازم.</li>
+                  <li>بعد التفريغ يتم وضع الوبريات وأكياس اللحاف وأكياس المخدة والنابكن والمفارش في المجفف بالبرامج المناسبة لكل نوع.</li>
+                  <li>تسليم الملاءات على الجندرة مع مراعاة عدم تعطيل الجندرة والعمل بشكل جماعي.</li>
+                  <li>بعد تجفيف الوبريات يتم تحضيرها على الترولي وتطبيقها أو ترجيعها ووضعها في ترولي الراجع.</li>
+                  <li>بعد الانتهاء من غسيل اللينن الخاص بالشوت وغسيل المطاعم واليونيفورم يتم فرز الراجع وغسله على برنامج غسيل الراجع.</li>
+                  <li>تسليم المكان للزميل بالتفاصيل نظيفاً ومرتباً.</li>
+                  <li>الغسال يعمل أيضاً على الغلاية عند الحاجة، ولا يوجد غير غسال واحد.</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="task-role-card card-animate">
+              <div class="task-role-head">
+                <span class="task-role-icon">🧼</span>
+                <div>
+                  <p class="task-role-kicker">Dry Clean Duties</p>
+                  <h3>المهام الوظيفية للدراي كلين</h3>
+                </div>
+              </div>
+
+              <div class="task-stage">
+                <h4>استلام وتجهيز القسم</h4>
+                <ul>
+                  <li>الظهور بالمظهر اللائق قبل دخول المغسلة بما يتفق مع سياسة الفندق.</li>
+                  <li>استلام منطقة الدراي كلين نظيفة من الدراي كلينر السابق.</li>
+                  <li>التشييك على المكواة ومكينة الدراي كلين، وفي حالة وجود أي عطل يجب إبلاغ المشرف.</li>
+                  <li>التشييك على المواد الكيميائية الخاصة بالمعالجات ومسدس إزالة البقع.</li>
+                  <li>استلام الملابس المراد تنظيفها من الغلاية.</li>
+                </ul>
+              </div>
+
+              <div class="task-stage">
+                <h4>أولاً: الفرز</h4>
+                <ul>
+                  <li>الفرز من حيث بهتان الألوان، القطع، التنسيل في النسيج، زرار مكسور أو مفقود، أو اتساخ مكوة قديم، أو بقع يصعب إزالتها.</li>
+                  <li>في حالة وجود أي مشكلة يتم إبلاغ المسؤول.</li>
+                  <li>فصل كل لون على حدة: أبيض، ألوان، وغوامق.</li>
+                  <li>فصل غسيل كل عميل عن غسيل عميل آخر، وفصل الغسيل المائي والغسيل اليدوي كل في المكان المخصص.</li>
+                </ul>
+              </div>
+
+              <div class="task-stage">
+                <h4>ثانياً: الغسيل والتجفيف</h4>
+                <ul>
+                  <li>معالجة البقع بالمواد المناسبة وتنظيف الياقات والأساور قبل وضعها في الغسالة.</li>
+                  <li>تشغيل الغسالة على البرنامج المناسب حسب درجة الحرارة وشدة الاتساخ واللون.</li>
+                  <li>تجفيف الملابس في المجفف على درجة حرارة مناسبة أو تنشيفها طبيعياً حسب نوعية الملابس.</li>
+                  <li>عدم إخراج الملابس وهي ساخنة من المجفف، والانتظار حتى تأخذ وقت التبريد.</li>
+                  <li>إخراج الملابس من المجفف كل نوع على حدة حتى لا يختلط نوع بآخر.</li>
+                  <li>بالنسبة للإندرات والجوارب توضع في أرضية الباسكت وتسلم مباشرة إلى الغلاية.</li>
+                </ul>
+              </div>
+
+              <div class="task-stage">
+                <h4>ثالثاً: كي الملابس والتسليم</h4>
+                <ul>
+                  <li>كي الملابس لتكون في حالة ممتازة وخالية من البقع والروائح الكريهة.</li>
+                  <li>استخدام قميص المكوة أثناء كي الغوامق.</li>
+                  <li>نفخ جواكت البدلة قبل كيها على التورنيقة.</li>
+                  <li>إبلاغ المسؤول في حالة فقدان زرار أو وجود فتق خياطة أو أي مشكلة قبل التسليم للغلاية.</li>
+                  <li>اتباع تعليمات التعليق والتطبيق على الماركة.</li>
+                  <li>تسليم الملابس المكوية إلى الغلاية في حالة ممتازة جداً.</li>
+                  <li>تنظيف المكان وتسليمه للزميل مرتباً ومنظماً.</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="task-role-card task-role-card-wide card-animate">
+              <div class="task-role-head">
+                <span class="task-role-icon">☎️</span>
+                <div>
+                  <p class="task-role-kicker">Valet Duties</p>
+                  <h3>المهام الوظيفية لموظف الغلاية</h3>
+                </div>
+              </div>
+
+              <div class="task-stage-grid">
+                <div class="task-stage">
+                  <h4>استلام الوردية وخدمة الاتصال</h4>
+                  <ul>
+                    <li>الظهور بالمظهر اللائق قبل دخول المغسلة بما يتفق مع سياسة الفندق.</li>
+                    <li>استلام متعلقات غرفة الغلاية من الوردية السابقة.</li>
+                    <li>قراءة دفتر اليومية ومتابعة ما فيه من أحداث.</li>
+                    <li>تجهيز أوراق التسليم والاستلام بكتابة اليوم والتاريخ واسم الغلاية.</li>
+                    <li>الرد على أي تليفون قبل الرنة الرابعة مستخدماً الصيغة المتفق عليها: Good Morning / Good Afternoon / Good Evening ثم Laundry Valet this is your Name.</li>
+                    <li>كتابة رقم الغرفة واسم النزيل ووقت الاتصال ومن المتصل في ورقة الاستلام قبل الذهاب إلى الغرفة.</li>
+                    <li>التوجه إلى الغرفة خلال 5 دقائق، والطرق على الباب مع قول Laundry Service.</li>
+                    <li>بدء التحية بتعريف الاسم والنفس، وجمع كل البيانات الممكنة من النزيل وخصوصاً المحاسبية قبل مغادرة الغرفة.</li>
+                    <li>سؤال النزيل إن كان له طلبات أخرى، ثم شكره والتوجه إلى المغسلة.</li>
+                  </ul>
+                </div>
+
+                <div class="task-stage">
+                  <h4>استلام وفرز ملابس النزلاء</h4>
+                  <ul>
+                    <li>مراجعة قائمة الغسيل للتأكد من مطابقتها للأعداد الموجودة بالفعل، وإبلاغ المشرف عند وجود أي مشكلة.</li>
+                    <li>ترقيم الملابس برقم الغرفة وتسجيلها في الدفتر المخصص باستخدام اللون والماركة.</li>
+                    <li>فرز الملابس جيداً وملاحظة أي عيوب قبل إعطائها للغسال مثل قطع، بهتان لون، تنسيل، أو دوبان في النسيج.</li>
+                    <li>عند العثور على أي عيب يتم إبلاغ المشرف المباشر أولاً لإبلاغ النزيل وأخذ الإذن قبل الغسيل.</li>
+                    <li>عند العثور على متعلقات مثل نقود أو أوراق أو إكسسوارات يتم إبلاغ المشرف المباشر فوراً لاتخاذ اللازم.</li>
+                    <li>تسليم الملابس إلى الغسال حسب الأولوية، وترتيب وتحضير الملابس بعد الغسيل حسب الأولوية وتسليمها إلى المكوجي.</li>
+                    <li>تجميع الملابس بعد كيها من المكوجي وتنظيفها من الهواء.</li>
+                  </ul>
+                </div>
+
+                <div class="task-stage">
+                  <h4>التجهيز والتسليم</h4>
+                  <ul>
+                    <li>فحص الملابس وإرجاع أي مشكلة إلى المشرف المباشر.</li>
+                    <li>إزالة المارك من الملابس المطوية والمعلقة.</li>
+                    <li>تغليف الملابس المطوية بالترتيب المتفق عليه وتجميع كل ثلاثة من نوع في كيس واحد.</li>
+                    <li>وضع قائمة الغسيل على الباسكت بعد تقفيله، ووضع كارت التعليق عليه رقم الغرفة على الشمعات وتجميعها بروب.</li>
+                    <li>كتابة رقم الغرفة وعدد الشماعات وعدد البوكسات الخاصة بها في ورقة التسليم.</li>
+                    <li>عمل حساب بالفاتورة على جهاز الميكروس قبل التسليم.</li>
+                    <li>تسليم الملابس التي تم طلبها سريعاً في نفس الساعة، وتسليم الملابس العادية في المساء.</li>
+                    <li>إذا لم يكن النزيل بالغرفة يتم فتحها عن طريق الماستر بعد ثلاث طرق للتأكد من عدم وجوده.</li>
+                    <li>في حالة وجود علامة ممنوع الإزعاج يتم وضع كارت خاص بموعد التسليم.</li>
+                    <li>عند الدخول للغرفة عن طريق الماستر توضع الملابس المطوية على حرف السرير والمعلقة بالدولاب، مع وضع كارت على البوكس يوضح سبب الدخول.</li>
+                  </ul>
+                </div>
+
+                <div class="task-stage">
+                  <h4>نهاية الوردية والنظافة</h4>
+                  <ul>
+                    <li>بالنسبة للملابس المراد كيها فقط يتم فرزها قبل تسليمها إلى المكوجي وتسلم إلى النزيل في خلال ساعة.</li>
+                    <li>المحافظة على نظافة غرفة الغلاية نظيفة ومرتبة طوال الوقت.</li>
+                    <li>عمل جرد على متعلقات غرفة الغلاية بصفة مستمرة وإبلاغ المشرف بأي نقص لعمل طلب صرف.</li>
+                    <li>تجميع الشبكات الخاصة بالمغسلة ووضعها في المكان المخصص لها.</li>
+                    <li>تقفيل أوراق التسليم والاستلام في نهاية اليوم ووضعها في المكان المخصص لها.</li>
+                    <li>تسليم غرفة الغلاية للزميل نظيفة ومرتبة.</li>
+                    <li>توضيح كل ما فيها من متعلقات وملاحظات وكتابتها في دفتر اليومية.</li>
+                    <li>تسليم المفاتيح والتليفونات إلى الزميل.</li>
+                  </ul>
+                </div>
+              </div>
+            </article>
+
+            <article class="task-role-card card-animate">
+              <div class="task-role-head">
+                <span class="task-role-icon">🧵</span>
+                <div>
+                  <p class="task-role-kicker">Tailor + Uniform Duties</p>
+                  <h3>المهام الوظيفية لترزي + موظف اليونيفورم</h3>
+                </div>
+              </div>
+
+              <div class="task-stage">
+                <h4>مهام يومية</h4>
+                <ol class="task-numbered">
+                  <li>ارتداء الزي الرسمي وإشارة الاسم والظهور بالشكل اللائق الذي يتفق مع سياسة الفندق.</li>
+                  <li>تنظيف المكان وترتيبه قبل البدء في العمل الموكل إليه.</li>
+                  <li>قراءة التقرير الخاص بالوردية السابقة ومتابعة ما فيها من تعليمات.</li>
+                  <li>أخذ مقاسات الموظفين الجدد وتظبيط الزي لهم حسب القسم والوظيفة بالشكل اللائق.</li>
+                  <li>تسليم الملابس الدرتي إلى قسم الغسيل داخل القسم للغسال لغسلها وتجهيزها.</li>
+                  <li>استلام الملابس النظيفة من قسم المكوة وترتيبها وتوزيعها لتكون جاهزة عند التسليم.</li>
+                  <li>استلام الملابس الدرتي عند تسليم الملابس النظيفة.</li>
+                  <li>تصليح أي عيوب في الملابس مثل القطع، السوستة، الأزرار، وغيرها.</li>
+                  <li>عمل جرد على جميع الملابس الموجودة داخل المخزن بصفة دورية والإبلاغ عن النواقص حتى يتم تعويضها.</li>
+                  <li>الحفاظ على نظافة الغرفة وترتيبها.</li>
+                  <li>تسليم الغرفة بمحتوياتها إلى الوردية التالية بدون مشاكل، والإبلاغ بالمشكلة لحلها.</li>
+                </ol>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </div><!-- /section-tasks -->
+
     <!-- ═══ SECTION: TIPS ═══ -->
     <div id="section-tips" class="app-section">
       <div class="tips-full-section">
@@ -714,6 +978,12 @@
       <span class="bnav-icon" aria-hidden="true">📅</span>
       <span class="bnav-label">الجدول</span>
       <span class="bnav-sub">Schedule</span>
+      <span class="bnav-indicator"></span>
+    </button>
+    <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tasks" onclick="switchSection('tasks')" aria-label="Job Tasks / المهام الوظيفية">
+      <span class="bnav-icon" aria-hidden="true">📋</span>
+      <span class="bnav-label">المهام</span>
+      <span class="bnav-sub">Tasks</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tips" onclick="switchSection('tips')" aria-label="Tips / النصائح">

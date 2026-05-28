@@ -1174,3 +1174,44 @@ html[data-scheme="light"] .landing-card:hover .landing-card-arrow {
   border-color: #17346f;
   color: #ffffff;
 }
+
+/* Job Tasks landing card */
+.landing-card-tasks .landing-card-glow {
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.82) 0%, transparent 70%);
+}
+
+.landing-card-tasks .landing-card-icon {
+  background: linear-gradient(135deg, rgba(126, 34, 206, 0.42), rgba(197, 160, 90, 0.18));
+  box-shadow: 0 8px 30px rgba(126, 34, 206, 0.2);
+}
+
+.landing-card-tasks .landing-stat strong {
+  color: #d8b4fe;
+}
+
+html[data-scheme="light"] .landing-card-tasks {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.17), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,245,255,0.95));
+}
+
+html[data-scheme="light"] .landing-card-tasks .landing-card-icon {
+  background: linear-gradient(135deg, #6d28d9, #c084fc);
+  box-shadow: 0 16px 34px rgba(109, 40, 217, 0.25);
+}
+
+html[data-scheme="light"] .landing-card-tasks .landing-stat strong {
+  color: #6d28d9;
+}
+
+@media (min-width: 1020px) {
+  .landing-cards {
+    max-width: 980px;
+  }
+}
+
+@media (min-width: 760px) {
+  .bottom-nav {
+    width: min(640px, calc(100% - 20px));
+  }
+}

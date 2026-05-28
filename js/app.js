@@ -110,7 +110,7 @@ function initProgramsUX() {
 function getRouteFromHash() {
   var raw = window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : '';
   if (!raw || raw === 'home' || raw === 'landing') return { section: 'landing', target: null };
-  if (raw === 'chemicals' || raw === 'programs' || raw === 'tips' || raw === 'schedule') {
+  if (raw === 'chemicals' || raw === 'programs' || raw === 'tips' || raw === 'schedule' || raw === 'tasks') {
     return { section: raw, target: null };
   }
 
