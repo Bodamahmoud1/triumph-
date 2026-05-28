@@ -80,6 +80,7 @@ router.get('/schedule', [
         name_ar: row.name_ar,
         name_en: row.name_en,
         department: row.department,
+        job: row.department,
         shifts: {}
       };
     }
@@ -162,6 +163,7 @@ router.post('/admin/schedule/publish', authenticateToken, [
 
       // 3. Process employees and shifts
       const insertEmp = db.prepare('INSERT INTO employees (name_ar, department) VALUES (?, ?)');
+      const updateEmpJob = db.prepare('UPDATE employees SET department = ? WHERE id = ?');
       const getEmp = db.prepare('SELECT id FROM employees WHERE name_ar = ?');
       const insertShift = db.prepare('INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)');
 
@@ -169,10 +171,13 @@ router.post('/admin/schedule/publish', authenticateToken, [
         let empId;
         const existingEmp = getEmp.get(row.name);
         
+        const rowJob = row.job || row.department;
+
         if (existingEmp) {
           empId = existingEmp.id;
+          if (rowJob) updateEmpJob.run(rowJob, empId);
         } else {
-          const empResult = insertEmp.run(row.name, row.department);
+          const empResult = insertEmp.run(row.name, rowJob);
           empId = empResult.lastInsertRowid;
         }
 
@@ -300,13 +305,13 @@ router.get('/admin/schedule/download/:id', [
   const empMap = {};
   shifts.forEach(s => {
     const key = s.name_ar;
-    if (!empMap[key]) empMap[key] = { name_ar: s.name_ar, name_en: s.name_en, department: s.department, shifts: {} };
+    if (!empMap[key]) empMap[key] = { name_ar: s.name_ar, name_en: s.name_en, department: s.department, job: s.department, shifts: {} };
     empMap[key].shifts[s.day] = s.shift;
   });
 
   sheet.columns = [
     { header: 'Name', key: 'name_ar', width: 25 },
-    { header: 'Department', key: 'department', width: 15 },
+    { header: 'Job', key: 'department', width: 15 },
     { header: 'Saturday', key: 'Saturday', width: 12 },
     { header: 'Sunday', key: 'Sunday', width: 12 },
     { header: 'Monday', key: 'Monday', width: 12 },

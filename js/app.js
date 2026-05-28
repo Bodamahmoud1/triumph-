@@ -197,6 +197,38 @@ function updateSectionHash(sectionName) {
   }
 }
 
+function applyTextContent(selector, value) {
+  var element = document.querySelector(selector);
+  if (!element || value === undefined || value === null || String(value).trim() === '') return;
+  element.textContent = String(value);
+}
+
+function loadEditablePageContent() {
+  if (window.location.protocol === 'file:') return;
+
+  fetch('/api/content/intro')
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (payload) {
+      var data = payload && payload.data ? payload.data : {};
+      applyTextContent('[data-content-field="intro.title_ar"]', data.title_ar || data.title_en);
+      applyTextContent('[data-content-field="intro.body_ar"]', data.body_ar || data.body_en);
+    })
+    .catch(function () {
+      // Static fallback content remains visible when the API is unavailable.
+    });
+
+  fetch('/api/content/tips')
+    .then(function (res) { return res.ok ? res.json() : null; })
+    .then(function (payload) {
+      var data = payload && payload.data ? payload.data : {};
+      applyTextContent('[data-content-field="tips.title_ar"]', data.title_ar || data.title_en);
+      applyTextContent('[data-content-field="tips.content_ar"]', data.content_ar || data.content_en);
+    })
+    .catch(function () {
+      // Static fallback content remains visible when the API is unavailable.
+    });
+}
+
 function initPwa() {
   if (!('serviceWorker' in navigator)) return;
   if (window.location.protocol === 'file:') return;
@@ -212,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
   openCurrentHash(!window.location.hash);
   initPwa();
   initStaggeredAnimations();
+  loadEditablePageContent();
 
   // Back to Top Button
   var backToTopBtn = document.getElementById('back-to-top');

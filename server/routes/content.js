@@ -2,18 +2,20 @@ const express = require('express');
 const router = express.Router();
 const authenticateToken = require('../middleware/auth');
 
-// GET /api/admin/content/:section
-router.get('/:section', authenticateToken, (req, res) => {
+function getSectionContent(db, section) {
+  const rows = db.prepare('SELECT field_key, value FROM content WHERE section = ?').all(section);
+
+  const contentMap = {};
+  rows.forEach(r => contentMap[r.field_key] = r.value);
+  return contentMap;
+}
+
+// GET /api/content/:section and /api/admin/content/:section
+router.get('/:section', (req, res) => {
   const db = req.app.locals.db;
   const section = req.params.section;
 
-  const rows = db.prepare('SELECT field_key, value FROM content WHERE section = ?').all(section);
-  
-  // Format as key:value object
-  const contentMap = {};
-  rows.forEach(r => contentMap[r.field_key] = r.value);
-  
-  res.json({ data: contentMap });
+  res.json({ data: getSectionContent(db, section) });
 });
 
 // PATCH /api/admin/content/:section
