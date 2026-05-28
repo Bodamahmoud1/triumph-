@@ -1,4 +1,4 @@
-h(function (global) {
+(function (global) {
   function getEl(id) { return document.getElementById(id); }
 
   function toggleMobMenu(forceOpen) {
