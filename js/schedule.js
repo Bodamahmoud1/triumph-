@@ -165,6 +165,7 @@
         var shiftLabel = shift === 'Morning' ? 'صباحي' : 
                          shift === 'Evening' ? 'مسائي' : 
                          shift === 'Night' ? 'ليلي' : 
+                         shift === 'Vacation' ? 'إجازة' :
                          shift === 'Holiday' ? 'عطلة' : 'راحة';
 
         // Table cell
