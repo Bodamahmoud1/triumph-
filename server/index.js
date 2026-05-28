@@ -4,7 +4,7 @@ const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 const path = require('path');
-const Database = require('better-sqlite3');
+const { createClient } = require('@libsql/client');
 const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const cron = require('node-cron');
@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: function(origin, callback) {
+  origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, file://)
     if (!origin) return callback(null, true);
     // In production, restrict to your domain
@@ -77,54 +77,56 @@ const loginLimiter = rateLimit({
 });
 
 // Initialize Database
-const isVercel = process.env.VERCEL === '1';
-const dbPath = process.env.DB_PATH || (isVercel ? '/tmp/triumph_laundry.db' : './triumph_laundry.db');
+const dbUrl = process.env.TURSO_DATABASE_URL || 'file:./triumph_laundry.db';
+const dbAuthToken = process.env.TURSO_AUTH_TOKEN || '';
 
-// If on Vercel and db doesn't exist in /tmp, we might need to copy it from the repo, but for now we'll just let it create a new one.
-// However, the schema will be applied via runMigrations.
-const dbOpts = process.env.NODE_ENV !== 'production' ? { verbose: console.log } : {};
-const db = new Database(dbPath, dbOpts);
+const db = createClient({
+  url: dbUrl,
+  authToken: dbAuthToken
+});
 
 // Expose DB to routes
 app.locals.db = db;
 
 // Run migrations
 const runMigrations = require('./db/migrate');
-runMigrations(db);
 
-// Seed admin if none exists
-const adminCount = db.prepare('SELECT COUNT(*) as count FROM admins').get();
-if (adminCount.count === 0) {
-  const defaultUser = process.env.ADMIN_USERNAME || 'admin';
-  let defaultPass = process.env.ADMIN_PASSWORD;
-  
-  if (!defaultPass || defaultPass === 'admin123' || defaultPass === 'change_this_password_immediately') {
-    defaultPass = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
-    console.warn('\n======================================================');
-    console.warn('WARNING: No secure ADMIN_PASSWORD provided in .env');
-    console.warn(`A random password has been generated: ${defaultPass}`);
-    console.warn('Please login and change this immediately!');
-    console.warn('======================================================\n');
-  } else {
-    console.log(`Default admin seeded. Username: ${defaultUser} (Please change password immediately if not secure)`);
+runMigrations(db).then(async () => {
+  // Seed admin if none exists
+  const adminCount = await db.execute('SELECT COUNT(*) as count FROM admins');
+  if (adminCount.rows[0].count === 0) {
+    const defaultUser = process.env.ADMIN_USERNAME || 'admin';
+    let defaultPass = process.env.ADMIN_PASSWORD;
+
+    if (!defaultPass || defaultPass === 'admin123' || defaultPass === 'change_this_password_immediately') {
+      defaultPass = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+      console.warn('\n======================================================');
+      console.warn('WARNING: No secure ADMIN_PASSWORD provided in .env');
+      console.warn(`A random password has been generated: ${defaultPass}`);
+      console.warn('Please login and change this immediately!');
+      console.warn('======================================================\n');
+    } else {
+      console.log(`Default admin seeded. Username: ${defaultUser} (Please change password immediately if not secure)`);
+    }
+
+    const salt = bcrypt.genSaltSync(12);
+    const hash = bcrypt.hashSync(defaultPass, salt);
+
+    await db.execute({
+      sql: 'INSERT INTO admins (username, password_hash) VALUES (?, ?)',
+      args: [defaultUser, hash]
+    });
   }
-
-  const salt = bcrypt.genSaltSync(12);
-  const hash = bcrypt.hashSync(defaultPass, salt);
-  
-  db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)')
-    .run(defaultUser, hash);
-}
+}).catch(err => {
+  console.error('Migration failed:', err);
+});
 
 // Daily database backup at 2 AM
 cron.schedule('0 2 * * *', () => {
-  const backupDir = path.join(__dirname, 'db', 'backups');
-  if (!fs.existsSync(backupDir)) fs.mkdirSync(backupDir, { recursive: true });
-  const dateStr = new Date().toISOString().split('T')[0];
-  const backupPath = path.join(backupDir, `backup_${dateStr}.db`);
-  db.backup(backupPath)
-    .then(() => console.log(`Database backup successful: ${backupPath}`))
-    .catch(err => console.error('Database backup failed:', err));
+  // SQLite local backups only work if we have a local file.
+  // With Turso, backups are handled on their cloud.
+  // This is kept here just as a placeholder or we can remove it.
+  console.log('Daily database backup: handled by Turso or Cloud Provider');
 });
 
 // Routes

@@ -11,7 +11,7 @@ router.get('/', authenticateToken, [
   query('search').optional().trim().escape(),
   query('status').optional().trim().escape(),
   query('department').optional().trim().escape()
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -40,30 +40,39 @@ router.get('/', authenticateToken, [
   }
 
   const countQuery = queryStr.replace('SELECT *', 'SELECT COUNT(*) as total');
-  const total = db.prepare(countQuery).get(...params).total;
-
-  queryStr += ' ORDER BY name_ar LIMIT ? OFFSET ?';
-  params.push(limit, offset);
-
-  const staff = db.prepare(queryStr).all(...params);
   
-  res.json({
-    data: staff,
-    pagination: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit)
-    }
-  });
+  try {
+    const totalResult = await db.execute({ sql: countQuery, args: params });
+    const total = totalResult.rows[0].total;
+
+    queryStr += ' ORDER BY name_ar LIMIT ? OFFSET ?';
+    params.push(limit, offset);
+
+    const staffResult = await db.execute({ sql: queryStr, args: params });
+    
+    res.json({
+      data: staffResult.rows,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      }
+    });
+  } catch (err) {
+    console.error('Staff get error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 // GET /api/admin/staff/export — MUST be before /:id routes
 router.get('/export', authenticateToken, async (req, res) => {
   const db = req.app.locals.db;
-  const staff = db.prepare('SELECT * FROM employees WHERE is_deleted = 0 ORDER BY name_ar').all();
-
+  
   try {
+    const staffResult = await db.execute('SELECT * FROM employees WHERE is_deleted = 0 ORDER BY name_ar');
+    const staff = staffResult.rows;
+
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet('Employees');
     sheet.columns = [
@@ -82,7 +91,7 @@ router.get('/export', authenticateToken, async (req, res) => {
     await workbook.xlsx.write(res);
     res.end();
   } catch (e) {
-    console.error(e);
+    console.error('Export failed:', e);
     res.status(500).json({ error: 'Export failed' });
   }
 });
@@ -95,7 +104,7 @@ router.post('/', authenticateToken, [
   body('department').trim().notEmpty().withMessage('Department is required'),
   body('phone').optional().trim(),
   body('status').optional().trim().isIn(['Active', 'Inactive', 'On Leave', 'Resigned']).withMessage('Invalid status')
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -104,19 +113,25 @@ router.post('/', authenticateToken, [
   const adminId = req.user.id;
 
   try {
-    const result = db.prepare(`
-      INSERT INTO employees (name_ar, name_en, employee_id, department, phone, status)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).run(name_ar, name_en || null, employee_id || null, department, phone || null, status || 'Active');
+    const result = await db.execute({
+      sql: `
+        INSERT INTO employees (name_ar, name_en, employee_id, department, phone, status)
+        VALUES (?, ?, ?, ?, ?, ?)
+      `,
+      args: [name_ar, name_en || null, employee_id || null, department, phone || null, status || 'Active']
+    });
 
-    db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-      .run(adminId, 'Add Staff', JSON.stringify({ name: name_ar }));
+    await db.execute({
+      sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+      args: [adminId, 'Add Staff', JSON.stringify({ name: name_ar })]
+    });
 
-    res.json({ success: true, id: result.lastInsertRowid });
+    res.json({ success: true, id: Number(result.lastInsertRowid) });
   } catch (e) {
-    if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+    if (e.message && e.message.includes('UNIQUE constraint failed')) {
       res.status(400).json({ error: 'Employee ID already exists' });
     } else {
+      console.error('Add staff error:', e);
       res.status(500).json({ error: 'Database error' });
     }
   }
@@ -131,7 +146,7 @@ router.patch('/:id', authenticateToken, [
   body('department').optional().trim().notEmpty(),
   body('phone').optional().trim(),
   body('status').optional().trim().isIn(['Active', 'Inactive', 'On Leave', 'Resigned'])
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -156,25 +171,29 @@ router.patch('/:id', authenticateToken, [
   params.push(id);
 
   try {
-    const tx = db.transaction(() => {
-      const info = db.prepare(`UPDATE employees SET ${updateClauses.join(', ')} WHERE id = ? AND is_deleted = 0`).run(...params);
-      if (info.changes === 0) {
-        const err = new Error('Employee not found');
-        err.statusCode = 404;
-        throw err;
+    const stmts = [
+      {
+        sql: `UPDATE employees SET ${updateClauses.join(', ')} WHERE id = ? AND is_deleted = 0`,
+        args: params
+      },
+      {
+        sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+        args: [adminId, 'Update Staff', JSON.stringify({ id, updates })]
       }
-      db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-        .run(adminId, 'Update Staff', JSON.stringify({ id, updates }));
-    });
-    tx();
+    ];
+
+    const results = await db.batch(stmts, "write");
+    
+    if (results[0].rowsAffected === 0) {
+      return res.status(404).json({ error: 'Employee not found' });
+    }
+    
     res.json({ success: true });
   } catch (e) {
-    if (e.statusCode === 404) {
-      return res.status(404).json({ error: e.message });
-    }
-    if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+    if (e.message && e.message.includes('UNIQUE constraint failed')) {
       return res.status(400).json({ error: 'Employee ID already exists' });
     }
+    console.error('Update staff error:', e);
     res.status(500).json({ error: 'Database error' });
   }
 });
@@ -182,7 +201,7 @@ router.patch('/:id', authenticateToken, [
 // DELETE /api/admin/staff/:id (Soft delete)
 router.delete('/:id', authenticateToken, [
   param('id').isInt().toInt()
-], (req, res) => {
+], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
@@ -191,15 +210,25 @@ router.delete('/:id', authenticateToken, [
   const adminId = req.user.id;
 
   try {
-    const info = db.prepare('UPDATE employees SET is_deleted = 1 WHERE id = ?').run(id);
-    if (info.changes === 0) {
+    const stmts = [
+      {
+        sql: 'UPDATE employees SET is_deleted = 1 WHERE id = ?',
+        args: [id]
+      },
+      {
+        sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+        args: [adminId, 'Delete Staff', JSON.stringify({ id })]
+      }
+    ];
+
+    const results = await db.batch(stmts, "write");
+    if (results[0].rowsAffected === 0) {
       return res.status(404).json({ error: 'Employee not found' });
     }
-    db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)')
-      .run(adminId, 'Delete Staff', JSON.stringify({ id }));
     
     res.json({ success: true, message: 'Employee deleted successfully' });
   } catch (e) {
+    console.error('Delete staff error:', e);
     res.status(500).json({ error: 'Database error' });
   }
 });

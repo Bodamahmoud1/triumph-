@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-function runMigrations(db) {
-  db.exec(`
+async function runMigrations(db) {
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS migrations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT UNIQUE NOT NULL,
@@ -23,13 +23,13 @@ function runMigrations(db) {
   const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
   
   for (const file of files) {
-    const isMigrated = db.prepare('SELECT id FROM migrations WHERE name = ?').get(file);
-    if (!isMigrated) {
+    const isMigrated = await db.execute({ sql: 'SELECT id FROM migrations WHERE name = ?', args: [file] });
+    if (isMigrated.rows.length === 0) {
       console.log(`Running migration: ${file}`);
       const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
       try {
-        db.exec(sql);
-        db.prepare('INSERT INTO migrations (name) VALUES (?)').run(file);
+        await db.executeMultiple(sql);
+        await db.execute({ sql: 'INSERT INTO migrations (name) VALUES (?)', args: [file] });
       } catch (err) {
         console.error(`Migration ${file} failed:`, err);
         throw err;
