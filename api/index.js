@@ -1,1 +1,2 @@
-throw new Error('The Express API is intentionally not deployed on Vercel. Deploy server/ to Render or Railway with a persistent DB_PATH.');
+// Vercel serverless entry — uses Turso when TURSO_* env vars are set on the project.
+module.exports = require('../server/index.js');

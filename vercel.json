@@ -1,8 +1,20 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/admin",
-      "destination": "/admin/index.html"
+      "destination": "/admin/",
+      "permanent": false
     }
-  ]
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30
+    }
+  }
 }

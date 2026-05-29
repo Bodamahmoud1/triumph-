@@ -172,13 +172,12 @@ test('catalogue data updates persisted SQLite payload and writes audit details',
   }
 });
 
-test('production deployment is documented as static Vercel plus separate persistent API host', () => {
-  const vercel = readFileSync('vercel.json', 'utf8');
+test('Vercel routes admin trailing slash and proxies API to serverless handler', () => {
+  const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'));
   const apiEntry = readFileSync('api/index.js', 'utf8');
-  const serverReadme = readFileSync('server/README.md', 'utf8');
-  assert.equal(vercel.includes('/api/(.*)'), false);
-  assert.match(apiEntry, /intentionally not deployed on Vercel/);
-  assert.match(serverReadme, /Backend \(Render\/Railway only\)/);
+  assert.ok(vercel.redirects?.some((r) => r.source === '/admin' && r.destination === '/admin/'));
+  assert.ok(vercel.rewrites?.some((r) => r.source === '/api/(.*)' && r.destination === '/api'));
+  assert.match(apiEntry, /require\('\.\.\/server\/index\.js'\)/);
 });
 
 test('migrations are tracked, checksum-protected, and runnable by npm script', () => {

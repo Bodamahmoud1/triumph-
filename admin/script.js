@@ -229,7 +229,13 @@ loginForm.addEventListener('submit', async(e)=>{
       body: JSON.stringify({username:user, password:pass})
     });
     if(!res.ok){
-      loginError.textContent = 'بيانات الدخول غير صحيحة';
+      if(res.status === 401){
+        loginError.textContent = 'بيانات الدخول غير صحيحة';
+      } else if(res.status >= 500){
+        loginError.textContent = 'خطأ في الخادم — حاول لاحقاً';
+      } else {
+        loginError.textContent = 'تعذر الاتصال بالخادم (تحقق من إعدادات النشر)';
+      }
       return;
     }
     const data = await res.json();
