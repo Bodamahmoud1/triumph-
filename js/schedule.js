@@ -51,19 +51,8 @@
     });
   }
 
-  function washingMachineIcon() {
-    return '<span class="schedule-job-icon" aria-hidden="true">' +
-      '<svg viewBox="0 0 64 64" focusable="false">' +
-      '<rect x="14" y="7" width="36" height="50" rx="7" fill="none" stroke="currentColor" stroke-width="4"/>' +
-      '<circle cx="24" cy="17" r="2.5" fill="currentColor"/>' +
-      '<rect x="31" y="14" width="10" height="5" rx="2.5" fill="currentColor" opacity="0.55"/>' +
-      '<circle cx="32" cy="38" r="13" fill="none" stroke="currentColor" stroke-width="4"/>' +
-      '<path d="M22 38c4 4 8 5 13 2 4-2 7-2 9 1" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>' +
-      '</svg></span>';
-  }
-
   function getJobFilterContent(job) {
-    return (isWashingJob(job) ? washingMachineIcon() : '') + '<span>' + escapeHtml(getJobLabel(job)) + '</span>';
+    return '<span>' + escapeHtml(getJobLabel(job)) + '</span>';
   }
 
   function getUniqueJobs(employees) {
