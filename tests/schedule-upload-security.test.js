@@ -6,7 +6,8 @@ const {
   sanitizeUploadedFilename,
   createStoredXlsxFilename,
   validateXlsxUploadMetadata,
-  validateXlsxBuffer
+  validateXlsxBuffer,
+  isAllowedXlsxMime
 } = require('../server/utils/uploadSecurity');
 
 function createZip(entries) {
@@ -71,6 +72,18 @@ test('schedule upload rejects invalid MIME types even with .xlsx extension', () 
     mimetype: 'text/plain',
     originalname: 'schedule.xlsx'
   }), /Only \.xlsx format allowed!/);
+});
+
+test('schedule upload accepts octet-stream and empty MIME when extension is .xlsx', () => {
+  assert.doesNotThrow(() => validateXlsxUploadMetadata({
+    mimetype: 'application/octet-stream',
+    originalname: 'schedule.xlsx'
+  }));
+  assert.doesNotThrow(() => validateXlsxUploadMetadata({
+    mimetype: '',
+    originalname: 'schedule.xlsx'
+  }));
+  assert.equal(isAllowedXlsxMime('application/octet-stream'), true);
 });
 
 test('schedule upload rejects invalid extensions even with XLSX MIME type', () => {

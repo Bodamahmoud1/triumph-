@@ -31,6 +31,12 @@ async function runMigrations(db) {
         await db.executeMultiple(sql);
         await db.execute({ sql: 'INSERT INTO migrations (name) VALUES (?)', args: [file] });
       } catch (err) {
+        const msg = String(err.message || err);
+        if (/duplicate column/i.test(msg)) {
+          console.warn(`Migration ${file} skipped (column already exists)`);
+          await db.execute({ sql: 'INSERT INTO migrations (name) VALUES (?)', args: [file] });
+          continue;
+        }
         console.error(`Migration ${file} failed:`, err);
         throw err;
       }

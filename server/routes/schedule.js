@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const authenticateToken = require('../middleware/auth');
-const { parseScheduleExcel } = require('../utils/excel');
+const { parseScheduleExcel, PREVIEW_SAMPLE_LIMIT } = require('../utils/excel');
 const {
   sanitizeUploadedFilename,
   createStoredXlsxFilename,
@@ -27,6 +27,22 @@ function normaliseShiftGroup(value) {
 
 function rosterRowKey(employeeId, nameAr, shiftGroup) {
   return `${employeeId || nameAr}::${shiftGroup || 'Morning'}`;
+}
+
+async function insertScheduleShift(tx, scheduleId, empId, day, shiftVal, shiftGroup) {
+  try {
+    await tx.execute({
+      sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift, shift_group) VALUES (?, ?, ?, ?, ?)',
+      args: [scheduleId, empId, day, shiftVal, shiftGroup]
+    });
+  } catch (e) {
+    const msg = String(e.message || e);
+    if (!/no such column.*shift_group/i.test(msg)) throw e;
+    await tx.execute({
+      sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)',
+      args: [scheduleId, empId, day, shiftVal]
+    });
+  }
 }
 
 function compareRosterRows(a, b) {
@@ -224,7 +240,7 @@ router.post('/admin/schedule/upload', authenticateToken, (req, res) => {
       const parseResult = await parseScheduleExcel(req.file.path);
 
       const previewId = Date.now().toString() + Math.floor(Math.random() * 1000);
-      const payload = { weeks: parseResult.weeks, data: parseResult.data };
+      const payload = { weeks: parseResult.weeks };
 
       await db.execute({
         sql: 'INSERT INTO schedule_previews (id, file_path, original_name, data_json) VALUES (?, ?, ?, ?)',
@@ -238,17 +254,25 @@ router.post('/admin/schedule/upload', authenticateToken, (req, res) => {
 
       cleanupPreviews(db);
 
+      const weekMeta = parseResult.weeks.map((week) => ({
+        week_key: week.week_key,
+        week_start: week.week_start,
+        rowCount: (week.rows || []).length
+      }));
+
       res.json({
         previewId,
         valid: parseResult.valid,
         errors: parseResult.errors,
-        previewData: parseResult.data,
-        weeks: parseResult.weeks
+        summary: parseResult.summary,
+        previewSample: parseResult.previewSample,
+        previewLimit: PREVIEW_SAMPLE_LIMIT,
+        weeks: weekMeta
       });
     } catch (e) {
       console.error('Upload error:', e);
       try { fs.unlinkSync(req.file.path); } catch (cleanupError) {}
-      res.status(500).json({ error: 'Error parsing Excel file' });
+      res.status(500).json({ error: e.message || 'Error parsing Excel file' });
     }
   });
 });
@@ -327,54 +351,72 @@ router.post('/admin/schedule/publish', authenticateToken, [
           throw new Error('Failed to create schedule record');
         }
 
+        const empsRes = await tx.execute('SELECT id, name_ar, employee_id FROM employees');
+        const empsByCode = new Map();
+        const empsByName = new Map();
+        for (const e of empsRes.rows) {
+          if (e.employee_id) empsByCode.set(String(e.employee_id), e.id);
+          empsByName.set(e.name_ar, e.id);
+        }
+
+        const employeeUpdates = [];
+        const shiftStatements = [];
+
         for (const row of week.rows || []) {
           const employeeCode = row.employeeId || row.employee_id || null;
-          let empId;
+          let empId = null;
+          let needsUpdate = false;
 
-          if (employeeCode) {
-            const byCode = await tx.execute({
-              sql: 'SELECT id FROM employees WHERE employee_id = ?',
-              args: [employeeCode]
-            });
-            const existing = byCode.rows[0];
-            if (existing) {
-              empId = existing.id;
-              await tx.execute({
-                sql: 'UPDATE employees SET name_ar = ?, department = ?, status = ?, is_deleted = 0 WHERE id = ?',
-                args: [row.name, row.department, 'Active', empId]
-              });
-            }
+          if (employeeCode && empsByCode.has(String(employeeCode))) {
+            empId = empsByCode.get(String(employeeCode));
+            needsUpdate = true;
+          } else if (empsByName.has(row.name)) {
+            empId = empsByName.get(row.name);
+            needsUpdate = true;
           }
 
-          if (!empId) {
-            const byName = await tx.execute({
-              sql: `SELECT id FROM employees WHERE name_ar = ? AND (employee_id IS NULL OR employee_id = '') ORDER BY is_deleted ASC, id ASC LIMIT 1`,
-              args: [row.name]
-            });
-            const existing = byName.rows[0];
-            if (existing) {
-              empId = existing.id;
-              await tx.execute({
+          if (empId && needsUpdate) {
+             employeeUpdates.push({
                 sql: 'UPDATE employees SET name_ar = ?, department = ?, status = ?, is_deleted = 0 WHERE id = ?',
                 args: [row.name, row.department, 'Active', empId]
-              });
-            }
-          }
-
-          if (!empId) {
-            const empResult = await tx.execute({
-              sql: 'INSERT INTO employees (name_ar, employee_id, department, status, is_deleted) VALUES (?, ?, ?, ?, 0)',
-              args: [row.name, employeeCode, row.department, 'Active']
-            });
-            empId = insertId(empResult);
+             });
+          } else {
+             const empResult = await tx.execute({
+                sql: 'INSERT INTO employees (name_ar, employee_id, department, status, is_deleted) VALUES (?, ?, ?, ?, 0)',
+                args: [row.name, employeeCode, row.department, 'Active']
+             });
+             empId = insertId(empResult);
+             if (employeeCode) empsByCode.set(String(employeeCode), empId);
+             empsByName.set(row.name, empId);
           }
 
           const shiftGroup = normaliseShiftGroup(row.shiftGroup || row.shift_group) || 'Morning';
           for (const [day, shiftVal] of Object.entries(row.shifts || {})) {
-            await tx.execute({
-              sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift, shift_group) VALUES (?, ?, ?, ?, ?)',
-              args: [newSchedId, empId, day, shiftVal, shiftGroup]
+            shiftStatements.push({
+               sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift, shift_group) VALUES (?, ?, ?, ?, ?)',
+               args: [newSchedId, empId, day, shiftVal, shiftGroup]
             });
+          }
+        }
+
+        for (let i = 0; i < employeeUpdates.length; i += 50) {
+          await tx.batch(employeeUpdates.slice(i, i + 50));
+        }
+
+        for (let i = 0; i < shiftStatements.length; i += 50) {
+          try {
+             await tx.batch(shiftStatements.slice(i, i + 50));
+          } catch(e) {
+             const msg = String(e.message || e);
+             if (/no such column.*shift_group/i.test(msg)) {
+               const fallbackChunk = shiftStatements.slice(i, i + 50).map(stmt => ({
+                 sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)',
+                 args: stmt.args.slice(0, 4)
+               }));
+               await tx.batch(fallbackChunk);
+             } else {
+               throw e;
+             }
           }
         }
 

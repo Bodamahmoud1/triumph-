@@ -2,6 +2,8 @@
 
 const DAY_KEYS = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 const BASE_SHIFT_BY_SECTION = ['Morning', 'Evening', 'Night'];
+const MAX_SCAN_COLUMNS = 48;
+const PREVIEW_SAMPLE_LIMIT = 100;
 
 function safeCellText(cell) {
   if (!cell) return '';
@@ -50,7 +52,8 @@ function isRedSeparatorCell(cell) {
 
 function isSeparatorRow(row, maxColumn) {
   let redCells = 0;
-  for (let c = 1; c <= maxColumn; c += 1) {
+  const limit = Math.min(maxColumn, MAX_SCAN_COLUMNS);
+  for (let c = 1; c <= limit; c += 1) {
     if (isRedSeparatorCell(row.getCell(c))) redCells += 1;
   }
   return redCells >= 3;
@@ -64,7 +67,8 @@ function findHeader(worksheet) {
   for (let r = 1; r <= Math.min(worksheet.rowCount, 20); r += 1) {
     const row = worksheet.getRow(r);
     const columns = {};
-    for (let c = 1; c <= worksheet.columnCount; c += 1) {
+    const colLimit = Math.min(worksheet.columnCount || 0, MAX_SCAN_COLUMNS);
+    for (let c = 1; c <= colLimit; c += 1) {
       const key = normaliseHeader(safeCellText(row.getCell(c)));
       if (['idno', 'id', 'employeeid', 'empid'].includes(key)) columns.employeeId = c;
       if (['name', 'employeename', 'الاسم'].includes(key)) columns.name = c;
@@ -76,9 +80,10 @@ function findHeader(worksheet) {
 }
 
 function findDateRow(worksheet, headerRowNumber, firstDayColumn) {
+  const colLimit = Math.min(worksheet.columnCount || 0, firstDayColumn + 20, MAX_SCAN_COLUMNS);
   for (let r = headerRowNumber; r <= Math.min(worksheet.rowCount, headerRowNumber + 5); r += 1) {
     let dateCount = 0;
-    for (let c = firstDayColumn; c <= worksheet.columnCount; c += 1) {
+    for (let c = firstDayColumn; c <= colLimit; c += 1) {
       if (getCellDate(worksheet.getRow(r).getCell(c))) dateCount += 1;
     }
     if (dateCount >= 7) return r;
@@ -104,7 +109,8 @@ function buildWeekDefinitions(worksheet, header, dateRowNumber) {
   const dateRow = worksheet.getRow(dateRowNumber);
   const dateColumns = [];
 
-  for (let c = firstDayColumn; c <= worksheet.columnCount; c += 1) {
+  const colLimit = Math.min(worksheet.columnCount || 0, firstDayColumn + 20, MAX_SCAN_COLUMNS);
+  for (let c = firstDayColumn; c <= colLimit; c += 1) {
     const date = getCellDate(dateRow.getCell(c));
     if (date) dateColumns.push({ column: c, date });
   }
@@ -162,6 +168,38 @@ function flattenWeeks(weeks) {
   })));
 }
 
+function countUniqueEmployees(weeks) {
+  const keys = new Set();
+  for (const week of weeks) {
+    for (const row of week.rows || []) {
+      keys.add(`${row.employeeId || ''}::${row.name || ''}`);
+    }
+  }
+  return keys.size;
+}
+
+function buildParseSummary(weeks, flatData) {
+  return {
+    employeeCount: countUniqueEmployees(weeks),
+    rowCount: flatData.length,
+    weekCount: weeks.length,
+    previewLimit: PREVIEW_SAMPLE_LIMIT
+  };
+}
+
+function buildPreviewSample(flatData, limit = PREVIEW_SAMPLE_LIMIT) {
+  return flatData.slice(0, limit);
+}
+
+function serializeWeeksForStorage(weeks) {
+  return weeks.map((week) => ({
+    week_key: week.week_key,
+    week_start: week.week_start,
+    columns: week.columns,
+    rows: week.rows
+  }));
+}
+
 /**
  * Parses a Triumph schedule workbook.
  *
@@ -199,11 +237,18 @@ async function parseScheduleExcel(filePath) {
 
   let sectionIndex = 0;
   const startRow = Math.max(header.rowNumber, dateRowNumber) + 1;
+  const scanColLimit = Math.min(
+    worksheet.columnCount || 0,
+    Math.max(header.department + 16, (weeks[0] && weeks[0].columns.length
+      ? weeks[0].columns[weeks[0].columns.length - 1].column + 2
+      : header.department + 16)),
+    MAX_SCAN_COLUMNS
+  );
 
   for (let rowNumber = startRow; rowNumber <= worksheet.rowCount; rowNumber += 1) {
     const row = worksheet.getRow(rowNumber);
 
-    if (isSeparatorRow(row, worksheet.columnCount)) {
+    if (isSeparatorRow(row, scanColLimit)) {
       sectionIndex = Math.min(sectionIndex + 1, BASE_SHIFT_BY_SECTION.length - 1);
       continue;
     }
@@ -237,21 +282,23 @@ async function parseScheduleExcel(filePath) {
   }
 
   const flatData = flattenWeeks(weeks);
+  const storedWeeks = serializeWeeksForStorage(weeks);
 
   return {
     valid: errors.length === 0,
     data: flatData,
-    weeks: weeks.map((week) => ({
-      week_key: week.week_key,
-      week_start: week.week_start,
-      columns: week.columns,
-      rows: week.rows
-    })),
+    weeks: storedWeeks,
+    summary: buildParseSummary(storedWeeks, flatData),
+    previewSample: buildPreviewSample(flatData),
     errors
   };
 }
 
 module.exports = {
   parseScheduleExcel,
-  DAY_KEYS
+  DAY_KEYS,
+  PREVIEW_SAMPLE_LIMIT,
+  buildParseSummary,
+  buildPreviewSample,
+  countUniqueEmployees
 };

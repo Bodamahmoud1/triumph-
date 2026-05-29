@@ -499,6 +499,9 @@ document.addEventListener('keydown', e=>{
    ═══════════════════════════════════════════════ */
 let scheduleFile = null;
 let schedulePreviewData = null;
+let hasWorkbookWeeks = false;
+const SCHEDULE_PREVIEW_PAGE_SIZE = 25;
+let schedulePreviewShown = SCHEDULE_PREVIEW_PAGE_SIZE;
 
 const dropZone = $('#schedule-drop');
 const fileInput = $('#schedule-file');
@@ -556,34 +559,58 @@ function handleScheduleFile(file){
 window._removeScheduleFile = function(){
   scheduleFile = null;
   schedulePreviewData = null;
+  hasWorkbookWeeks = false;
+  schedulePreviewShown = SCHEDULE_PREVIEW_PAGE_SIZE;
   fileInfo.style.display = 'none';
   fileInfo.innerHTML = '';
   previewCard.style.display = 'none';
   fileInput.value = '';
 };
 
+function setScheduleUploadStatus(message){
+  const el = $('#schedule-upload-status');
+  if(el) el.textContent = message;
+}
+
 async function uploadScheduleFile(file){
   const fd = new FormData();
   fd.append('file', file);
   previewCard.style.display = 'block';
-  $('#schedule-preview-table').innerHTML = '<div class="loading-state"><div class="spinner"></div><p>جاري تحليل الملف…</p></div>';
+  schedulePreviewShown = SCHEDULE_PREVIEW_PAGE_SIZE;
+  $('#schedule-preview-summary').innerHTML = '';
+  $('#schedule-preview-table').innerHTML = '<div class="loading-state"><div class="spinner"></div><p id="schedule-upload-status">جاري رفع الملف…</p></div>';
   $('#schedule-validation-errors').innerHTML = '';
 
   try{
+    setScheduleUploadStatus('جاري رفع الملف…');
     const data = await apiFormData('/api/admin/schedule/upload', fd);
     schedulePreviewData = data;
+    hasWorkbookWeeks = (Array.isArray(data.weeks) && data.weeks.length > 0) || (data.summary && data.summary.weekCount > 0);
     renderSchedulePreview(data);
+    if(data.summary){
+      const s = data.summary;
+      toast(`تم تحليل الجدول: ${s.employeeCount} موظف · ${s.weekCount} أسبوع · ${s.rowCount} صف`, 'success');
+    }
   }catch(err){
-    $('#schedule-preview-table').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">فشل في تحليل الملف</div><div class="empty-hint">${err.message}</div></div>`;
+    const hint = err.message || 'تحقق من الاتصال بالسيرفر وصيغة الملف (.xlsx)';
+    $('#schedule-preview-table').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">فشل في تحليل الملف</div><div class="empty-hint">${escHtml(hint)}</div></div>`;
+    toast(hint, 'error');
   }
 }
 
 const ROSTER_SHIFT_ORDER = ['Morning', 'Evening', 'Night'];
 
-function renderSchedulePreview(data){
-  let rawRows = (data.previewData || data.rows || data.preview || []).slice();
-  const errors = data.errors || [];
-  rawRows.sort((a, b) => {
+function schedulePreviewHasRows(data){
+  if(!data) return false;
+  if(data.summary && data.summary.rowCount > 0) return true;
+  const sample = data.previewSample || data.previewData || data.rows || data.preview;
+  if(Array.isArray(sample) && sample.length) return true;
+  if(Array.isArray(data.weeks) && data.weeks.some((w) => (w.rowCount || (w.rows && w.rows.length)) > 0)) return true;
+  return false;
+}
+
+function sortSchedulePreviewRows(rawRows){
+  return rawRows.slice().sort((a, b) => {
     const rankA = ROSTER_SHIFT_ORDER.indexOf(a.shiftGroup || a.shift_group || 'Morning');
     const rankB = ROSTER_SHIFT_ORDER.indexOf(b.shiftGroup || b.shift_group || 'Morning');
     const safeA = rankA === -1 ? ROSTER_SHIFT_ORDER.length : rankA;
@@ -591,40 +618,97 @@ function renderSchedulePreview(data){
     if (safeA !== safeB) return safeA - safeB;
     return String(a.name || '').localeCompare(String(b.name || ''), 'ar');
   });
-  if(!rawRows.length){
+}
+
+function mapScheduleRowForTable(r){
+  if(r.shifts) {
+    return {
+      'الأسبوع': r.week_key || '',
+      'الوردية': r.shiftGroup || r.shift_group || '',
+      'كود الموظف': r.employeeId || '',
+      'الاسم': r.name,
+      'الوظيفة': r.job || r.department,
+      ...r.shifts
+    };
+  }
+  return r;
+}
+
+function renderSchedulePreviewSummary(data, totalRows){
+  const summaryEl = $('#schedule-preview-summary');
+  if(!summaryEl) return;
+  const s = data.summary || {};
+  const employees = s.employeeCount ?? '—';
+  const weeks = s.weekCount ?? (Array.isArray(data.weeks) ? data.weeks.length : '—');
+  const rows = s.rowCount ?? totalRows ?? 0;
+  const shown = Math.min(schedulePreviewShown, totalRows);
+  let html = `<div class="schedule-preview-summary">
+    <span><strong>${employees}</strong> موظف</span>
+    <span><strong>${weeks}</strong> أسبوع</span>
+    <span><strong>${rows}</strong> صف في الملف</span>
+    <span>معاينة: <strong>${shown}</strong> من ${rows}</span>
+  </div>`;
+  if(rows > employees){
+    html += `<p class="form-hint" style="margin:8px 0 0">كل موظف قد يظهر أكثر من مرة (ورديات أو أسابيع متعددة) — هذا طبيعي.</p>`;
+  }
+  summaryEl.innerHTML = html;
+}
+
+function renderSchedulePreview(data){
+  const errors = data.errors || [];
+  let rawRows = data.previewSample || data.previewData || data.rows || data.preview || [];
+  rawRows = sortSchedulePreviewRows(rawRows);
+  const totalRows = (data.summary && data.summary.rowCount) || rawRows.length;
+
+  if(!schedulePreviewHasRows(data)){
+    $('#schedule-preview-summary').innerHTML = '';
     $('#schedule-preview-table').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">لا توجد بيانات في الملف</div></div>';
     return;
   }
-  
-  // Flatten the rows so shifts are part of the main object for rendering
-  const rows = rawRows.map(r => {
-    if(r.shifts) {
-       return { 
-         'الأسبوع': r.week_key || '',
-         'الوردية': r.shiftGroup || r.shift_group || '',
-         'كود الموظف': r.employeeId || '',
-         'الاسم': r.name, 
-         'الوظيفة': r.job || r.department, 
-         ...r.shifts 
-       };
-    }
-    return r;
-  });
 
-  const headers = Object.keys(rows[0]);
+  renderSchedulePreviewSummary(data, totalRows);
+
+  const pageRows = rawRows.slice(0, schedulePreviewShown).map(mapScheduleRowForTable);
+  if(!pageRows.length){
+    $('#schedule-preview-table').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">لا توجد بيانات للمعاينة</div></div>';
+    return;
+  }
+
+  const headers = Object.keys(pageRows[0]);
   let html = '<table class="data-table"><thead><tr>';
   html += '<th>#</th>';
   headers.forEach(h => html += `<th>${escHtml(h)}</th>`);
   html += '</tr></thead><tbody>';
-  rows.forEach((row, i) => {
-    const hasError = errors.some(e => e.row === i);
+  pageRows.forEach((row, i) => {
+    const hasError = errors.some(e => e.row === i + 1);
     html += `<tr style="${hasError?'background:#fff5f5':''}">`;
     html += `<td>${i+1}</td>`;
     headers.forEach(h => html += `<td>${escHtml(String(row[h]||''))}</td>`);
     html += '</tr>';
   });
   html += '</tbody></table>';
+
+  const canShowMoreInSample = schedulePreviewShown < rawRows.length;
+  if(canShowMoreInSample){
+    html += `<div class="preview-actions" style="margin-top:12px">
+      <button type="button" class="btn btn-outline btn-sm" id="schedule-preview-more-btn">
+        عرض المزيد (${Math.min(SCHEDULE_PREVIEW_PAGE_SIZE, rawRows.length - schedulePreviewShown)} صف)
+      </button>
+    </div>`;
+  }
+  if(totalRows > rawRows.length){
+    html += `<p class="form-hint" style="margin-top:10px">المعاينة تعرض أول ${rawRows.length} صف فقط — عند النشر يُحفظ الملف كاملاً (${totalRows} صف).</p>`;
+  }
+
   $('#schedule-preview-table').innerHTML = html;
+
+  const moreBtn = $('#schedule-preview-more-btn');
+  if(moreBtn){
+    moreBtn.addEventListener('click', ()=>{
+      schedulePreviewShown += SCHEDULE_PREVIEW_PAGE_SIZE;
+      renderSchedulePreview(data);
+    });
+  }
 
   if(errors.length){
     let errHtml = '<div style="margin-top:14px">';
@@ -634,16 +718,15 @@ function renderSchedulePreview(data){
     });
     errHtml += '</div>';
     $('#schedule-validation-errors').innerHTML = errHtml;
+  } else {
+    $('#schedule-validation-errors').innerHTML = '';
   }
 }
 
 $('#schedule-publish-btn').addEventListener('click', async()=>{
   if(!scheduleFile){toast('يرجى رفع ملف أولاً','warning');return;}
   if(!schedulePreviewData || !schedulePreviewData.previewId){toast('انتظر حتى يتم تحليل الملف','warning');return;}
-  const hasWorkbookWeeks = Array.isArray(schedulePreviewData.weeks) && schedulePreviewData.weeks.length > 0;
-  const hasPreviewRows = Array.isArray(schedulePreviewData.previewData) && schedulePreviewData.previewData.length > 0;
-  const hasWeekRows = hasWorkbookWeeks && schedulePreviewData.weeks.some((w) => w.rows && w.rows.length > 0);
-  if (!hasPreviewRows && !hasWeekRows) {
+  if (!schedulePreviewHasRows(schedulePreviewData)) {
     toast('لا يمكن نشر جدول فارغ. يرجى التأكد من أن الملف يحتوي على بيانات صحيحة.', 'warning');
     return;
   }

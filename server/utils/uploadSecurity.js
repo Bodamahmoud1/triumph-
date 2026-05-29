@@ -2,6 +2,12 @@ const path = require('path');
 const crypto = require('crypto');
 
 const XLSX_MIME_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+const XLSX_MIME_TYPES = new Set([
+  XLSX_MIME_TYPE,
+  'application/octet-stream',
+  'application/vnd.ms-excel',
+  'binary/octet-stream'
+]);
 const MAX_EOCD_SEARCH_BYTES = 66_000;
 
 function sanitizeUploadedFilename(originalName) {
@@ -19,8 +25,17 @@ function createStoredXlsxFilename(originalName) {
   return `${crypto.randomUUID()}${extension}`;
 }
 
+function isAllowedXlsxMime(mimetype) {
+  const type = String(mimetype || '').trim().toLowerCase();
+  if (!type) return true;
+  return XLSX_MIME_TYPES.has(type);
+}
+
 function validateXlsxUploadMetadata(file) {
-  if (!file || file.mimetype !== XLSX_MIME_TYPE || !hasXlsxExtension(file.originalname)) {
+  if (!file || !hasXlsxExtension(file.originalname)) {
+    throw new Error('Only .xlsx format allowed!');
+  }
+  if (!isAllowedXlsxMime(file.mimetype)) {
     throw new Error('Only .xlsx format allowed!');
   }
 }
@@ -90,6 +105,8 @@ function validateXlsxBuffer(buffer) {
 
 module.exports = {
   XLSX_MIME_TYPE,
+  XLSX_MIME_TYPES,
+  isAllowedXlsxMime,
   sanitizeUploadedFilename,
   hasXlsxExtension,
   createStoredXlsxFilename,
