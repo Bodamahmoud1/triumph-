@@ -5,7 +5,18 @@ const path = require('path');
 const fs = require('fs');
 const authenticateToken = require('../middleware/auth');
 const { parseScheduleExcel } = require('../utils/excel');
+const {
+  sanitizeUploadedFilename,
+  createStoredXlsxFilename,
+  validateXlsxUploadMetadata,
+  validateXlsxBuffer
+} = require('../utils/uploadSecurity');
 const { body, query, param, validationResult } = require('express-validator');
+
+function insertId(result) {
+  const id = result?.lastInsertRowid ?? result?.lastInsertRowId;
+  return Number(id);
+}
 
 // Multer setup for temporary Excel uploads
 const isVercel = process.env.VERCEL === '1';
@@ -17,20 +28,20 @@ const storage = multer.diskStorage({
     cb(null, uploadDir)
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname)
+    cb(null, createStoredXlsxFilename(file.originalname));
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    // Strictly accept only xlsx
-    if (file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
-        file.originalname.match(/\.xlsx$/)) {
+    try {
+      file.safeOriginalName = sanitizeUploadedFilename(file.originalname);
+      validateXlsxUploadMetadata(file);
       cb(null, true);
-    } else {
-      cb(new Error('Only .xlsx format allowed!'), false);
+    } catch (e) {
+      cb(e, false);
     }
   }
 });
@@ -118,26 +129,40 @@ router.post('/admin/schedule/upload', authenticateToken, (req, res) => {
     const db = req.app.locals.db;
 
     try {
+      validateXlsxBuffer(fs.readFileSync(req.file.path));
+    } catch (e) {
+      try { fs.unlinkSync(req.file.path); } catch (cleanupError) {}
+      return res.status(400).json({ error: e.message });
+    }
+
+    try {
       const parseResult = await parseScheduleExcel(req.file.path);
-      
-      const previewId = Date.now().toString() + Math.floor(Math.random()*1000);
-      
+
+      const previewId = Date.now().toString() + Math.floor(Math.random() * 1000);
+      const payload = { weeks: parseResult.weeks, data: parseResult.data };
+
       await db.execute({
         sql: 'INSERT INTO schedule_previews (id, file_path, original_name, data_json) VALUES (?, ?, ?, ?)',
-        args: [previewId, req.file.path, req.file.originalname, JSON.stringify(parseResult.data)]
+        args: [
+          previewId,
+          req.file.path,
+          req.file.safeOriginalName || sanitizeUploadedFilename(req.file.originalname),
+          JSON.stringify(payload)
+        ]
       });
 
-      cleanupPreviews(db); // Fire and forget async cleanup
+      cleanupPreviews(db);
 
       res.json({
         previewId,
         valid: parseResult.valid,
         errors: parseResult.errors,
-        // Send a preview of the first week to the UI
-        previewData: parseResult.data[0] ? parseResult.data[0].scheduleData.slice(0, 5) : [] 
+        previewData: parseResult.data,
+        weeks: parseResult.weeks
       });
     } catch (e) {
       console.error('Upload error:', e);
+      try { fs.unlinkSync(req.file.path); } catch (cleanupError) {}
       res.status(500).json({ error: 'Error parsing Excel file' });
     }
   });
@@ -146,8 +171,8 @@ router.post('/admin/schedule/upload', authenticateToken, (req, res) => {
 // POST /api/admin/schedule/publish - AUTH REQUIRED
 router.post('/admin/schedule/publish', authenticateToken, [
   body('previewId').trim().notEmpty().withMessage('Preview ID required'),
-  body('week_key').trim().notEmpty().withMessage('Week key required'),
-  body('week_start').trim().notEmpty().withMessage('Week start required')
+  body('week_key').optional().trim(),
+  body('week_start').optional().trim()
 ], async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
@@ -164,65 +189,99 @@ router.post('/admin/schedule/publish', authenticateToken, [
       return res.status(400).json({ error: 'Invalid or expired preview ID' });
     }
 
-    const scheduleDataArray = JSON.parse(previewRecord.data_json);
+    const schedulePayload = JSON.parse(previewRecord.data_json);
+    const weeksToPublish = Array.isArray(schedulePayload.weeks) && schedulePayload.weeks.length
+      ? schedulePayload.weeks
+      : [{
+          week_key,
+          week_start: week_start || week_key,
+          rows: Array.isArray(schedulePayload) ? schedulePayload : (schedulePayload.data || [])
+        }];
+
+    if (!weeksToPublish.length || weeksToPublish.every((week) => !week.rows || week.rows.length === 0)) {
+      return res.status(400).json({ error: 'Schedule preview is empty' });
+    }
 
     const tx = await db.transaction('write');
     try {
-      let insertedCount = 0;
-      
-      // We expect scheduleDataArray to be an array of 2 weeks: [{ week_start, scheduleData }, ...]
-      for (let i = 0; i < scheduleDataArray.length; i++) {
-        const weekObj = scheduleDataArray[i];
-        if (!weekObj || !weekObj.scheduleData || weekObj.scheduleData.length === 0) continue;
-        
-        // Suffix the base week_key provided by the user
-        const suffix = (scheduleDataArray.length > 1) ? ` - W${i + 1}` : '';
-        const currentWeekKey = week_key + suffix;
-        const currentWeekStart = weekObj.week_start || week_start;
+      for (const week of weeksToPublish) {
+        const resolvedWeekKey = week.week_key || week_key;
+        const resolvedWeekStart = week.week_start || week_start || resolvedWeekKey;
 
-        // 1. Deactivate existing schedules for this week
-        await tx.execute({ sql: 'UPDATE schedules SET is_active = 0 WHERE week_key = ?', args: [currentWeekKey] });
+        if (!resolvedWeekKey || !resolvedWeekStart) {
+          throw new Error('Week key/start could not be determined from the uploaded file');
+        }
 
-        // 2. Insert new schedule
+        await tx.execute({ sql: 'UPDATE schedules SET is_active = 0 WHERE week_key = ?', args: [resolvedWeekKey] });
+
         const schedResult = await tx.execute({
           sql: `
-            INSERT INTO schedules (week_key, week_start, published_by, is_active, original_filename) 
+            INSERT INTO schedules (week_key, week_start, published_by, is_active, original_filename)
             VALUES (?, ?, ?, 1, ?)
           `,
-          args: [currentWeekKey, currentWeekStart, adminId, previewRecord.original_name]
+          args: [resolvedWeekKey, resolvedWeekStart, adminId, previewRecord.original_name]
         });
-        
-        const newSchedId = Number(schedResult.lastInsertRowid);
 
-        // 3. Process employees and shifts
-        for (const row of weekObj.scheduleData) {
+        const newSchedId = insertId(schedResult);
+        if (!newSchedId) {
+          throw new Error('Failed to create schedule record');
+        }
+
+        for (const row of week.rows || []) {
+          const employeeCode = row.employeeId || row.employee_id || null;
           let empId;
-          const existingEmpResult = await tx.execute({ sql: 'SELECT id FROM employees WHERE name_ar = ?', args: [row.name] });
-          const existingEmp = existingEmpResult.rows[0];
-          
-          if (existingEmp) {
-            empId = existingEmp.id;
-          } else {
-            const empResult = await tx.execute({ sql: 'INSERT INTO employees (name_ar, department) VALUES (?, ?)', args: [row.name, row.department] });
-            empId = Number(empResult.lastInsertRowid);
+
+          if (employeeCode) {
+            const byCode = await tx.execute({
+              sql: 'SELECT id FROM employees WHERE employee_id = ?',
+              args: [employeeCode]
+            });
+            const existing = byCode.rows[0];
+            if (existing) {
+              empId = existing.id;
+              await tx.execute({
+                sql: 'UPDATE employees SET name_ar = ?, department = ?, status = ?, is_deleted = 0 WHERE id = ?',
+                args: [row.name, row.department, 'Active', empId]
+              });
+            }
           }
 
-          // Insert shifts
-          for (const [day, shiftVal] of Object.entries(row.shifts)) {
+          if (!empId) {
+            const byName = await tx.execute({
+              sql: `SELECT id FROM employees WHERE name_ar = ? AND (employee_id IS NULL OR employee_id = '') ORDER BY is_deleted ASC, id ASC LIMIT 1`,
+              args: [row.name]
+            });
+            const existing = byName.rows[0];
+            if (existing) {
+              empId = existing.id;
+              await tx.execute({
+                sql: 'UPDATE employees SET name_ar = ?, department = ?, status = ?, is_deleted = 0 WHERE id = ?',
+                args: [row.name, row.department, 'Active', empId]
+              });
+            }
+          }
+
+          if (!empId) {
+            const empResult = await tx.execute({
+              sql: 'INSERT INTO employees (name_ar, employee_id, department, status, is_deleted) VALUES (?, ?, ?, ?, 0)',
+              args: [row.name, employeeCode, row.department, 'Active']
+            });
+            empId = insertId(empResult);
+          }
+
+          for (const [day, shiftVal] of Object.entries(row.shifts || {})) {
             await tx.execute({
               sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)',
               args: [newSchedId, empId, day, shiftVal]
             });
           }
-          insertedCount++;
         }
-      }
 
-      // 4. Log Audit
-      await tx.execute({
-        sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
-        args: [adminId, 'Publish Schedule', JSON.stringify({ base_week: week_key, total_rows: insertedCount })]
-      });
+        await tx.execute({
+          sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+          args: [adminId, 'Publish Schedule', JSON.stringify({ week: resolvedWeekKey, rows: (week.rows || []).length })]
+        });
+      }
 
       await tx.commit();
     } catch (e) {
@@ -230,14 +289,13 @@ router.post('/admin/schedule/publish', authenticateToken, [
       throw e;
     }
 
-    // Cleanup preview
     await db.execute({ sql: 'DELETE FROM schedule_previews WHERE id = ?', args: [previewId] });
-    try { fs.unlinkSync(previewRecord.file_path); } catch(e){}
-    
+    try { fs.unlinkSync(previewRecord.file_path); } catch (e) {}
+
     res.json({ success: true, message: 'Schedule published successfully' });
   } catch (e) {
     console.error('Publish error:', e);
-    res.status(500).json({ error: 'Database error during publish' });
+    res.status(500).json({ error: e.message || 'Database error during publish' });
   }
 });
 

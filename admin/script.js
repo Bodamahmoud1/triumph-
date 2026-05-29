@@ -573,7 +573,8 @@ function renderSchedulePreview(data){
   if(errors.length){
     let errHtml = '<div style="margin-top:14px">';
     errors.forEach(e=>{
-      errHtml += `<div style="color:var(--danger);font-size:.82rem;margin-bottom:4px">⚠️ صف ${e.row+1}: ${escHtml(e.message)}</div>`;
+      const msg = e.message || (Array.isArray(e.issues) ? e.issues.join(', ') : '');
+      errHtml += `<div style="color:var(--danger);font-size:.82rem;margin-bottom:4px">⚠️ صف ${e.row}: ${escHtml(msg)}</div>`;
     });
     errHtml += '</div>';
     $('#schedule-validation-errors').innerHTML = errHtml;
@@ -583,12 +584,13 @@ function renderSchedulePreview(data){
 $('#schedule-publish-btn').addEventListener('click', async()=>{
   if(!scheduleFile){toast('يرجى رفع ملف أولاً','warning');return;}
   if(!schedulePreviewData || !schedulePreviewData.previewId){toast('انتظر حتى يتم تحليل الملف','warning');return;}
-  if(!schedulePreviewData.previewData || schedulePreviewData.previewData.length === 0){
+  const hasWorkbookWeeks = Array.isArray(schedulePreviewData.weeks) && schedulePreviewData.weeks.length > 0;
+  const hasPreviewRows = Array.isArray(schedulePreviewData.previewData) && schedulePreviewData.previewData.length > 0;
+  const hasWeekRows = hasWorkbookWeeks && schedulePreviewData.weeks.some((w) => w.rows && w.rows.length > 0);
+  if (!hasPreviewRows && !hasWeekRows) {
     toast('لا يمكن نشر جدول فارغ. يرجى التأكد من أن الملف يحتوي على بيانات صحيحة.', 'warning');
     return;
   }
-  
-  const hasWorkbookWeeks = Array.isArray(schedulePreviewData.weeks) && schedulePreviewData.weeks.length > 0;
   let weekKey = '';
   if(!hasWorkbookWeeks){
     weekKey = prompt("أدخل مفتاح الأسبوع (مثال: 2026-W21):", "2026-W21");
@@ -599,13 +601,14 @@ $('#schedule-publish-btn').addEventListener('click', async()=>{
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner spinner-sm" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></div> جاري النشر…';
   try{
+    const publishBody = { previewId: schedulePreviewData.previewId };
+    if (!hasWorkbookWeeks) {
+      publishBody.week_key = weekKey;
+      publishBody.week_start = weekKey;
+    }
     await api('/api/admin/schedule/publish', {
       method:'POST',
-      body: JSON.stringify({
-        previewId: schedulePreviewData.previewId,
-        week_key: weekKey,
-        week_start: weekKey
-      })
+      body: JSON.stringify(publishBody)
     });
     toast(hasWorkbookWeeks ? 'تم نشر أسبوعين من الملف بنجاح' : 'تم نشر الجدول بنجاح','success');
     window._removeScheduleFile();
