@@ -135,6 +135,7 @@ const scheduleRoutes = require('./routes/schedule');
 const contentRoutes = require('./routes/content');
 const staffRoutes = require('./routes/staff');
 const auditRoutes = require('./routes/audit');
+const adminsRoutes = require('./routes/admins');
 const dataFilesRoutes = require('./routes/data-files');
 
 // Serve the admin entry without relying on a trailing-slash redirect.
@@ -151,6 +152,7 @@ app.use('/api/admin/content', contentRoutes);
 app.use('/api/admin/data', dataFilesRoutes);
 app.use('/api/admin/staff', staffRoutes);
 app.use('/api/admin/audit', auditRoutes);
+app.use('/api/admin/admins', adminsRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

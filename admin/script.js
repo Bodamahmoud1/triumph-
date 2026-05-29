@@ -256,7 +256,7 @@ loginForm.addEventListener('submit', async(e)=>{
   }
 });
 
-logoutBtn.addEventListener('click', async()=>{
+async function handleLogout(){
   const refreshToken = getRefreshToken();
   if(refreshToken){
     await fetch(API_BASE + '/api/admin/login/logout', {
@@ -266,11 +266,15 @@ logoutBtn.addEventListener('click', async()=>{
     }).catch(()=>{});
   }
   clearToken();
+  setSidebarOpen(false);
+  setSidebarAccountOpen(false);
   showLogin();
   toast('تم تسجيل الخروج','info');
-});
+}
 
-changePasswordBtn.addEventListener('click', ()=>{
+function openChangePasswordModal(){
+  setSidebarOpen(false);
+  setSidebarAccountOpen(false);
   openModal('🔑 تغيير كلمة المرور', `
     <div class="form-group">
       <label>كلمة المرور الحالية</label>
@@ -290,7 +294,15 @@ changePasswordBtn.addEventListener('click', ()=>{
     const btn = $('#cp-save');
     if(btn) btn.addEventListener('click', changePassword);
   },50);
-});
+}
+
+if(logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+const sidebarLogoutBtn = $('#sidebar-logout-btn');
+if(sidebarLogoutBtn) sidebarLogoutBtn.addEventListener('click', handleLogout);
+
+if(changePasswordBtn) changePasswordBtn.addEventListener('click', openChangePasswordModal);
+const sidebarChangePasswordBtn = $('#sidebar-change-password-btn');
+if(sidebarChangePasswordBtn) sidebarChangePasswordBtn.addEventListener('click', openChangePasswordModal);
 
 async function changePassword(){
   const oldPassword = ($('#cp-old')||{}).value || '';
@@ -338,15 +350,16 @@ function switchModule(mod){
     a.classList.toggle('active', a.dataset.module === mod);
   });
   // Update mobile tabs
-  $$('.mobile-tab').forEach(t=>{
+  $$('.mobile-tab[data-module]').forEach(t=>{
     t.classList.toggle('active', t.dataset.module === mod);
   });
+  setSidebarAccountOpen(false);
   // Show module
   $$('.module').forEach(m => m.classList.remove('active'));
   const target = $(`#mod-${mod}`);
   if(target) target.classList.add('active');
   // Close mobile sidebar
-  sidebar.classList.remove('open');
+  setSidebarOpen(false);
   // Load data
   loadModule(mod);
 }
@@ -357,18 +370,49 @@ $$('#sidebar-nav a').forEach(a=>{
     switchModule(a.dataset.module);
   });
 });
-$$('.mobile-tab').forEach(t=>{
+const sidebarAccountToggle = $('#sidebar-account-toggle');
+const sidebarAccountMenu = $('#sidebar-account-menu');
+
+function setSidebarAccountOpen(open){
+  if(!sidebarAccountMenu) return;
+  sidebarAccountMenu.hidden = !open;
+  if(sidebarAccountToggle){
+    sidebarAccountToggle.classList.toggle('open', open);
+    sidebarAccountToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+}
+
+if(sidebarAccountToggle){
+  sidebarAccountToggle.addEventListener('click', e=>{
+    e.stopPropagation();
+    setSidebarAccountOpen(sidebarAccountMenu.hidden);
+  });
+}
+
+$$('.mobile-tab[data-module]').forEach(t=>{
   t.addEventListener('click', ()=> switchModule(t.dataset.module));
 });
-mobileMenuBtn.addEventListener('click', ()=>{
-  sidebar.classList.toggle('open');
+
+function setSidebarOpen(open){
+  if(!open) setSidebarAccountOpen(false);
+  sidebar.classList.toggle('open', open);
+  adminPage.classList.toggle('sidebar-open', open);
+}
+mobileMenuBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  setSidebarOpen(!sidebar.classList.contains('open'));
 });
-// Close sidebar on outside click
+// Close sidebar on outside click / backdrop
 document.addEventListener('click', e=>{
   if(sidebar.classList.contains('open') &&
      !sidebar.contains(e.target) &&
-     e.target !== mobileMenuBtn){
-    sidebar.classList.remove('open');
+     !mobileMenuBtn.contains(e.target)){
+    setSidebarOpen(false);
+  }
+  if(sidebarAccountMenu && !sidebarAccountMenu.hidden &&
+     sidebarAccountToggle && !sidebarAccountToggle.contains(e.target) &&
+     !sidebarAccountMenu.contains(e.target)){
+    setSidebarAccountOpen(false);
   }
 });
 
@@ -379,6 +423,7 @@ function loadModule(mod){
     case 'content':  loadContentSection('intro'); break;
     case 'staff':    loadStaff(); break;
     case 'audit':    loadAudit(1); break;
+    case 'admins':   loadAdmins(); break;
   }
 }
 
@@ -533,9 +578,19 @@ async function uploadScheduleFile(file){
   }
 }
 
+const ROSTER_SHIFT_ORDER = ['Morning', 'Evening', 'Night'];
+
 function renderSchedulePreview(data){
-  let rawRows = data.previewData || data.rows || data.preview || [];
+  let rawRows = (data.previewData || data.rows || data.preview || []).slice();
   const errors = data.errors || [];
+  rawRows.sort((a, b) => {
+    const rankA = ROSTER_SHIFT_ORDER.indexOf(a.shiftGroup || a.shift_group || 'Morning');
+    const rankB = ROSTER_SHIFT_ORDER.indexOf(b.shiftGroup || b.shift_group || 'Morning');
+    const safeA = rankA === -1 ? ROSTER_SHIFT_ORDER.length : rankA;
+    const safeB = rankB === -1 ? ROSTER_SHIFT_ORDER.length : rankB;
+    if (safeA !== safeB) return safeA - safeB;
+    return String(a.name || '').localeCompare(String(b.name || ''), 'ar');
+  });
   if(!rawRows.length){
     $('#schedule-preview-table').innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">لا توجد بيانات في الملف</div></div>';
     return;
@@ -546,6 +601,7 @@ function renderSchedulePreview(data){
     if(r.shifts) {
        return { 
          'الأسبوع': r.week_key || '',
+         'الوردية': r.shiftGroup || r.shift_group || '',
          'كود الموظف': r.employeeId || '',
          'الاسم': r.name, 
          'الوظيفة': r.job || r.department, 
@@ -606,11 +662,17 @@ $('#schedule-publish-btn').addEventListener('click', async()=>{
       publishBody.week_key = weekKey;
       publishBody.week_start = weekKey;
     }
-    await api('/api/admin/schedule/publish', {
+    const res = await api('/api/admin/schedule/publish', {
       method:'POST',
       body: JSON.stringify(publishBody)
     });
-    toast(hasWorkbookWeeks ? 'تم نشر أسبوعين من الملف بنجاح' : 'تم نشر الجدول بنجاح','success');
+    const count = res.weekCount || (Array.isArray(res.publishedWeeks) ? res.publishedWeeks.length : 0);
+    const keys = Array.isArray(res.publishedWeeks) ? res.publishedWeeks.join('، ') : '';
+    if (count > 1) {
+      toast(`تم نشر ${count} أسابيع: ${keys}`, 'success');
+    } else {
+      toast(keys ? `تم نشر الأسبوع ${keys}` : 'تم نشر الجدول بنجاح', 'success');
+    }
     window._removeScheduleFile();
     loadScheduleHistory();
   }catch(err){
@@ -1723,6 +1785,115 @@ $('#audit-export-btn').addEventListener('click', async()=>{
     toast('تم تصدير سجل المراجعة','success');
   }catch(err){
     toast('فشل في التصدير: '+err.message,'error');
+  }
+});
+
+/* ═══════════════════════════════════════════════
+   MODULE: ADMINS
+   ═══════════════════════════════════════════════ */
+function adminFormHtml(){
+  return `
+    <div class="form-group">
+      <label for="af-username">اسم المستخدم *</label>
+      <input type="text" class="form-control" id="af-username" dir="ltr" autocomplete="username"
+        placeholder="مثال: admin2" pattern="[A-Za-z0-9._-]{3,32}" required>
+      <div class="form-hint">3–32 حرفاً: إنجليزي، أرقام، نقطة، شرطة سفلية أو وسطية.</div>
+    </div>
+    <div class="form-group">
+      <label for="af-password">كلمة المرور *</label>
+      <input type="password" class="form-control" id="af-password" autocomplete="new-password" required>
+      <div class="form-hint">8 أحرف على الأقل.</div>
+    </div>
+    <div class="form-group">
+      <label for="af-password-confirm">تأكيد كلمة المرور *</label>
+      <input type="password" class="form-control" id="af-password-confirm" autocomplete="new-password" required>
+    </div>
+  `;
+}
+
+function getAdminFormData(){
+  const username = (($('#af-username')||{}).value || '').trim();
+  const password = ($('#af-password')||{}).value || '';
+  const confirm = ($('#af-password-confirm')||{}).value || '';
+  if(!username || !password){
+    toast('يرجى تعبئة اسم المستخدم وكلمة المرور','warning');
+    return null;
+  }
+  if(!/^[a-zA-Z0-9._-]{3,32}$/.test(username)){
+    toast('اسم المستخدم غير صالح','warning');
+    return null;
+  }
+  if(password.length < 8){
+    toast('كلمة المرور يجب أن تكون 8 أحرف على الأقل','warning');
+    return null;
+  }
+  if(password !== confirm){
+    toast('تأكيد كلمة المرور غير مطابق','warning');
+    return null;
+  }
+  return { username, password };
+}
+
+async function loadAdmins(){
+  const container = $('#admins-table-content');
+  if(!container) return;
+  container.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>جاري تحميل البيانات…</p></div>';
+  try{
+    const res = await api('/api/admin/admins');
+    const rows = res.data || [];
+    if(!rows.length){
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">👤</div><div class="empty-text">لا يوجد مشرفون مسجلون</div></div>';
+      return;
+    }
+    let html = '<div class="table-wrap"><table class="data-table"><thead><tr>' +
+      '<th>#</th><th>اسم المستخدم</th><th>تاريخ الإنشاء</th></tr></thead><tbody>';
+    rows.forEach((row, i) => {
+      const isSelf = row.username && $('#header-username') &&
+        row.username === $('#header-username').textContent;
+      html += `<tr>
+        <td>${i + 1}</td>
+        <td><strong>${escHtml(row.username)}</strong>${isSelf ? ' <span class="status-badge status-active">أنت</span>' : ''}</td>
+        <td>${formatDateTime(row.created_at)}</td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+  }catch(err){
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-text">فشل التحميل</div><div class="empty-hint">${escHtml(err.message)}</div></div>`;
+  }
+}
+
+async function saveNewAdmin(){
+  const body = getAdminFormData();
+  if(!body) return;
+  const btn = $('#admin-save-new');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner spinner-sm" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></div>';
+  try{
+    await api('/api/admin/admins', { method:'POST', body: JSON.stringify(body) });
+    toast('تم إنشاء حساب المشرف بنجاح','success');
+    closeModal();
+    loadAdmins();
+  }catch(err){
+    toast('فشل الإضافة: ' + err.message, 'error');
+  }finally{
+    btn.disabled = false;
+    btn.innerHTML = '💾 إنشاء الحساب';
+  }
+}
+
+onReady(()=>{
+  const adminAddBtn = $('#admin-add-btn');
+  if(adminAddBtn){
+    adminAddBtn.addEventListener('click', ()=>{
+      openModal('➕ إضافة مشرف جديد', adminFormHtml(),
+        '<button class="btn btn-gold" id="admin-save-new">💾 إنشاء الحساب</button><button class="btn btn-outline" data-action="close-modal">إلغاء</button>'
+      );
+      setTimeout(()=>{
+        const saveBtn = $('#admin-save-new');
+        if(saveBtn) saveBtn.addEventListener('click', saveNewAdmin);
+      }, 50);
+    });
   }
 });
 
