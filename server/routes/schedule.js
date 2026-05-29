@@ -18,6 +18,55 @@ function insertId(result) {
   return Number(id);
 }
 
+const ROSTER_SHIFT_ORDER = ['Morning', 'Evening', 'Night'];
+
+function normaliseShiftGroup(value) {
+  const group = String(value || '').trim();
+  return ROSTER_SHIFT_ORDER.includes(group) ? group : null;
+}
+
+function rosterRowKey(employeeId, nameAr, shiftGroup) {
+  return `${employeeId || nameAr}::${shiftGroup || 'Morning'}`;
+}
+
+function compareRosterRows(a, b) {
+  const orderA = ROSTER_SHIFT_ORDER.indexOf(a.shift_group || 'Morning');
+  const orderB = ROSTER_SHIFT_ORDER.indexOf(b.shift_group || 'Morning');
+  const rankA = orderA === -1 ? ROSTER_SHIFT_ORDER.length : orderA;
+  const rankB = orderB === -1 ? ROSTER_SHIFT_ORDER.length : orderB;
+  if (rankA !== rankB) return rankA - rankB;
+  return String(a.name_ar || '').localeCompare(String(b.name_ar || ''), 'ar');
+}
+
+async function getSiblingWeeks(db, scheduleRow) {
+  if (!scheduleRow) return [];
+  const filename = scheduleRow.original_filename;
+  const publishedAt = scheduleRow.published_at;
+  if (!filename || !publishedAt) {
+    const single = await db.execute({
+      sql: `
+        SELECT week_key, week_start
+        FROM schedules
+        WHERE id = ? AND is_active = 1
+      `,
+      args: [scheduleRow.id]
+    });
+    return single.rows;
+  }
+  const result = await db.execute({
+    sql: `
+      SELECT week_key, week_start
+      FROM schedules
+      WHERE is_active = 1
+        AND original_filename = ?
+        AND published_at = ?
+      ORDER BY week_start ASC, week_key ASC
+    `,
+    args: [filename, publishedAt]
+  });
+  return result.rows;
+}
+
 // Multer setup for temporary Excel uploads
 const isVercel = process.env.VERCEL === '1';
 const uploadDir = isVercel ? '/tmp/uploads' : path.join(__dirname, '..', 'uploads');
@@ -59,6 +108,23 @@ async function cleanupPreviews(db) {
   }
 }
 
+// GET /api/schedule/weeks - PUBLIC list of active published weeks
+router.get('/schedule/weeks', async (req, res) => {
+  const db = req.app.locals.db;
+  try {
+    const result = await db.execute(`
+      SELECT week_key, week_start, published_at, original_filename
+      FROM schedules
+      WHERE is_active = 1
+      ORDER BY week_start ASC, week_key ASC
+    `);
+    res.json({ weeks: result.rows });
+  } catch (err) {
+    console.error('List schedule weeks error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
 // GET /api/schedule - PUBLIC (No Auth)
 router.get('/schedule', [
   query('week').optional().trim().escape()
@@ -85,33 +151,52 @@ router.get('/schedule', [
 
     const shiftsResult = await db.execute({
       sql: `
-        SELECT ss.day, ss.shift, e.name_ar, e.name_en, e.department, e.employee_id 
+        SELECT ss.day, ss.shift, ss.shift_group, e.name_ar, e.name_en, e.department, e.employee_id
         FROM schedule_shifts ss
         JOIN employees e ON ss.employee_id = e.id
         WHERE ss.schedule_id = ?
+        ORDER BY ss.shift_group ASC, e.name_ar ASC, ss.day ASC
       `,
       args: [scheduleRow.id]
     });
 
+    const usesShiftGroups = shiftsResult.rows.some((row) => normaliseShiftGroup(row.shift_group));
     const employeesMap = {};
-    shiftsResult.rows.forEach(row => {
-      const key = row.employee_id || row.name_ar;
+    shiftsResult.rows.forEach((row) => {
+      const shiftGroup = normaliseShiftGroup(row.shift_group)
+        || normaliseShiftGroup(row.shift)
+        || 'Morning';
+      const key = usesShiftGroups
+        ? rosterRowKey(row.employee_id, row.name_ar, shiftGroup)
+        : (row.employee_id || row.name_ar);
+
       if (!employeesMap[key]) {
         employeesMap[key] = {
           name_ar: row.name_ar,
           name_en: row.name_en,
           department: row.department,
+          employee_id: row.employee_id,
+          shift_group: usesShiftGroups ? shiftGroup : null,
           shifts: {}
         };
       }
       employeesMap[key].shifts[row.day] = row.shift;
+      if (!employeesMap[key].shift_group && usesShiftGroups) {
+        employeesMap[key].shift_group = shiftGroup;
+      }
     });
+
+    const employees = Object.values(employeesMap).sort(compareRosterRows);
+    const siblings = await getSiblingWeeks(db, scheduleRow);
+    const siblingIndex = siblings.findIndex((w) => w.week_key === scheduleRow.week_key);
 
     res.json({
       data: {
         week_key: scheduleRow.week_key,
         week_start: scheduleRow.week_start,
-        employees: Object.values(employeesMap)
+        employees,
+        siblings,
+        sibling_index: siblingIndex
       }
     });
   } catch (err) {
@@ -198,19 +283,34 @@ router.post('/admin/schedule/publish', authenticateToken, [
           rows: Array.isArray(schedulePayload) ? schedulePayload : (schedulePayload.data || [])
         }];
 
-    if (!weeksToPublish.length || weeksToPublish.every((week) => !week.rows || week.rows.length === 0)) {
+    const weeksWithRows = weeksToPublish.filter((week) => week.rows && week.rows.length > 0);
+    if (!weeksWithRows.length) {
       return res.status(400).json({ error: 'Schedule preview is empty' });
     }
 
+    const resolvedKeys = weeksWithRows.map((week, index) => {
+      const key = week.week_key || week_key;
+      if (!key) return null;
+      return key;
+    });
+    if (resolvedKeys.some((key) => !key)) {
+      return res.status(400).json({ error: 'Week key could not be determined from the uploaded file' });
+    }
+    if (new Set(resolvedKeys).size !== resolvedKeys.length) {
+      return res.status(400).json({ error: 'Duplicate week keys in workbook — check date row in Excel' });
+    }
+
+    const publishedWeekKeys = [];
     const tx = await db.transaction('write');
     try {
-      for (const week of weeksToPublish) {
+      for (const week of weeksWithRows) {
         const resolvedWeekKey = week.week_key || week_key;
         const resolvedWeekStart = week.week_start || week_start || resolvedWeekKey;
 
         if (!resolvedWeekKey || !resolvedWeekStart) {
           throw new Error('Week key/start could not be determined from the uploaded file');
         }
+        publishedWeekKeys.push(resolvedWeekKey);
 
         await tx.execute({ sql: 'UPDATE schedules SET is_active = 0 WHERE week_key = ?', args: [resolvedWeekKey] });
 
@@ -269,10 +369,11 @@ router.post('/admin/schedule/publish', authenticateToken, [
             empId = insertId(empResult);
           }
 
+          const shiftGroup = normaliseShiftGroup(row.shiftGroup || row.shift_group) || 'Morning';
           for (const [day, shiftVal] of Object.entries(row.shifts || {})) {
             await tx.execute({
-              sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift) VALUES (?, ?, ?, ?)',
-              args: [newSchedId, empId, day, shiftVal]
+              sql: 'INSERT INTO schedule_shifts (schedule_id, employee_id, day, shift, shift_group) VALUES (?, ?, ?, ?, ?)',
+              args: [newSchedId, empId, day, shiftVal, shiftGroup]
             });
           }
         }
@@ -292,7 +393,12 @@ router.post('/admin/schedule/publish', authenticateToken, [
     await db.execute({ sql: 'DELETE FROM schedule_previews WHERE id = ?', args: [previewId] });
     try { fs.unlinkSync(previewRecord.file_path); } catch (e) {}
 
-    res.json({ success: true, message: 'Schedule published successfully' });
+    res.json({
+      success: true,
+      message: 'Schedule published successfully',
+      publishedWeeks: publishedWeekKeys,
+      weekCount: publishedWeekKeys.length
+    });
   } catch (e) {
     console.error('Publish error:', e);
     res.status(500).json({ error: e.message || 'Database error during publish' });

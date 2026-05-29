@@ -35,9 +35,15 @@ html[data-scheme="dark"] {
   --status-leave-text: #fdba74;
   --status-resigned-bg: #3a1424;
   --status-resigned-text: #fda4af;
-  --shift-night-bg: #243042;
-  --shift-night-text: #e2e8f0;
-  --shift-night-border: #475569;
+  --shift-morning-bg: #5c3d0a;
+  --shift-morning-text: #ffcc80;
+  --shift-morning-border: #e65100;
+  --shift-evening-bg: #1e3a5f;
+  --shift-evening-text: #90caf9;
+  --shift-evening-border: #1565c0;
+  --shift-night-bg: #0d0d0d;
+  --shift-night-text: #f5f5f5;
+  --shift-night-border: #616161;
 }
 
 

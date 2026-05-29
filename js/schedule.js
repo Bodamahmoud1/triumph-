@@ -3,9 +3,15 @@
 ═══════════════════════════════════════ */
 (function initScheduleUX() {
   var scheduleApiUrl = '/api/schedule';
+  var scheduleWeeksApiUrl = '/api/schedule/weeks';
   var cacheKey = 'triumph_schedule_cache';
   var currentWeekKey = null;
   var currentScheduleData = null;
+  var publishedWeeks = [];
+  var siblingWeeks = [];
+  var siblingIndex = 0;
+
+  var SHIFT_ORDER = ['Morning', 'Evening', 'Night'];
 
   var tbody = document.getElementById('schedule-table-body');
   var mobileList = document.getElementById('schedule-card-list');
@@ -230,15 +236,61 @@
     });
   }
 
+  function getShiftGroupRank(emp) {
+    var group = emp.shift_group;
+    if (!group) {
+      var shifts = Object.values(emp.shifts || {});
+      for (var i = 0; i < SHIFT_ORDER.length; i++) {
+        if (shifts.indexOf(SHIFT_ORDER[i]) !== -1) group = SHIFT_ORDER[i];
+      }
+    }
+    var idx = SHIFT_ORDER.indexOf(group || '');
+    return idx === -1 ? SHIFT_ORDER.length : idx;
+  }
+
+  function sortEmployeesByShift(employees) {
+    return (employees || []).slice().sort(function(a, b) {
+      var rankDiff = getShiftGroupRank(a) - getShiftGroupRank(b);
+      if (rankDiff !== 0) return rankDiff;
+      return String(a.name_ar || '').localeCompare(String(b.name_ar || ''), 'ar');
+    });
+  }
+
+  function updateWeekNavUi() {
+    var weeks = siblingWeeks.length > 1 ? siblingWeeks : publishedWeeks;
+    var idx = siblingWeeks.length > 1 ? siblingIndex : findPublishedWeekIndex(currentWeekKey);
+    var hasMultiple = weeks.length > 1;
+
+    if (btnPrev) btnPrev.disabled = !hasMultiple || idx <= 0;
+    if (btnNext) btnNext.disabled = !hasMultiple || idx < 0 || idx >= weeks.length - 1;
+
+    if (titleLabel) {
+      if (hasMultiple && idx >= 0) {
+        titleLabel.textContent = 'الأسبوع ' + (idx + 1) + ' من ' + weeks.length;
+      } else if (currentWeekKey) {
+        titleLabel.textContent = currentWeekKey;
+      }
+    }
+
+    if (hasMultiple && idx >= 0) {
+      setStatus('الأسبوع ' + (idx + 1) + ' من ' + weeks.length + ' — استخدم الأسهم للتنقل بين الأسابيع', true);
+    } else {
+      setStatus('', false);
+    }
+  }
+
   function renderSchedule(data) {
     currentWeekKey = data.week_key;
-    currentScheduleData = data.employees;
+    siblingWeeks = Array.isArray(data.siblings) ? data.siblings : [];
+    siblingIndex = typeof data.sibling_index === 'number' && data.sibling_index >= 0
+      ? data.sibling_index
+      : findPublishedWeekIndex(data.week_key);
+    currentScheduleData = sortEmployeesByShift(data.employees);
     renderJobFilters(currentScheduleData);
-    
-    if (titleLabel) titleLabel.textContent = data.week_key;
+
     if (weekLabel) weekLabel.textContent = formatWeekRange(data.week_key, data.week_start);
     if (emptyState) emptyState.style.display = 'none';
-    setStatus('', false);
+    updateWeekNavUi();
 
     filterAndRender();
   }
@@ -248,7 +300,7 @@
     
     var query = searchInput ? normaliseText(searchInput.value) : '';
     
-    var filtered = currentScheduleData.filter(function(emp) {
+    var filtered = sortEmployeesByShift(currentScheduleData).filter(function(emp) {
       var job = getEmployeeJob(emp);
       var matchJob = activeFilter === 'all' || job === activeFilter;
       var matchName = true;
@@ -340,7 +392,36 @@
   var btnNext = document.getElementById('schedule-next');
   var btnCurrent = document.getElementById('schedule-current');
 
+  function loadPublishedWeeks() {
+    return fetch(scheduleWeeksApiUrl)
+      .then(function(res) { return res.json(); })
+      .then(function(payload) {
+        publishedWeeks = Array.isArray(payload.weeks) ? payload.weeks : [];
+        return publishedWeeks;
+      })
+      .catch(function() {
+        publishedWeeks = [];
+        return publishedWeeks;
+      });
+  }
+
+  function findPublishedWeekIndex(weekKey) {
+    return publishedWeeks.findIndex(function(w) { return w.week_key === weekKey; });
+  }
+
   function navWeek(offset) {
+    var weeks = siblingWeeks.length > 1 ? siblingWeeks : publishedWeeks;
+    if (weeks.length) {
+      var idx = siblingWeeks.length > 1 ? siblingIndex : findPublishedWeekIndex(currentWeekKey);
+      if (idx === -1) idx = weeks.length - 1;
+      var target = weeks[idx + offset];
+      if (target && target.week_key) {
+        fetchSchedule(target.week_key);
+        return;
+      }
+      return;
+    }
+
     if (!currentWeekKey) currentWeekKey = getISOWeekString(new Date());
     var d = parseISOWeek(currentWeekKey);
     d.setDate(d.getDate() + (offset * 7));
@@ -349,8 +430,16 @@
 
   if (btnPrev) btnPrev.addEventListener('click', function() { navWeek(-1); });
   if (btnNext) btnNext.addEventListener('click', function() { navWeek(1); });
-  if (btnCurrent) btnCurrent.addEventListener('click', function() { fetchSchedule(null); });
+  if (btnCurrent) btnCurrent.addEventListener('click', function() {
+    loadPublishedWeeks().then(function(weeks) {
+      if (weeks.length) fetchSchedule(weeks[weeks.length - 1].week_key);
+      else fetchSchedule(null);
+    });
+  });
 
-  // Load initial
-  fetchSchedule(null);
+  // Load published weeks list, then show the latest active week
+  loadPublishedWeeks().then(function(weeks) {
+    if (weeks.length) fetchSchedule(weeks[weeks.length - 1].week_key);
+    else fetchSchedule(null);
+  });
 })();

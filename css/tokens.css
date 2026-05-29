@@ -51,9 +51,15 @@
   --status-leave-text: #e65100;
   --status-resigned-bg: #fce4ec;
   --status-resigned-text: #c62828;
-  --shift-night-bg: #1a1a2e;
+  --shift-morning-bg: #fff3e0;
+  --shift-morning-text: #e65100;
+  --shift-morning-border: #ffb74d;
+  --shift-evening-bg: #eaf0fb;
+  --shift-evening-text: #1a3370;
+  --shift-evening-border: rgba(0, 86, 179, 0.25);
+  --shift-night-bg: #1a1a1a;
   --shift-night-text: #ffffff;
-  --shift-night-border: #2d2d4e;
+  --shift-night-border: #404040;
 }
 
 [data-theme="gold"] {

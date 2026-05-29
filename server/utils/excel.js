@@ -24,6 +24,17 @@ function getCellDate(cell) {
   const value = cell.value;
   if (value instanceof Date && !Number.isNaN(value.getTime())) return value;
   if (value && value.result instanceof Date && !Number.isNaN(value.result.getTime())) return value.result;
+  const numeric = typeof value === 'number' ? value : (value && typeof value.result === 'number' ? value.result : null);
+  if (numeric != null && numeric > 30000 && numeric < 60000) {
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+    const parsed = new Date(excelEpoch.getTime() + Math.round(numeric) * 86400000);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
+  const text = safeCellText(cell);
+  if (text) {
+    const parsed = new Date(text);
+    if (!Number.isNaN(parsed.getTime())) return parsed;
+  }
   return null;
 }
 
