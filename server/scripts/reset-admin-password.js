@@ -1,7 +1,6 @@
 require('dotenv').config();
 
-const path = require('path');
-const Database = require('better-sqlite3');
+const { createClient } = require('@libsql/client');
 const bcrypt = require('bcryptjs');
 
 function fail(message) {
@@ -16,34 +15,46 @@ if (!newPassword || String(newPassword).trim().length < 8) {
   fail('ADMIN_PASSWORD must be set and at least 8 characters long (in server/.env).');
 }
 
-const dbPath = process.env.DB_PATH
-  ? path.resolve(__dirname, '..', process.env.DB_PATH)
-  : path.resolve(__dirname, '..', 'triumph_laundry.db');
+const dbUrl = process.env.TURSO_DATABASE_URL || 'file:./triumph_laundry.db';
+const dbAuthToken = process.env.TURSO_AUTH_TOKEN || '';
 
-const db = new Database(dbPath);
+const db = createClient({
+  url: dbUrl,
+  authToken: dbAuthToken
+});
 
-try {
-  const admin = db.prepare('SELECT id, username FROM admins WHERE username = ?').get(username);
+async function main() {
+  const adminResult = await db.execute({
+    sql: 'SELECT id, username FROM admins WHERE username = ?',
+    args: [username]
+  });
+  const admin = adminResult.rows[0];
+
   if (!admin) {
-    fail(`Admin user "${username}" not found in DB. (DB_PATH=${dbPath})`);
+    fail(`Admin user "${username}" not found in database.`);
   }
 
   const salt = bcrypt.genSaltSync(12);
   const hash = bcrypt.hashSync(String(newPassword), salt);
 
-  const tx = db.transaction(() => {
-    db.prepare('UPDATE admins SET password_hash = ? WHERE id = ?').run(hash, admin.id);
-    db.prepare('UPDATE sessions SET is_revoked = 1 WHERE admin_id = ?').run(admin.id);
-    db.prepare('INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)').run(
-      admin.id,
-      'Password Reset (CLI)',
-      JSON.stringify({ username: admin.username })
-    );
+  await db.execute({
+    sql: 'UPDATE admins SET password_hash = ? WHERE id = ?',
+    args: [hash, admin.id]
+  });
+  await db.execute({
+    sql: 'UPDATE sessions SET is_revoked = 1 WHERE admin_id = ?',
+    args: [admin.id]
+  });
+  await db.execute({
+    sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+    args: [admin.id, 'Password Reset (CLI)', JSON.stringify({ username: admin.username })]
   });
 
-  tx();
   console.log(`OK: Password reset for admin "${admin.username}". All sessions revoked.`);
-} finally {
-  db.close();
+  console.log(`Database: ${dbUrl.startsWith('file:') ? dbUrl : '(Turso remote)'}`);
 }
 
+main().catch((err) => {
+  console.error('Password reset failed:', err.message || err);
+  process.exit(1);
+});
