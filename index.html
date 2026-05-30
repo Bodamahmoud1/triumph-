@@ -47,8 +47,6 @@
     href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;700;800;900&display=swap"
     rel="stylesheet">
   <script src="js/theme-init.js"></script>
-  <script src="js/translations.js"></script>
-  <script src="js/i18n.js"></script>
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -124,8 +122,8 @@
       </div>
 
       <!-- Guide title -->
-      <div class="intro-guide-label" id="intro-title" data-content-field="intro.title_ar" data-i18n="intro.title">Laundry Guide / دليل المغسلة</div>
-      <div class="intro-guide-sub" data-content-field="intro.body_ar" data-i18n="intro.subtitle">Chemicals & Washing Programs Reference</div>
+      <div class="intro-guide-label" id="intro-title" data-content-field="intro.title_ar">Laundry Guide / دليل المغسلة</div>
+      <div class="intro-guide-sub" data-content-field="intro.body_ar">Chemicals & Washing Programs Reference</div>
 
       <!-- Diamond divider -->
       <div class="intro-divider">
@@ -158,7 +156,7 @@
         <div class="intro-prog-bar"></div>
       </div>
 
-      <button class="intro-skip" type="button" data-action="close-intro" data-i18n="intro.enter">Enter Guide / دخول المغسلة ›</button>
+      <button class="intro-skip" type="button" data-action="close-intro">Enter Guide / دخول المغسلة ›</button>
     </div>
   </div>
 
@@ -183,10 +181,6 @@
 
     </nav>
 
-    
-    <button class="theme-btn" id="lang-toggle-btn" type="button" aria-label="Toggle Language" onclick="window.i18n.toggleLanguage()" style="font-weight:bold; margin-right: 8px;">
-      EN
-    </button>
     <button class="theme-btn" id="theme-btn" type="button" aria-label="Toggle dark mode / تبديل الوضع الليلي"
       data-action="toggle-theme">
       <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -222,7 +216,7 @@
       <button class="mob-cat-btn" type="button" data-action="toggle-mobile-category" aria-expanded="false"
         aria-controls="mob-chemicals">
         <span class="mob-cat-icon">🧪</span>
-        <span class="mob-cat-label" data-i18n="nav.chemicals" data-i18n="landing.chemTitle">Chemicals / الكيماويات</span>
+        <span class="mob-cat-label">Chemicals / الكيماويات</span>
         <span class="mob-cat-arrow">›</span>
       </button>
       <div class="mob-cat-items" id="mob-chemicals">
@@ -235,7 +229,7 @@
       <button class="mob-cat-btn" type="button" data-action="toggle-mobile-category" aria-expanded="false"
         aria-controls="mob-programs">
         <span class="mob-cat-icon">⚙️</span>
-        <span class="mob-cat-label" data-i18n="nav.programs" data-i18n="landing.progTitle">Programs / البرامج</span>
+        <span class="mob-cat-label">Programs / البرامج</span>
         <span class="mob-cat-arrow">›</span>
       </button>
       <div class="mob-cat-items" id="mob-programs">
@@ -248,7 +242,7 @@
       <button class="mob-cat-btn" type="button" data-nav-section="schedule" data-close-mobile="true"
         data-nav-section="schedule">
         <span class="mob-cat-icon">📅</span>
-        <span class="mob-cat-label" data-i18n="nav.schedule">Schedule / جدول العمل</span>
+        <span class="mob-cat-label">Schedule / جدول العمل</span>
         <span class="mob-cat-arrow">›</span>
       </button>
     </div>
@@ -257,7 +251,7 @@
     <div class="mob-category">
       <button class="mob-cat-btn" type="button" data-nav-section="tasks" data-close-mobile="true" data-nav-section="tasks">
         <span class="mob-cat-icon">📋</span>
-        <span class="mob-cat-label" data-i18n="nav.tasks" data-i18n="landing.tasksTitle">Job Tasks / المهام الوظيفية</span>
+        <span class="mob-cat-label">Job Tasks / المهام الوظيفية</span>
         <span class="mob-cat-arrow">›</span>
       </button>
     </div>
@@ -266,7 +260,7 @@
     <div class="mob-category">
       <button class="mob-cat-btn" type="button" data-nav-section="tips" data-close-mobile="true" data-nav-section="tips">
         <span class="mob-cat-icon">💡</span>
-        <span class="mob-cat-label" data-i18n="nav.tips" data-i18n="landing.tipsTitle">Tips / النصائح</span>
+        <span class="mob-cat-label">Tips / النصائح</span>
         <span class="mob-cat-arrow">›</span>
       </button>
     </div>
@@ -294,7 +288,7 @@
               TRIUMPH LUXURY HOTEL
               <span class="landing-dot"></span>
             </div>
-            <h1 class="landing-title" data-i18n="landing.title">Laundry Operations / تشغيل المغسلة</h1>
+            <h1 class="landing-title">Laundry Operations / تشغيل المغسلة</h1>
             <p class="landing-subtitle" dir="auto">Fast internal lookup for chemicals, wash programs, and safety
               reminders.</p>
           </div>
@@ -323,7 +317,7 @@
               </div>
               <div class="landing-card-content">
                 <h2 class="landing-card-title">Chemicals / الكيماويات</h2>
-                <p class="landing-card-title-ar" data-i18n="landing.chemSub">Reference by product, code, function, and dose.</p>
+                <p class="landing-card-title-ar">Reference by product, code, function, and dose.</p>
                 <p class="landing-card-desc">دليل تشغيلي للكيماويات — الجرعات، البيانات الفنية، وتعليمات
                   الاستخدام</p>
               </div>
@@ -407,7 +401,7 @@
               </div>
               <div class="landing-card-content">
                 <h2 class="landing-card-title">Programs / البرامج</h2>
-                <p class="landing-card-title-ar" data-i18n="landing.progSub">Wash formulas by textile type and operation.</p>
+                <p class="landing-card-title-ar">Wash formulas by textile type and operation.</p>
                 <p class="landing-card-desc">جداول غسيل مفصلة لكل نوع — درجات الحرارة، مستويات المياه، والكيماويات
                   المستخدمة</p>
               </div>
@@ -439,7 +433,7 @@
               </div>
               <div class="landing-card-content">
                 <h2 class="landing-card-title">Tips / النصائح</h2>
-                <p class="landing-card-title-ar" data-i18n="landing.tipsSub">Daily reminders for sorting, dosing, timing, and safety.</p>
+                <p class="landing-card-title-ar">Daily reminders for sorting, dosing, timing, and safety.</p>
                 <p class="landing-card-desc">نقاط تشغيل سريعة تساعد الفريق يحافظ على الجودة ويقلل أخطاء الغسيل اليومية.
                 </p>
               </div>
@@ -473,7 +467,7 @@
               </div>
               <div class="landing-card-content">
                 <h2 class="landing-card-title">Job Tasks / المهام الوظيفية</h2>
-                <p class="landing-card-title-ar" data-i18n="landing.tasksSub">Role duties for laundry team members.</p>
+                <p class="landing-card-title-ar">Role duties for laundry team members.</p>
                 <p class="landing-card-desc">مهام تشغيل يومية للغسال، الدراي كلين، الفالية، والترزي/اليونيفورم.</p>
               </div>
               <div class="landing-card-stats">
@@ -498,7 +492,7 @@
               <div class="landing-divider-diamond"></div>
               <div class="landing-divider-line"></div>
             </div>
-            <p class="landing-powered" data-i18n="landing.footerTag">Triumph Hotel — Laundry Department Internal Guide</p>
+            <p class="landing-powered">Triumph Hotel — Laundry Department Internal Guide</p>
           </div>
         </div>
       </section>
@@ -511,11 +505,11 @@
         <div class="hero-shell">
           <div class="hero-copy">
             <div class="hero-eyebrow">TRIUMPH HOTEL</div>
-            <h1 class="hero-title" data-i18n="chemicals.heroTitle">Laundry Operations Reference — Quick Chemical Lookup for Daily Use</h1>
+            <h1 class="hero-title">Laundry Operations Reference — Quick Chemical Lookup for Daily Use</h1>
             <p class="hero-text">Search by name or function — jump directly to the right chemical for any wash cycle.
             </p>
             <div class="hero-actions">
-              <a class="hero-btn hero-btn-primary" href="#hypo" data-i18n="chemicals.btnRef">Chemical Reference / دليل الكيماويات</a>
+              <a class="hero-btn hero-btn-primary" href="#hypo">Chemical Reference / دليل الكيماويات</a>
               <button class="hero-btn hero-btn-secondary" type="button" id="print-chemicals">Print Visible / طباعة
                 المعروض</button>
               <button class="hero-btn hero-btn-secondary" type="button" data-nav-section="programs">
@@ -527,26 +521,26 @@
 
           <div class="hero-panel">
             <div class="hero-card">
-              <div class="hero-card-title" data-i18n="chemicals.lookupTitle">Quick Lookup / بحث سريع</div>
+              <div class="hero-card-title">Quick Lookup / بحث سريع</div>
               <label class="hero-search" for="product-search">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                   <circle cx="11" cy="11" r="7"></circle>
                   <path d="m20 20-3.5-3.5"></path>
                 </svg>
                 <input id="product-search" type="search"
-                  placeholder="Search chemical, code, or function / ابحث عن كيماوي أو وظيفة" data-i18n="chemicals.searchPlaceholder" dir="auto" />
+                  placeholder="Search chemical, code, or function / ابحث عن كيماوي أو وظيفة" dir="auto" />
               </label>
             </div>
 
             <div class="hero-card">
-              <div class="hero-card-title" data-i18n="chemicals.filterTitle">Filter by Type / تصفية حسب النوع</div>
+              <div class="hero-card-title">Filter by Type / تصفية حسب النوع</div>
               <div class="hero-filter-row">
-                <button class="hero-filter active" type="button" data-filter="all" data-i18n="chemicals.filterAll">All / الكل</button>
-                <button class="hero-filter" type="button" data-filter="gold" data-i18n="chemicals.filterBleach">Bleach / مبيض</button>
-                <button class="hero-filter" type="button" data-filter="pink" data-i18n="chemicals.filterSoftener">Softener / منعم</button>
-                <button class="hero-filter" type="button" data-filter="blue" data-i18n="chemicals.filterBuilder">Builder / قلوي</button>
-                <button class="hero-filter" type="button" data-filter="red" data-i18n="chemicals.filterNeutralizer">Neutralizer / معادل</button>
-                <button class="hero-filter" type="button" data-filter="green" data-i18n="chemicals.filterDetergent">Detergent / منظف</button>
+                <button class="hero-filter active" type="button" data-filter="all">All / الكل</button>
+                <button class="hero-filter" type="button" data-filter="gold">Bleach / مبيض</button>
+                <button class="hero-filter" type="button" data-filter="pink">Softener / منعم</button>
+                <button class="hero-filter" type="button" data-filter="blue">Builder / قلوي</button>
+                <button class="hero-filter" type="button" data-filter="red">Neutralizer / معادل</button>
+                <button class="hero-filter" type="button" data-filter="green">Detergent / منظف</button>
               </div>
               <div class="filter-status" id="chemicals-count">8 chemicals</div>
             </div>
@@ -575,8 +569,8 @@
         <!-- Chemicals are now dynamically injected by js/renderer.js -->
       </div><!-- /products-grid -->
       <div class="empty-state" id="chemicals-empty" hidden>
-        <strong data-i18n="chemicals.emptyTitle">No chemicals match this search.</strong>
-        <span data-i18n="chemicals.emptySub">Clear the search or choose All to show the full reference.</span>
+        <strong>No chemicals match this search.</strong>
+        <span>Clear the search or choose All to show the full reference.</span>
       </div>
     </div><!-- /section-chemicals -->
 
@@ -589,29 +583,29 @@
         <div class="prog-section-header">
           <div class="prog-section-badge"><span class="prog-badge-dot"></span>WASHING PROGRAMS<span
               class="prog-badge-dot"></span></div>
-          <h2 class="prog-section-title" data-i18n="programs.title">برامج الغسيل</h2>
-          <p class="prog-section-sub" data-i18n="programs.sub">Triumph New Cairo — Standard Operating Wash Formulas</p>
+          <h2 class="prog-section-title">برامج الغسيل</h2>
+          <p class="prog-section-sub">Triumph New Cairo — Standard Operating Wash Formulas</p>
         </div>
 
         <div class="programs-toolbar" aria-label="Program lookup controls">
           <div class="program-search-card">
-            <div class="program-toolbar-label" data-i18n="programs.lookupTitle">Quick Program Lookup / بحث سريع</div>
+            <div class="program-toolbar-label">Quick Program Lookup / بحث سريع</div>
             <label class="program-search" for="program-search">
               <span aria-hidden="true">Search</span>
               <input id="program-search" type="search"
-                placeholder="Search program, linen type, chemical, temperature / ابحث في البرامج" data-i18n="programs.searchPlaceholder" dir="auto" />
+                placeholder="Search program, linen type, chemical, temperature / ابحث في البرامج" dir="auto" />
             </label>
             <div class="filter-status" id="programs-count">13 programs</div>
           </div>
           <div class="program-filter-card">
-            <div class="program-toolbar-label" data-i18n="programs.filterTitle">Filter by Family / تصفية حسب النوع</div>
+            <div class="program-toolbar-label">Filter by Family / تصفية حسب النوع</div>
             <div class="program-filter-row">
               <button class="program-filter active" type="button" data-program-filter="all">All / الكل</button>
-              <button class="program-filter" type="button" data-program-filter="linen" data-i18n="programs.filterLinen">Linen / ملايات</button>
-              <button class="program-filter" type="button" data-program-filter="towels" data-i18n="programs.filterTowels">Towels / فوط</button>
-              <button class="program-filter" type="button" data-program-filter="table" data-i18n="programs.filterTable">Table / ترابيزات</button>
-              <button class="program-filter" type="button" data-program-filter="uniforms" data-i18n="programs.filterUniforms">Uniforms / يونيفورم</button>
-              <button class="program-filter" type="button" data-program-filter="utility" data-i18n="programs.filterUtility">Utility / مساعد</button>
+              <button class="program-filter" type="button" data-program-filter="linen">Linen / ملايات</button>
+              <button class="program-filter" type="button" data-program-filter="towels">Towels / فوط</button>
+              <button class="program-filter" type="button" data-program-filter="table">Table / ترابيزات</button>
+              <button class="program-filter" type="button" data-program-filter="uniforms">Uniforms / يونيفورم</button>
+              <button class="program-filter" type="button" data-program-filter="utility">Utility / مساعد</button>
             </div>
           </div>
           <button class="program-print-btn" type="button" id="print-programs">Print Visible / طباعة المعروض</button>
@@ -621,8 +615,8 @@
           <!-- Programs are now dynamically injected by js/renderer.js -->
         </div><!-- /programs-grid -->
         <div class="empty-state" id="programs-empty" hidden>
-          <strong data-i18n="programs.emptyTitle">No programs match this search.</strong>
-          <span data-i18n="programs.emptySub">Try a linen type, program number, chemical, or temperature.</span>
+          <strong>No programs match this search.</strong>
+          <span>Try a linen type, program number, chemical, or temperature.</span>
         </div>
 
 
@@ -637,11 +631,11 @@
             <div>
               <div class="schedule-badge"><span class="schedule-badge-dot"></span>STAFF ROSTER<span
                   class="schedule-badge-dot"></span></div>
-              <h2 class="schedule-title" id="schedule-title" dir="rtl" data-i18n="schedule.title">جدول العمل الأسبوعي</h2>
-              <p class="schedule-subtitle" data-i18n="schedule.sub">Weekly Schedule</p>
+              <h2 class="schedule-title" id="schedule-title" dir="rtl">جدول العمل الأسبوعي</h2>
+              <p class="schedule-subtitle">Weekly Schedule</p>
             </div>
             <div class="schedule-week-card" aria-live="polite">
-              <span class="schedule-week-label" data-i18n="schedule.weekLabel">Week / الأسبوع</span>
+              <span class="schedule-week-label">Week / الأسبوع</span>
               <strong id="schedule-week-range" dir="auto">Loading...</strong>
               <small id="schedule-active-week" dir="auto"></small>
             </div>
@@ -652,12 +646,12 @@
               <button class="schedule-nav-btn" id="schedule-prev" type="button" aria-label="Previous week">← Previous
                 week</button>
               <button class="schedule-nav-btn schedule-current-btn" id="schedule-current" type="button"
-                aria-pressed="true" data-i18n="schedule.currentWeek">Current week / الأسبوع الحالي</button>
+                aria-pressed="true">Current week / الأسبوع الحالي</button>
               <button class="schedule-nav-btn" id="schedule-next" type="button" aria-label="Next week">Next week
                 →</button>
             </div>
             <label class="schedule-select-label" for="schedule-job">
-              <span data-i18n="schedule.jobSelect">Job / الوظيفة</span>
+              <span>Job / الوظيفة</span>
               <select id="schedule-job" dir="auto">
                 <option value="all">All / الكل</option>
               </select>
@@ -667,16 +661,16 @@
 
           <div class="schedule-toolbar">
             <div class="schedule-search-card">
-              <div class="schedule-toolbar-label" data-i18n="schedule.lookupTitle">Employee Lookup / بحث الموظفين</div>
+              <div class="schedule-toolbar-label">Employee Lookup / بحث الموظفين</div>
               <label class="schedule-search" for="schedule-search">
                 <span aria-hidden="true">Search</span>
-                <input id="schedule-search" type="search" placeholder="Search employee / ابحث باسم الموظف" data-i18n="schedule.searchPlaceholder"
+                <input id="schedule-search" type="search" placeholder="Search employee / ابحث باسم الموظف"
                   autocomplete="off" dir="auto" />
               </label>
               <div class="schedule-status" id="schedule-status">Loading schedule...</div>
             </div>
             <div class="schedule-filter-card">
-              <div class="schedule-toolbar-label" data-i18n="schedule.filterTitle">Filter by Job / تصفية حسب الوظيفة</div>
+              <div class="schedule-toolbar-label">Filter by Job / تصفية حسب الوظيفة</div>
               <div class="schedule-filter-row" role="group" aria-label="Job filters">
                 <button class="hero-filter schedule-filter active" type="button" data-schedule-filter="all"
                   aria-pressed="true">All / الكل</button>
@@ -689,14 +683,14 @@
               <table class="schedule-table" id="schedule-table" dir="ltr" aria-describedby="schedule-status">
                 <thead>
                   <tr>
-                    <th scope="col" data-i18n="schedule.tableEmp">Employee Name</th>
-                    <th scope="col" data-i18n="schedule.tableSat">Saturday</th>
-                    <th scope="col" data-i18n="schedule.tableSun">Sunday</th>
-                    <th scope="col" data-i18n="schedule.tableMon">Monday</th>
-                    <th scope="col" data-i18n="schedule.tableTue">Tuesday</th>
-                    <th scope="col" data-i18n="schedule.tableWed">Wednesday</th>
-                    <th scope="col" data-i18n="schedule.tableThu">Thursday</th>
-                    <th scope="col" data-i18n="schedule.tableFri">Friday</th>
+                    <th scope="col">Employee Name</th>
+                    <th scope="col">Saturday</th>
+                    <th scope="col">Sunday</th>
+                    <th scope="col">Monday</th>
+                    <th scope="col">Tuesday</th>
+                    <th scope="col">Wednesday</th>
+                    <th scope="col">Thursday</th>
+                    <th scope="col">Friday</th>
                   </tr>
                 </thead>
                 <tbody id="schedule-table-body"></tbody>
@@ -718,8 +712,8 @@
         <div class="tasks-shell">
           <div class="tasks-header">
             <div class="tasks-badge"><span></span>JOB TASKS<span></span></div>
-            <h2 class="tasks-title" id="tasks-title" data-i18n="tasks.title">المهام الوظيفية</h2>
-            <p class="tasks-subtitle" data-i18n="tasks.sub">Standard operating responsibilities for Triumph Laundry team roles.</p>
+            <h2 class="tasks-title" id="tasks-title">المهام الوظيفية</h2>
+            <p class="tasks-subtitle">Standard operating responsibilities for Triumph Laundry team roles.</p>
           </div>
 
           <div class="tasks-overview" aria-label="Job task roles summary">
@@ -988,13 +982,13 @@
   <nav class="bottom-nav" id="bottom-nav" aria-label="Primary sections" role="tablist">
     <button class="bnav-item is-active" type="button" role="tab" aria-selected="true" data-section="landing" data-nav-section="landing" aria-label="Home / الرئيسية">
       <span class="bnav-icon" aria-hidden="true">🏠</span>
-      <span class="bnav-label" data-i18n="bnav.home">الرئيسية</span>
+      <span class="bnav-label">الرئيسية</span>
       <span class="bnav-sub">Home</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="chemicals" data-nav-section="chemicals" aria-label="Chemicals / الكيماويات">
       <span class="bnav-icon" aria-hidden="true">🧪</span>
-      <span class="bnav-label" data-i18n="bnav.chemicals">الكيماويات</span>
+      <span class="bnav-label">الكيماويات</span>
       <span class="bnav-sub">Chemicals</span>
       <span class="bnav-indicator"></span>
     </button>
@@ -1039,25 +1033,25 @@
           <circle cx="42" cy="44" r="2" fill="rgba(255,255,255,0.8)" />
         </svg>
       </span>
-      <span class="bnav-label" data-i18n="bnav.programs">البرامج</span>
+      <span class="bnav-label">البرامج</span>
       <span class="bnav-sub">Programs</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="schedule" data-nav-section="schedule" aria-label="Schedule / جدول العمل">
       <span class="bnav-icon" aria-hidden="true">📅</span>
-      <span class="bnav-label" data-i18n="bnav.schedule">الجدول</span>
+      <span class="bnav-label">الجدول</span>
       <span class="bnav-sub">Schedule</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tasks" data-nav-section="tasks" aria-label="Job Tasks / المهام الوظيفية">
       <span class="bnav-icon" aria-hidden="true">📋</span>
-      <span class="bnav-label" data-i18n="bnav.tasks">المهام</span>
+      <span class="bnav-label">المهام</span>
       <span class="bnav-sub">Tasks</span>
       <span class="bnav-indicator"></span>
     </button>
     <button class="bnav-item" type="button" role="tab" aria-selected="false" data-section="tips" data-nav-section="tips" aria-label="Tips / النصائح">
       <span class="bnav-icon" aria-hidden="true">💡</span>
-      <span class="bnav-label" data-i18n="bnav.tips">النصائح</span>
+      <span class="bnav-label">النصائح</span>
       <span class="bnav-sub">Tips</span>
       <span class="bnav-indicator"></span>
     </button>
