@@ -526,6 +526,67 @@ router.post('/admin/schedule/restore/:id', authenticateToken, [
   }
 });
 
+// DELETE /api/admin/schedule/:id - AUTH REQUIRED
+router.delete('/admin/schedule/:id', authenticateToken, [
+  param('id').isInt().toInt()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+
+  const db = req.app.locals.db;
+  const scheduleId = req.params.id;
+  const adminId = req.user.id;
+
+  try {
+    const targetResult = await db.execute({ sql: 'SELECT * FROM schedules WHERE id = ?', args: [scheduleId] });
+    const target = targetResult.rows[0];
+    if (!target) return res.status(404).json({ error: 'Schedule not found' });
+
+    const wasActive = target.is_active === 1 || target.is_active === true;
+    const weekKey = target.week_key;
+
+    const tx = await db.transaction('write');
+    try {
+      await tx.execute({ sql: 'DELETE FROM schedule_shifts WHERE schedule_id = ?', args: [scheduleId] });
+      await tx.execute({ sql: 'DELETE FROM schedules WHERE id = ?', args: [scheduleId] });
+
+      if (wasActive) {
+        const previousResult = await tx.execute({
+          sql: `
+            SELECT id FROM schedules
+            WHERE week_key = ?
+            ORDER BY id DESC
+            LIMIT 1
+          `,
+          args: [weekKey]
+        });
+        const previous = previousResult.rows[0];
+        if (previous) {
+          await tx.execute({ sql: 'UPDATE schedules SET is_active = 1 WHERE id = ?', args: [previous.id] });
+        }
+      }
+
+      await tx.execute({
+        sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
+        args: [
+          adminId,
+          'Delete Schedule',
+          JSON.stringify({ id: scheduleId, week: weekKey, wasActive })
+        ]
+      });
+      await tx.commit();
+    } catch (e) {
+      await tx.rollback();
+      throw e;
+    }
+
+    res.json({ success: true, message: 'Schedule deleted' });
+  } catch (e) {
+    console.error('Delete schedule error:', e);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
 // GET /api/admin/schedule/download/:id - AUTH via query token or header
 router.get('/admin/schedule/download/:id', [
   param('id').isInt().toInt()

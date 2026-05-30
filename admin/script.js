@@ -44,6 +44,7 @@ function handleDelegatedAdminAction(event) {
   if (action === 'remove-schedule-file') return window._removeScheduleFile();
   if (action === 'restore-schedule') return window._restoreSchedule(target.dataset.id);
   if (action === 'download-schedule') return window._downloadSchedule(target.dataset.id);
+  if (action === 'delete-schedule') return window._deleteSchedule(target.dataset.id, target.dataset.week);
   if (action === 'select-json-item') return window._selectJsonItem(target.dataset.id);
   if (action === 'add-chemical') return window._addChemical();
   if (action === 'delete-chemical') return window._deleteChemical(target.dataset.id);
@@ -797,9 +798,10 @@ async function loadScheduleHistory(){
         <td>${escHtml(uploader)}</td>
         <td style="font-size:.8rem">${escHtml(filename)}</td>
         <td><span class="status-badge ${isActive ? 'status-published' : 'status-resigned'}">${isActive ? '✓ نشط' : 'نسخة محفوظة'}</span></td>
-        <td>
+        <td class="schedule-history-actions">
           <button class="btn btn-outline btn-sm" data-action="restore-schedule" data-id="${id}" ${isActive ? 'disabled' : ''}>🔄 استعادة</button>
-          <button class="btn btn-outline btn-sm" data-action="download-schedule" data-id="${id}" style="margin-right:4px">📥 تحميل</button>
+          <button class="btn btn-outline btn-sm" data-action="download-schedule" data-id="${id}">📥 تحميل</button>
+          <button class="btn btn-danger btn-sm" data-action="delete-schedule" data-id="${id}" data-week="${escAttr(item.week_key || item.weekKey || '')}">🗑️ حذف</button>
         </td>
       </tr>`;
     });
@@ -817,6 +819,17 @@ window._restoreSchedule = async function(id){
     toast('تمت استعادة الجدول بنجاح','success');
     loadScheduleHistory();
   }catch(err){toast('فشلت الاستعادة: '+err.message,'error')}
+};
+
+window._deleteSchedule = async function(id, weekKey){
+  const weekLabel = weekKey ? ` (${weekKey})` : '';
+  if(!confirm(`هل تريد حذف هذا الجدول نهائياً${weekLabel}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
+  try{
+    await api(`/api/admin/schedule/${id}`, { method: 'DELETE' });
+    toast('تم حذف الجدول بنجاح','success');
+    loadScheduleHistory();
+    loadDashboard();
+  }catch(err){toast('فشل الحذف: '+err.message,'error')}
 };
 
 window._downloadSchedule = async function(id){
