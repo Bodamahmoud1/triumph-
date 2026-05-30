@@ -1,0 +1,30 @@
+[33m247b882[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{Sat May 30 14:53:01 2026}: commit: test
+[33madd366a[m HEAD@{Sat May 30 01:07:26 2026}: reset: moving to HEAD
+[33madd366a[m HEAD@{Sat May 30 01:07:26 2026}: reset: moving to HEAD
+[33madd366a[m HEAD@{Sat May 30 01:04:15 2026}: reset: moving to add366a
+[33m14544ec[m HEAD@{Sat May 30 01:00:37 2026}: pull --rebase origin main (finish): returning to refs/heads/main
+[33m14544ec[m HEAD@{Sat May 30 01:00:37 2026}: pull --rebase origin main (pick): Commit current changes onto previous commit
+[33madd366a[m HEAD@{Sat May 30 01:00:37 2026}: pull --rebase origin main (start): checkout add366ac31da8819d382bce2f05223a65af69971
+[33m4478e0f[m HEAD@{Sat May 30 00:58:37 2026}: commit: Commit current changes onto previous commit
+[33mfedef11[m HEAD@{Sat May 30 00:58:37 2026}: reset: moving to HEAD~1
+[33madd366a[m HEAD@{Sat May 30 00:58:28 2026}: reset: moving to HEAD~1
+[33me17f046[m HEAD@{Fri May 29 20:14:55 2026}: commit: feat: implement internationalization system with dynamic UI rendering and language support
+[33madd366a[m HEAD@{Fri May 29 20:06:18 2026}: commit: feat: add schedule.js UX logic for filtering, rendering, and week navigation
+[33mfedef11[m HEAD@{Fri May 29 19:57:27 2026}: commit: feat: implement secure Excel file upload handling, schema migration utility, and scheduling management routes
+[33m1e34359[m HEAD@{Fri May 29 15:01:48 2026}: commit: feat(schedule): navigate twin-week rosters and order shifts Morning–Evening–Night
+[33m99493c9[m HEAD@{Fri May 29 15:00:18 2026}: commit: feat(admin): move account menu to sidebar and improve mobile layout
+[33maec414a[m HEAD@{Fri May 29 08:39:51 2026}: commit: fix: restore full Excel schedule parser and weeks-based publish
+[33m8428108[m HEAD@{Fri May 29 08:32:53 2026}: commit: fix: reset admin password via Turso and align env examples
+[33mb0649a9[m HEAD@{Fri May 29 08:27:30 2026}: commit: fix: admin asset paths and enable API on Vercel with Turso
+[33m37d790b[m HEAD@{Fri May 29 08:24:33 2026}: commit: fix: resolve merge conflicts and restore Turso-backed server
+[33ma213b4c[m HEAD@{Fri May 29 02:19:34 2026}: commit (merge): tst
+[33m67c0ff4[m HEAD@{Fri May 29 00:33:45 2026}: checkout: moving from d18dc0f7226c2be856a459750729b721d253871a to main
+[33md18dc0f[m HEAD@{Thu May 28 23:11:25 2026}: pull origin main: Fast-forward
+[33me298de4[m HEAD@{Thu May 28 22:59:33 2026}: pull origin main: Fast-forward
+[33m56fe31e[m HEAD@{Thu May 28 22:54:22 2026}: pull origin main: Fast-forward
+[33m1e6384c[m HEAD@{Thu May 28 22:46:10 2026}: pull origin main: Fast-forward
+[33me079013[m HEAD@{Thu May 28 22:35:54 2026}: pull origin main: Fast-forward
+[33m5c5f2f9[m HEAD@{Thu May 28 22:28:57 2026}: pull origin main: Fast-forward
+[33me93bee7[m HEAD@{Thu May 28 22:24:01 2026}: pull origin main: Fast-forward
+[33m6cfecf3[m HEAD@{Thu May 28 22:21:21 2026}: pull origin main: Fast-forward
+[33m4caf1d0[m HEAD@{Thu May 28 22:11:00 2026}: merge remotes/origin/codex/add-job-tasks-card-to-home: Merge made by the 'ort' strategy.
