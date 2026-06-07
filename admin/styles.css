@@ -1034,14 +1034,66 @@ select.form-control{
    ═══════════════════════════════════════════════ */
 .editor-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: 16px;
   align-items: start;
+}
+
+/* Content editor form rows – ensure they wrap gracefully */
+#content-editor-body .form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+#content-editor-body .form-row .form-group {
+  min-width: 140px;
+}
+
+/* Step row grid layout for program steps */
+.form-row.step-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  padding: 14px;
+  background: var(--surface-soft);
+  border-radius: var(--radius);
+  border: 1px solid var(--line-soft);
+  margin-bottom: 10px;
+  transition: border-color .2s ease;
+}
+.form-row.step-row:hover {
+  border-color: rgba(197,160,90,.25);
+}
+.form-row.step-row .form-group {
+  margin-bottom: 0;
+}
+
+/* Editor cards internal content – prevent overflow */
+.editor-grid .card {
+  min-width: 0;
+  overflow: hidden;
+}
+.editor-grid .table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ═══════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════ */
+/* ═════════════ 1200px – Medium screens ═════════════ */
+@media(max-width:1200px){
+  .editor-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+    gap: 14px;
+  }
+  .form-row.step-row .form-group {
+    min-width: 100px;
+  }
+}
+
+/* ═════════════ 900px – Tablet / sidebar collapse ═════════════ */
 @media(max-width:900px){
   .admin-sidebar{
     transform:translateX(100%);
@@ -1077,6 +1129,14 @@ select.form-control{
   .admin-header .header-action-btn{display:none}
   .form-row{flex-direction:column}
   .form-row .form-group{min-width:auto}
+
+  /* --- Content Editor: editor grid stacks to single column --- */
+  .editor-grid{
+    grid-template-columns:1fr;
+    gap:16px;
+  }
+
+  /* --- Content Editor: program step-rows go 2-col grid --- */
   .form-row.step-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1085,15 +1145,18 @@ select.form-control{
     padding: 14px;
     border-radius: var(--radius);
     border: 1px solid var(--line-soft);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
   .form-row.step-row .form-group {
     margin-bottom: 0;
+    min-width: 0;
   }
+  /* Operation & chemicals fields span full width */
   .form-row.step-row .form-group:nth-child(1),
   .form-row.step-row .form-group:nth-child(5) {
     grid-column: span 2;
   }
+  /* Remove button spans full width */
   .form-row.step-row .form-group:last-child {
     grid-column: span 2;
     align-items: center !important;
@@ -1102,7 +1165,12 @@ select.form-control{
   .form-row.step-row .form-group:last-child button {
     width: 100%;
   }
-  .editor-grid{grid-template-columns:1fr;gap:20px}
+
+  /* --- Content Editor: form action buttons --- */
+  #content-editor-body [style*="display:flex"][style*="gap:10px"] {
+    flex-wrap: wrap;
+  }
+
   .header-user{margin-inline-start:8px}
   #toast-container{
     top:72px;
@@ -1111,6 +1179,7 @@ select.form-control{
   }
   .toast{min-width:0;max-width:none;width:100%}
 }
+/* ═════════════ 600px – Mobile ═════════════ */
 @media(max-width:600px){
   .login-card{padding:36px 24px;margin:0 16px}
   .login-brand{font-size:1.8rem}
@@ -1171,9 +1240,115 @@ select.form-control{
   .stat-grid{grid-template-columns:1fr;gap:12px}
   .pagination{flex-wrap:wrap;gap:6px}
   table.data-table{min-width:520px}
+
+  /* --- Content Editor: compact spacing on mobile --- */
+  .editor-grid {
+    gap: 12px;
+  }
+  .editor-grid > .card {
+    padding: 12px;
+  }
+  .editor-grid .card-header {
+    margin-bottom: 10px;
+  }
+
+  /* --- Content Editor: step-row goes full single column --- */
+  .form-row.step-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+  .form-row.step-row .form-group:nth-child(1),
+  .form-row.step-row .form-group:nth-child(5),
+  .form-row.step-row .form-group:last-child {
+    grid-column: span 1;
+  }
+  .form-row.step-row .form-group:last-child button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  /* --- Content Editor: chemical/program form rows stack --- */
+  #content-editor-body .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  #content-editor-body .form-row .form-group {
+    min-width: 100% !important;
+    flex: none !important;
+  }
+
+  /* --- Content Editor: action buttons go full width --- */
+  #content-editor-body form > div:last-child {
+    flex-direction: column;
+  }
+  #content-editor-body form > div:last-child .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* --- Content Editor: textareas are more compact --- */
+  #content-editor-body textarea.form-control {
+    min-height: 80px;
+  }
+
+  /* --- Content Editor: data tables inside editor --- */
+  .editor-grid table.data-table {
+    min-width: 380px;
+  }
+  .editor-grid .table-wrap {
+    margin-inline: -12px;
+    padding-inline: 12px;
+    border-radius: 0;
+  }
+
+  /* --- Content Editor: section tabs scroll indicator --- */
+  .section-tabs::after {
+    content: '';
+    display: block;
+    flex-shrink: 0;
+    width: 4px;
+  }
+
+  /* --- Content Editor: description hint boxes --- */
+  #content-editor-body .empty-hint {
+    font-size: .75rem;
+    line-height: 1.6;
+    padding: 10px 12px;
+  }
 }
+
+/* ═════════════ 380px – Very small screens ═════════════ */
 @media(max-width:380px){
   .mobile-tab{font-size:.58rem;padding:5px 2px}
   .mobile-tab .tab-icon{font-size:1rem}
   .header-brand{font-size:.95rem}
+
+  /* --- Content Editor: even more compact --- */
+  .editor-grid > .card {
+    padding: 10px;
+  }
+  .section-tab {
+    padding: 7px 10px;
+    font-size: .75rem;
+  }
+  #content-editor-body .form-control {
+    padding: 9px 10px;
+    font-size: .82rem;
+  }
+  #content-editor-body label {
+    font-size: .76rem;
+  }
+  .editor-grid table.data-table {
+    min-width: 320px;
+    font-size: .78rem;
+  }
+  .editor-grid table.data-table th {
+    padding: 10px 8px;
+    font-size: .72rem;
+  }
+  .editor-grid table.data-table td {
+    padding: 9px 8px;
+    font-size: .78rem;
+  }
 }
