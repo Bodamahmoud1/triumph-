@@ -1030,6 +1030,16 @@ select.form-control{
 }
 
 /* ═══════════════════════════════════════════════
+   EDITOR GRID
+   ═══════════════════════════════════════════════ */
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  align-items: start;
+}
+
+/* ═══════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════ */
 @media(max-width:900px){
@@ -1067,6 +1077,32 @@ select.form-control{
   .admin-header .header-action-btn{display:none}
   .form-row{flex-direction:column}
   .form-row .form-group{min-width:auto}
+  .form-row.step-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    background: var(--surface-soft);
+    padding: 14px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-soft);
+    margin-bottom: 16px;
+  }
+  .form-row.step-row .form-group {
+    margin-bottom: 0;
+  }
+  .form-row.step-row .form-group:nth-child(1),
+  .form-row.step-row .form-group:nth-child(5) {
+    grid-column: span 2;
+  }
+  .form-row.step-row .form-group:last-child {
+    grid-column: span 2;
+    align-items: center !important;
+    justify-content: center;
+  }
+  .form-row.step-row .form-group:last-child button {
+    width: 100%;
+  }
+  .editor-grid{grid-template-columns:1fr;gap:20px}
   .header-user{margin-inline-start:8px}
   #toast-container{
     top:72px;

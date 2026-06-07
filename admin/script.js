@@ -922,7 +922,7 @@ function renderChemicalsEditor(activeId){
   const active = _chemicalsJson.find(x=>x.id===activeId) || _chemicalsJson[0] || null;
   const id = active ? active.id : '';
   const html = `
-    <div class="fade-in" style="display:grid;grid-template-columns: 1fr 2fr; gap:16px; align-items:start;">
+    <div class="fade-in editor-grid">
       <div class="card" style="margin:0;">
         <div class="card-header"><div class="card-title"><span class="icon">🧪</span> عناصر الكيماويات</div></div>
         <div style="padding:14px;">
@@ -1137,7 +1137,7 @@ function renderProgramsEditor(activeId){
   `).join('');
 
   const html = `
-    <div class="fade-in" style="display:grid;grid-template-columns: 1fr 2fr; gap:16px; align-items:start;">
+    <div class="fade-in editor-grid">
       <div class="card" style="margin:0;">
         <div class="card-header"><div class="card-title"><span class="icon">⚙️</span> عناصر البرامج</div></div>
         <div style="padding:14px;">
@@ -1377,7 +1377,7 @@ function renderTipsCardsEditor(data){
   const container = $('#content-editor-body');
   const active = _tipsCardsJson[_activeTipIndex] || null;
   const html = `
-    <div class="fade-in" style="display:grid;grid-template-columns: 1fr 2fr; gap:16px; align-items:start;">
+    <div class="fade-in editor-grid">
       <div class="card" style="margin:0;">
         <div class="card-header"><div class="card-title"><span class="icon">💡</span> مربعات النصائح</div></div>
         <div style="padding:14px;">
