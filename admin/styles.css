@@ -762,8 +762,8 @@ select.form-control{
   background-position:14px center;
   padding-left:32px;
 }
-.form-row{display:flex;gap:16px;flex-wrap:wrap}
-.form-row .form-group{flex:1;min-width:200px}
+.form-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.form-row .form-group{flex:1;min-width:200px;margin-bottom:0}
 .form-hint{font-size:.75rem;color:var(--text-muted);margin-top:4px}
 
 .admin-filter-bar{
