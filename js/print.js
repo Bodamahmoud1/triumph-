@@ -12,12 +12,60 @@ function printTarget(element, sectionName) {
   element.classList.add('print-target');
   document.body.classList.add('is-printing');
 
+  // Inject print header
+  var existingHeader = document.getElementById('print-page-header');
+  if (existingHeader) existingHeader.remove();
+  var existingFooter = document.getElementById('print-page-footer');
+  if (existingFooter) existingFooter.remove();
+
+  var title = getCardTitle(element) || 'Document';
+  var now = new Date();
+  var dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  var timeStr = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+  var printHeader = document.createElement('div');
+  printHeader.id = 'print-page-header';
+  printHeader.innerHTML =
+    '<div class="print-header-inner">' +
+    '  <div class="print-header-brand">' +
+    '    <div class="print-logo-mark">T</div>' +
+    '    <div class="print-brand-text">' +
+    '      <div class="print-hotel-name">TRIUMPH LUXURY HOTEL</div>' +
+    '      <div class="print-dept-name">Laundry Department</div>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div class="print-header-info">' +
+    '    <div class="print-doc-title">' + escapeHtmlPrint(title) + '</div>' +
+    '    <div class="print-doc-date">' + dateStr + ' — ' + timeStr + '</div>' +
+    '  </div>' +
+    '</div>';
+
+  var printFooter = document.createElement('div');
+  printFooter.id = 'print-page-footer';
+  printFooter.innerHTML =
+    '<div class="print-footer-inner">' +
+    '  <span>Triumph Hotel — Laundry Operations Reference</span>' +
+    '  <span>Confidential — Internal Use Only</span>' +
+    '</div>';
+
+  // Insert header before the print target and footer after
+  element.parentNode.insertBefore(printHeader, element);
+  if (element.nextSibling) {
+    element.parentNode.insertBefore(printFooter, element.nextSibling);
+  } else {
+    element.parentNode.appendChild(printFooter);
+  }
+
   var cleaned = false;
   var cleanup = function () {
     if (cleaned) return;
     cleaned = true;
     element.classList.remove('print-target');
     document.body.classList.remove('is-printing');
+    var h = document.getElementById('print-page-header');
+    var f = document.getElementById('print-page-footer');
+    if (h) h.remove();
+    if (f) f.remove();
     window.removeEventListener('afterprint', cleanup);
   };
 
@@ -25,10 +73,16 @@ function printTarget(element, sectionName) {
 
   setTimeout(function () {
     window.print();
-  }, 150);
+  }, 200);
 
-  // Fallback cleanup in case afterprint doesn't fire
-  setTimeout(cleanup, 5000);
+  // Fallback cleanup
+  setTimeout(cleanup, 8000);
+}
+
+function escapeHtmlPrint(str) {
+  var div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
 }
 
 function addPrintButton(card, sectionName) {

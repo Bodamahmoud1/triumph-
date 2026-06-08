@@ -45,6 +45,7 @@ module.exports = [
         getCardTitle: 'readonly',
         setActiveSection: 'readonly',
         scrollToTarget: 'readonly',
+        escapeHtmlPrint: 'readonly',
       },
     },
     rules: {

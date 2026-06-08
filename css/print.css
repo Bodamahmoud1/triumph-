@@ -1,287 +1,564 @@
- @media print {
+/* ══════════════════════════════════════════════════════════════
+   TRIUMPH HOTEL — PROFESSIONAL PRINT STYLESHEET
+   Designed for clean, branded A4 single-product printing
+══════════════════════════════════════════════════════════════ */
 
-   /* ── Page Setup ── */
-   @page {
-     size: A4 portrait;
-     margin: 12mm 10mm;
-   }
+@media print {
 
-   /* ── Hide everything not needed ── */
-   .bottom-nav,
-   #intro-overlay,
-   #bubble-canvas,
-   .theme-btn,
-   .site-footer,
-   .mob-nav-drawer,
-   .mob-backdrop,
-   .back-to-top,
-   .print-mini-btn,
-   .print-chemicals,
-   .print-programs,
-   .program-print-btn,
-   .section-header,
-   .section-toolbar,
-   .search-wrap,
-   .nav-bar,
-   .nav-panel,
-   .desktop-nav,
-   #print-chemicals,
-   #print-programs,
-   #print-schedule,
-   .masthead,
-   nav,
-   header,
-   footer {
-     display: none !important;
-   }
+  /* ── Page Setup ── */
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm 18mm 12mm;
+  }
 
-   /* ── Hide section-level content when printing a single card ── */
-   body.is-printing .site-hero,
-   body.is-printing .hero-shell,
-   body.is-printing .prog-section-header,
-   body.is-printing .programs-toolbar,
-   body.is-printing .empty-state,
-   body.is-printing .filter-status,
-   body.is-printing .hero-actions,
-   body.is-printing .hero-panel,
-   body.is-printing .hero-stats,
-   body.is-printing .prog-tips-section {
-     display: none !important;
-   }
+  /* ── Global Reset ── */
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
-   /* ── Remove page-wrap padding ── */
-   .page-wrap {
-     padding: 0 !important;
-     margin: 0 !important;
-     max-width: 100% !important;
-   }
+  html, body {
+    background: #fff !important;
+    color: #1a1a1a !important;
+    font-family: 'Noto Sans Arabic', 'Outfit', Arial, sans-serif !important;
+    font-size: 12px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow: visible !important;
+    line-height: 1.6 !important;
+  }
 
-   .programs-section {
-     padding: 0 !important;
-     margin: 0 !important;
-     max-width: 100% !important;
-   }
+  /* ── Kill all animations ── */
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .card-animate {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 
-   /* ── Reset body ── */
-   html, body {
-     background: #fff !important;
-     color: #000 !important;
-     font-size: 12px !important;
-     margin: 0 !important;
-     padding: 0 !important;
-     width: 100% !important;
-     overflow: visible !important;
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  /* ══════════════════════════════════════
+     HIDE NON-PRINT ELEMENTS
+  ══════════════════════════════════════ */
+  .bottom-nav,
+  #intro-overlay,
+  #bubble-canvas,
+  .theme-btn,
+  .site-footer,
+  .mob-nav-drawer,
+  .mob-backdrop,
+  .back-to-top,
+  .print-mini-btn,
+  .print-chemicals,
+  .print-programs,
+  .program-print-btn,
+  .schedule-print-btn,
+  .section-header,
+  .section-toolbar,
+  .search-wrap,
+  .nav-bar,
+  .nav-panel,
+  .desktop-nav,
+  #print-chemicals,
+  #print-programs,
+  #print-schedule,
+  .masthead,
+  .prod-nav,
+  .mob-toggle,
+  nav,
+  header,
+  footer {
+    display: none !important;
+  }
 
-   /* ── When is-printing is active, hide all sections ── */
-   body.is-printing .app-section,
-   body.is-printing .products-grid,
-   body.is-printing .programs-grid {
-     display: none !important;
-   }
+  /* Hide section UI when printing a single card */
+  body.is-printing .site-hero,
+  body.is-printing .hero-shell,
+  body.is-printing .prog-section-header,
+  body.is-printing .programs-toolbar,
+  body.is-printing .empty-state,
+  body.is-printing .filter-status,
+  body.is-printing .hero-actions,
+  body.is-printing .hero-panel,
+  body.is-printing .hero-stats,
+  body.is-printing .prog-tips-section,
+  body.is-printing .landing-hero,
+  body.is-printing .landing-footer-tag {
+    display: none !important;
+  }
 
-   /* ── Show only the active section that contains the print target ── */
-   body.is-printing .app-section.is-active {
-     display: block !important;
-     padding: 0 !important;
-     margin: 0 !important;
-   }
+  /* ── Layout Reset ── */
+  .page-wrap,
+  .programs-section {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
 
-   /* ── When NOT is-printing (full section print), keep sections visible ── */
-   .app-section {
-     display: none !important;
-   }
+  /* ── Section visibility ── */
+  .app-section {
+    display: none !important;
+  }
+  .app-section.is-active {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 
-   .app-section.is-active {
-     display: block !important;
-   }
+  /* ══════════════════════════════════════
+     PRINT PAGE HEADER (injected by JS)
+  ══════════════════════════════════════ */
+  #print-page-header {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 16px !important;
+    page-break-after: avoid !important;
+  }
 
-   /* ── The print target (single card) ── */
-   .print-target {
-     display: block !important;
-     visibility: visible !important;
-     position: relative !important;
-     width: 100% !important;
-     max-width: 100% !important;
-     margin: 0 auto !important;
-     padding: 0 !important;
-     box-shadow: none !important;
-     border: 1.5px solid #ccc !important;
-     border-radius: 8px !important;
-     overflow: visible !important;
-     page-break-inside: avoid !important;
-     break-inside: avoid !important;
-     page-break-before: auto !important;
-     page-break-after: auto !important;
-     transform: none !important;
-     opacity: 1 !important;
-     float: none !important;
-   }
+  .print-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #0f1e42 0%, #1a3370 100%);
+    border-radius: 8px;
+    color: #fff;
+  }
 
-   /* ── Hide sibling cards when printing a single product ── */
-   body.is-printing .product-card:not(.print-target),
-   body.is-printing .prog-card:not(.print-target) {
-     display: none !important;
-   }
+  .print-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-   /* ── Show the grid but reset it to single column ── */
-   body.is-printing .products-grid,
-   body.is-printing .programs-grid {
-     display: block !important;
-     grid-template-columns: 1fr !important;
-     gap: 0 !important;
-     width: 100% !important;
-     max-width: 100% !important;
-     padding: 0 !important;
-     margin: 0 !important;
-   }
+  .print-logo-mark {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #c5a05a, #b8924a);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Outfit', Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f1e42;
+    flex-shrink: 0;
+  }
 
-   /* ── Card Header print adjustments ── */
-   .print-target .card-header,
-   .print-target .hd-theme {
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  .print-hotel-name {
+    font-family: 'Outfit', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #fff;
+    line-height: 1.2;
+  }
 
-   .print-target .card-prod-name {
-     font-size: 20px !important;
-     color: #111 !important;
-     text-shadow: none !important;
-   }
+  .print-dept-name {
+    font-size: 10px;
+    color: rgba(197, 160, 90, 0.85);
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 1px;
+  }
 
-   /* ── Card Body print adjustments ── */
-   .print-target .card-body {
-     padding: 12px 16px !important;
-   }
+  .print-header-info {
+    text-align: left;
+    direction: ltr;
+  }
 
-   .print-target .card-top-row {
-     display: flex !important;
-     align-items: flex-start !important;
-     gap: 14px !important;
-   }
+  .print-doc-title {
+    font-family: 'Outfit', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.3;
+    max-width: 240px;
+    text-align: right;
+  }
 
-   .print-target .card-icon-box {
-     width: 90px !important;
-     height: 78px !important;
-   }
+  .print-doc-date {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.55);
+    margin-top: 3px;
+    font-family: 'Outfit', monospace;
+    letter-spacing: 0.5px;
+    text-align: right;
+  }
 
-   .print-target .sec-head {
-     font-size: 12px !important;
-     margin-top: 10px !important;
-   }
+  /* ══════════════════════════════════════
+     PRINT PAGE FOOTER (injected by JS)
+  ══════════════════════════════════════ */
+  #print-page-footer {
+    display: block !important;
+    width: 100% !important;
+    margin-top: 20px !important;
+    page-break-before: avoid !important;
+  }
 
-   .print-target .btext {
-     font-size: 12px !important;
-     line-height: 1.7 !important;
-     color: #222 !important;
-   }
+  .print-footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 2px solid #0f1e42;
+    font-size: 8px;
+    color: #888;
+    letter-spacing: 0.3px;
+  }
 
-   .print-target .blist li {
-     font-size: 12px !important;
-     line-height: 1.7 !important;
-     color: #222 !important;
-   }
+  /* ══════════════════════════════════════
+     GRID RESET
+  ══════════════════════════════════════ */
+  body.is-printing .products-grid,
+  body.is-printing .programs-grid {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 
-   /* ── Tables inside print target ── */
-   .print-target .dose-table,
-   .print-target .tech-table-enhanced,
-   .print-target .prog-tbl-full {
-     width: 100% !important;
-     max-width: 100% !important;
-     font-size: 11px !important;
-     page-break-inside: avoid !important;
-     break-inside: avoid !important;
-   }
+  /* Hide siblings */
+  body.is-printing .product-card:not(.print-target),
+  body.is-printing .prog-card:not(.print-target) {
+    display: none !important;
+  }
 
-   .print-target .table-responsive {
-     overflow: visible !important;
-   }
+  /* ══════════════════════════════════════
+     PRINT TARGET — THE CARD ITSELF
+  ══════════════════════════════════════ */
+  .print-target {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: 2px solid #d0d0d0 !important;
+    border-radius: 10px !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    transform: none !important;
+    opacity: 1 !important;
+    float: none !important;
+    background: #fff !important;
+  }
 
-   .print-target .prog-tbl-full {
-     min-width: 0 !important;
-   }
+  /* ══════════════════════════════════════
+     CHEMICAL CARD PRINT DESIGN
+  ══════════════════════════════════════ */
 
-   .print-target .prog-tbl-full thead th {
-     font-size: 10px !important;
-     padding: 6px 8px !important;
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  /* Card Header */
+  .print-target .card-header,
+  .print-target .hd-theme {
+    padding: 14px 20px 12px !important;
+    border-radius: 8px 8px 0 0 !important;
+  }
 
-   .print-target .prog-tbl-full tbody td {
-     font-size: 11px !important;
-     padding: 6px 8px !important;
-   }
+  .print-target .clax-box span {
+    font-size: 22px !important;
+  }
 
-   /* ── Program card header ── */
-   .print-target .prog-card-head {
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  .print-target .card-prod-name {
+    font-size: 22px !important;
+    text-shadow: none !important;
+  }
 
-   .print-target .prog-num {
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  .print-target .card-prod-code {
+    font-size: 13px !important;
+    padding: 3px 10px !important;
+  }
 
-   .print-target .prog-en {
-     font-size: 18px !important;
-   }
+  /* Product Type Badge */
+  .print-target .prod-type-tag {
+    font-size: 11px !important;
+    padding: 4px 14px !important;
+    margin: 12px 20px 0 !important;
+  }
 
-   .print-target .prog-chem {
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  /* Card Body */
+  .print-target .card-body {
+    padding: 16px 20px 8px !important;
+  }
 
-   /* ── Technical section ── */
-   .print-target .tech-section {
-     page-break-inside: avoid !important;
-     break-inside: avoid !important;
-     margin-top: 12px !important;
-   }
+  .print-target .card-top-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 18px !important;
+  }
 
-   /* ── Safety footer ── */
-   .print-target .card-safe {
-     page-break-inside: avoid !important;
-     break-inside: avoid !important;
-   }
+  .print-target .card-icon-box {
+    width: 100px !important;
+    height: 88px !important;
+    border-radius: 10px !important;
+    border: 2px solid #ddd !important;
+  }
 
-   .print-target .card-safe-head {
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  /* Section Headers */
+  .print-target .sec-head {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    margin-top: 14px !important;
+    margin-bottom: 5px !important;
+    padding-bottom: 3px !important;
+    border-bottom-width: 2px !important;
+    letter-spacing: 0.3px !important;
+  }
 
-   .print-target .card-safe-text {
-     font-size: 10px !important;
-     color: #333 !important;
-   }
+  .print-target .sec-head:first-child {
+    margin-top: 0 !important;
+  }
 
-   /* ── Program notes ── */
-   .print-target .prog-note {
-     font-size: 10px !important;
-     -webkit-print-color-adjust: exact !important;
-     print-color-adjust: exact !important;
-   }
+  /* Body Text */
+  .print-target .btext {
+    font-size: 12.5px !important;
+    line-height: 1.8 !important;
+    color: #222 !important;
+  }
 
-   /* ── Animations off ── */
-   .card-animate {
-     opacity: 1 !important;
-     transform: none !important;
-     transition: none !important;
-   }
+  /* Bullet List */
+  .print-target .blist {
+    margin: 4px 0 8px !important;
+  }
 
-   /* ── Hover effects off ── */
-   .product-card,
-   .prog-card {
-     transform: none !important;
-     box-shadow: none !important;
-   }
+  .print-target .blist li {
+    font-size: 12.5px !important;
+    line-height: 1.8 !important;
+    color: #222 !important;
+    padding-right: 16px !important;
+    margin-bottom: 2px !important;
+  }
 
-   /* ── Links color ── */
-   a {
-     color: #000 !important;
-     text-decoration: none !important;
-   }
- }
+  .print-target .blist li::before {
+    font-size: 10px !important;
+    color: #555 !important;
+  }
+
+  /* Note Head */
+  .print-target .note-head {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    color: #111 !important;
+  }
+
+  /* ── Dosage Table ── */
+  .print-target .dose-table {
+    width: 100% !important;
+    max-width: 320px !important;
+    font-size: 11px !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    margin-top: 8px !important;
+    border: 1px solid #ccc !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-target .dose-table thead tr th {
+    padding: 6px 10px !important;
+    font-size: 10px !important;
+  }
+
+  .print-target .dose-table tbody tr td {
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }
+
+  /* ── Technical Data Table ── */
+  .print-target .tech-section {
+    margin-top: 14px !important;
+    padding: 0 20px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-target .tech-table-enhanced {
+    width: 100% !important;
+    font-size: 11px !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .print-target .tech-table-enhanced thead th {
+    padding: 6px 10px !important;
+    font-size: 10px !important;
+  }
+
+  .print-target .tech-table-enhanced tbody td {
+    padding: 5px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .print-target .tech-table-enhanced tbody td.lbl {
+    font-weight: 700 !important;
+    border-left: 3px solid #ddd !important;
+  }
+
+  .print-target .tech-note {
+    font-size: 9px !important;
+    color: #666 !important;
+    padding: 4px 0 0 !important;
+  }
+
+  /* ── Safety Footer ── */
+  .print-target .card-safe {
+    margin-top: 14px !important;
+    padding: 8px 20px 10px !important;
+    border-radius: 0 0 8px 8px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-target .card-safe-head {
+    font-size: 11px !important;
+    padding: 6px 20px !important;
+    margin: 0 -20px !important;
+  }
+
+  .print-target .card-safe-text {
+    font-size: 11px !important;
+    line-height: 1.7 !important;
+    color: #333 !important;
+    padding: 6px 0 0 !important;
+  }
+
+  /* ══════════════════════════════════════
+     PROGRAM CARD PRINT DESIGN
+  ══════════════════════════════════════ */
+
+  /* Program Card Header */
+  .print-target .prog-card-head {
+    padding: 16px 20px !important;
+    border-radius: 8px 8px 0 0 !important;
+  }
+
+  .print-target .prog-num {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 20px !important;
+  }
+
+  .print-target .prog-en {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+  }
+
+  .print-target .prog-ar {
+    font-size: 13px !important;
+    margin-top: 3px !important;
+  }
+
+  .print-target .prog-temp {
+    font-size: 12px !important;
+    padding: 3px 10px !important;
+  }
+
+  .print-target .prog-time {
+    font-size: 11px !important;
+    padding: 3px 10px !important;
+  }
+
+  /* Program Table */
+  .print-target .table-responsive {
+    overflow: visible !important;
+  }
+
+  .print-target .prog-tbl-full {
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 11px !important;
+    border-collapse: collapse !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .print-target .prog-tbl-full thead tr {
+    background: #f0f4f8 !important;
+  }
+
+  .print-target .prog-tbl-full thead th {
+    font-size: 10px !important;
+    padding: 8px 8px !important;
+    font-weight: 800 !important;
+    color: #333 !important;
+    border-bottom: 2px solid #ccc !important;
+    white-space: nowrap !important;
+  }
+
+  .print-target .prog-tbl-full tbody td {
+    font-size: 11px !important;
+    padding: 7px 8px !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    color: #222 !important;
+  }
+
+  .print-target .prog-tbl-full tbody tr:nth-child(even) {
+    background: #fafafa !important;
+  }
+
+  .print-target .prog-tbl-full tbody tr:last-child td {
+    border-bottom: none !important;
+  }
+
+  /* Chemical badges in table */
+  .print-target .prog-chem {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+    border-radius: 3px !important;
+  }
+
+  .print-target .num-col {
+    font-family: 'Courier New', monospace !important;
+    font-size: 11px !important;
+  }
+
+  /* Program Note */
+  .print-target .prog-note {
+    font-size: 10px !important;
+    padding: 8px 16px 10px !important;
+    border-top: 1px solid #e0e0e0 !important;
+    color: #555 !important;
+    background: #fafafa !important;
+    border-radius: 0 0 8px 8px !important;
+  }
+
+  /* ══════════════════════════════════════
+     PRODUCT/PROGRAM CARD HOVER RESET
+  ══════════════════════════════════════ */
+  .product-card,
+  .prog-card {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .product-card:hover,
+  .prog-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* ── Links ── */
+  a {
+    color: #1a1a1a !important;
+    text-decoration: none !important;
+  }
+
+  /* ══════════════════════════════════════
+     HIDE PRINT ELEMENTS ON SCREEN
+  ══════════════════════════════════════ */
+}
+
+/* Hide the injected print elements on screen */
+#print-page-header,
+#print-page-footer {
+  display: none;
+}
