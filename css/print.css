@@ -224,21 +224,26 @@
   }
 
   /* Hide siblings */
-  body.is-printing .product-card:not(.print-target),
-  body.is-printing .prog-card:not(.print-target) {
+  /* Hide siblings only when an individual card is printed */
+  body.is-printing:not(.printing-grid) .product-card:not(.print-target),
+  body.is-printing:not(.printing-grid) .prog-card:not(.print-target) {
     display: none !important;
   }
 
   /* ══════════════════════════════════════
      PRINT TARGET — THE CARD ITSELF
   ══════════════════════════════════════ */
-  .print-target {
+  .print-target,
+  body.printing-grid .products-grid .product-card:not([hidden]),
+  body.printing-grid .programs-grid .prog-card:not([hidden]),
+  body.printing-grid .products-grid .product-card:not([style*="display: none"]),
+  body.printing-grid .programs-grid .prog-card:not([style*="display: none"]) {
     display: block !important;
     visibility: visible !important;
     position: relative !important;
     width: 100% !important;
     max-width: 100% !important;
-    margin: 0 !important;
+    margin: 0 0 24px 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
     border: 2px solid #d0d0d0 !important;
@@ -250,6 +255,16 @@
     opacity: 1 !important;
     float: none !important;
     background: #fff !important;
+  }
+  
+  /* Remove border/box from the grid container itself if it is the target */
+  .print-target.products-grid,
+  .print-target.programs-grid {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
   }
 
   /* ══════════════════════════════════════

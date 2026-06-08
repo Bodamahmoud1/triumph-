@@ -11,6 +11,9 @@ function printTarget(element, sectionName) {
 
   element.classList.add('print-target');
   document.body.classList.add('is-printing');
+  if (element.classList.contains('products-grid') || element.classList.contains('programs-grid')) {
+    document.body.classList.add('printing-grid');
+  }
 
   // Inject print header
   var existingHeader = document.getElementById('print-page-header');
@@ -62,6 +65,7 @@ function printTarget(element, sectionName) {
     cleaned = true;
     element.classList.remove('print-target');
     document.body.classList.remove('is-printing');
+    document.body.classList.remove('printing-grid');
     var h = document.getElementById('print-page-header');
     var f = document.getElementById('print-page-footer');
     if (h) h.remove();
