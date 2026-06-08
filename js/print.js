@@ -12,17 +12,23 @@ function printTarget(element, sectionName) {
   element.classList.add('print-target');
   document.body.classList.add('is-printing');
 
+  var cleaned = false;
   var cleanup = function () {
+    if (cleaned) return;
+    cleaned = true;
     element.classList.remove('print-target');
     document.body.classList.remove('is-printing');
     window.removeEventListener('afterprint', cleanup);
   };
 
   window.addEventListener('afterprint', cleanup);
+
   setTimeout(function () {
     window.print();
-  }, 80);
-  setTimeout(cleanup, 1500);
+  }, 150);
+
+  // Fallback cleanup in case afterprint doesn't fire
+  setTimeout(cleanup, 5000);
 }
 
 function addPrintButton(card, sectionName) {
@@ -71,4 +77,3 @@ function initPrintTools() {
     });
   }
 }
-
