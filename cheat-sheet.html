@@ -15,8 +15,10 @@
         .theme-red { background: #e74c3c; }
         .theme-green { background: #2ecc71; }
         .theme-yellow { background: #f1c40f; color: #333 !important; }
+        .theme-gold { background: #d4af37; color: #fff !important; }
         .theme-purple { background: #9b59b6; }
         .theme-orange { background: #e67e22; }
+        .theme-pink { background: #e84393; }
         .theme-teal { background: #1abc9c; }
         .theme-dark { background: #34495e; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -40,26 +42,47 @@
             .then(data => {
                 const grid = document.getElementById('cheat-sheet-grid');
                 data.forEach(chem => {
-                    let themeClass = 'theme-blue';
-                    if(chem.theme === 'red') themeClass = 'theme-red';
-                    if(chem.theme === 'green') themeClass = 'theme-green';
-                    if(chem.theme === 'yellow') themeClass = 'theme-yellow';
-                    if(chem.theme === 'purple') themeClass = 'theme-purple';
-                    if(chem.theme === 'orange') themeClass = 'theme-orange';
+                    let themeClass = 'theme-dark';
+                    switch(chem.theme) {
+                        case 'red': themeClass = 'theme-red'; break;
+                        case 'green': themeClass = 'theme-green'; break;
+                        case 'yellow': themeClass = 'theme-yellow'; break;
+                        case 'gold': themeClass = 'theme-gold'; break;
+                        case 'purple': themeClass = 'theme-purple'; break;
+                        case 'orange': themeClass = 'theme-orange'; break;
+                        case 'blue': themeClass = 'theme-blue'; break;
+                        case 'pink': themeClass = 'theme-pink'; break;
+                        case 'teal': themeClass = 'theme-teal'; break;
+                    }
                     
+                    const dosageText = chem.usage && chem.usage.dosage ? chem.usage.dosage : '-';
+                    const phText = chem.technical && chem.technical.ph ? chem.technical.ph : '-';
+                    const typeText = chem.type || '-';
+                    const descText = chem.description || '-';
+
                     grid.innerHTML += `
                         <div class="card">
                             <h2 class="${themeClass} en">${chem.name} - ${chem.code}</h2>
                             <table>
-                                <tr><th>النوع</th><td>${chem.type_ar}</td></tr>
-                                <tr><th>الوظيفة الأساسية</th><td>${chem.description.substring(0, 100)}...</td></tr>
-                                <tr><th>الجرعة (خفيفة)</th><td class="en">${chem.dosage.light || '-'} ml/kg</td></tr>
-                                <tr><th>الجرعة (متوسطة)</th><td class="en">${chem.dosage.medium || '-'} ml/kg</td></tr>
-                                <tr><th>الجرعة (شديدة)</th><td class="en">${chem.dosage.heavy || '-'} ml/kg</td></tr>
+                                <tr><th>النوع</th><td>${typeText}</td></tr>
+                                <tr><th>الوظيفة الأساسية</th><td>${descText}</td></tr>
+                                <tr><th>الجرعة</th><td>${dosageText}</td></tr>
+                                <tr><th>الـ pH</th><td class="en">${phText}</td></tr>
                             </table>
                         </div>
                     `;
                 });
+            })
+            .catch(err => {
+                console.error("Error loading chemicals data:", err);
+                const grid = document.getElementById('cheat-sheet-grid');
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; background: #ffebee; color: #c62828; padding: 20px; border-radius: 8px; border: 1px solid #ef9a9a; text-align: center;">
+                        <h3 style="margin-top: 0;">عذراً، لم نتمكن من تحميل البيانات ❌</h3>
+                        <p>يبدو أنك قمت بفتح الملف مباشرة من جهازك (بصيغة <code>file:///</code>). متصفح الويب يمنع تحميل ملفات البيانات (JSON) لأسباب أمنية في هذه الحالة.</p>
+                        <p><strong>الحل:</strong> يرجى فتح الصفحة من خلال الخادم المحلي (Local Server) الخاص بالتطبيق، على سبيل المثال: <br><code style="font-size: 16px; background: #fff; padding: 5px 10px; border-radius: 4px; display: inline-block; margin-top: 10px;">http://localhost:3000/cheat-sheet.html</code></p>
+                    </div>
+                `;
             });
     </script>
 </body>

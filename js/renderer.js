@@ -12,9 +12,9 @@
 
   var familyAr = {
     linen: 'مفروشات',
-    towels: 'فوط',
+    towels: 'مناشف',
     table: 'مفارش طاولات',
-    uniforms: 'يونيفورم',
+    uniforms: 'زي موحد',
     utility: 'مساعد'
   };
 
