@@ -67,3 +67,13 @@ These checks validate JavaScript, JSON manifests, service-worker cached assets, 
 Do not commit generated SQLite databases, DB WAL/SHM files, backup databases, uploaded schedule files, exported Excel/PDF/PPTX documents, or local handoff files. The `.gitignore` blocks these, and CI fails if runtime/binary production documents are tracked.
 
 If sensitive files have already been pushed to a shared remote, remove them from Git history with a tool such as `git filter-repo` or BFG, rotate any exposed secrets, and force-push only after coordinating with collaborators.
+
+## Arabic presentation
+
+Generate the 12-slide Arabic product presentation without installing additional dependencies:
+
+```bash
+python3 tools/generate_arabic_presentation.py
+```
+
+The generated PowerPoint file is written to `deliverables/triumph-laundry-ar.pptx`. Exported office documents remain ignored by Git; regenerate the deck from the tracked source when needed.
