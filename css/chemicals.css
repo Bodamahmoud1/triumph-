@@ -3,7 +3,7 @@
 .products-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 22px;
+  gap: 24px;
   align-items: stretch;
 }
 
@@ -12,25 +12,48 @@
 ═══════════════════════════════════════ */
 .product-card {
   background: var(--surface);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   scroll-margin-top: 85px;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease;
   will-change: transform, box-shadow;
   height: 100%;
+  position: relative;
 }
+
+/* Subtle left-edge accent that picks up the theme color */
+.product-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--thm, #dde3ec);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
 .product-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-7px) scale(1.005);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--thm-bd, var(--border));
+}
+
+.product-card:hover::before {
+  opacity: 1;
 }
 
 /* ── Card Header ── */
 .card-header {
-  padding: 10px 14px 8px;
+  padding: 12px 16px 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -42,10 +65,10 @@
 }
 .clax-box {
   background: var(--surface);
-  padding: 2px 7px;
+  padding: 2px 8px;
   display: inline-block;
   line-height: 1;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 .clax-box span {
   font-size: 20px;
@@ -66,20 +89,21 @@
 .card-prod-name {
   color: var(--inverse-text);
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 800;
   margin-right: 8px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.18);
   line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 .card-prod-code {
   color: rgba(255,255,255,0.92);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 1.5px;
   font-family: Arial, sans-serif;
-  background: rgba(0,0,0,0.15);
-  padding: 2px 8px;
-  border-radius: 4px;
+  background: rgba(0,0,0,0.18);
+  padding: 3px 10px;
+  border-radius: 6px;
 }
 
 .hd-theme { background: var(--thm-gr); }
@@ -87,18 +111,18 @@
 /* ── Product Type Badge ── */
 .prod-type-tag {
   display: inline-block;
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 700;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
-  margin: 10px 14px 0;
-  letter-spacing: 0.2px;
+  margin: 12px 16px 0;
+  letter-spacing: 0.15px;
 }
 .tag-theme { background: var(--thm-lt); color: var(--thm-dk); border: 1px solid var(--thm-bd); }
 
 /* ── Card Body ── */
 .card-body {
-  padding: 10px 14px 0;
+  padding: 10px 16px 0;
   flex: 1;
 }
 
@@ -106,13 +130,13 @@
 .card-top-row {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
 }
 .card-icon-box {
   flex-shrink: 0;
-  width: 78px;
-  height: 68px;
-  border-radius: 8px;
+  width: 80px;
+  height: 70px;
+  border-radius: 12px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -120,6 +144,10 @@
   border: 1.5px solid var(--border);
   background: var(--surface-muted);
   margin-top: 2px;
+  transition: transform 0.3s ease;
+}
+.product-card:hover .card-icon-box {
+  transform: scale(1.05) rotate(-1deg);
 }
 .card-icon-box svg {
   width: 100%;
@@ -133,13 +161,13 @@
 .sec-head {
   font-size: 10px;
   font-weight: 800;
-  margin-top: 8px;
-  margin-bottom: 3px;
-  letter-spacing: 0.1px;
-  padding-bottom: 2px;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding-bottom: 3px;
   border-bottom: 1.5px solid currentColor;
   display: inline-block;
-  text-underline-offset: 2px;
 }
 .sec-head:first-child { margin-top: 0; }
 
@@ -147,40 +175,40 @@
 
 /* Body text */
 .btext {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text);
-  line-height: 1.6;
+  line-height: 1.7;
   text-align: justify;
 }
 
 /* Bullet list */
 .blist {
   list-style: none;
-  margin: 3px 0 0;
+  margin: 4px 0 0;
   padding: 0;
 }
 .blist li {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text);
-  line-height: 1.6;
-  padding-right: 13px;
+  line-height: 1.65;
+  padding-right: 16px;
   position: relative;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
   text-align: justify;
 }
 .blist li::before {
-  content: "▸";
+  content: "✦";
   position: absolute;
   right: 0;
-  top: 0;
-  font-size: 9px;
-  line-height: 1.7;
-  color: var(--text-sm);
+  top: 1px;
+  font-size: 7px;
+  line-height: 1.9;
+  color: var(--thm, var(--text-sm));
 }
 
 /* Warning / note head */
 .note-head {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text);
   margin-top: 4px;
@@ -189,31 +217,32 @@
 
 /* Dosage lines */
 .dosage-line {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text);
-  line-height: 1.6;
-  margin-bottom: 1px;
+  line-height: 1.65;
+  margin-bottom: 2px;
 }
 
 /* ── Dosage Table ── */
 .dose-table {
   width: 100%;
-  max-width: 260px;
+  max-width: 280px;
   border-collapse: collapse;
-  font-size: 9.5px;
-  margin-top: 4px;
-  border-radius: 6px;
+  font-size: 10px;
+  margin-top: 6px;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .dose-table thead tr th {
-  padding: 4px 8px;
+  padding: 5px 10px;
   font-weight: 700;
   color: var(--theme-fill-text);
   text-align: right;
 }
 .dose-table thead tr th:last-child { text-align: left; direction: ltr; }
 .dose-table tbody tr td {
-  padding: 3px 8px;
+  padding: 4px 10px;
   text-align: right;
   color: var(--text);
   border-bottom: 1px solid var(--line-soft);
@@ -226,24 +255,25 @@
 
 /* ── Technical Data Table ── */
 .tech-section {
-  margin-top: 10px;
-  padding: 0 14px;
+  margin-top: 12px;
+  padding: 0 16px;
 }
 .tech-table-enhanced {
   width: 100%;
   border-collapse: collapse;
-  font-size: 9.5px;
-  border-radius: 6px;
+  font-size: 10px;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .tech-table-enhanced thead th {
-  padding: 5px 8px;
+  padding: 6px 10px;
   color: var(--theme-fill-text);
   font-weight: 700;
   text-align: right;
 }
 .tech-table-enhanced tbody td {
-  padding: 4px 8px;
+  padding: 5px 10px;
   color: var(--text);
   vertical-align: top;
 }
@@ -258,40 +288,60 @@
   direction: ltr;
   width: 14%;
   font-family: 'Courier New', monospace;
-  font-size: 9px;
+  font-size: 9.5px;
 }
 .tech-table-enhanced tbody tr:nth-child(odd) td { background: var(--overlay-soft); }
 
 .tt-theme thead { background: var(--thm-dk); }
 
 .tech-note {
-  font-size: 8.5px;
+  font-size: 9px;
   color: var(--text-sm);
   font-style: italic;
-  padding: 3px 0 0;
-  line-height: 1.4;
+  padding: 4px 0 0;
+  line-height: 1.5;
 }
 
 /* ── Safe Handling Footer ── */
 .card-safe {
-  margin-top: 10px;
-  padding: 6px 14px 7px;
+  margin-top: 12px;
+  padding: 7px 16px 9px;
 }
 .card-safe-head {
-  font-size: 9.5px;
+  font-size: 10px;
   font-weight: 800;
   color: var(--theme-fill-text);
-  padding: 4px 14px;
-  margin: 0 -14px;
+  padding: 5px 16px;
+  margin: 0 -16px;
   display: block;
+  letter-spacing: 0.3px;
 }
 .safe-theme { background: var(--thm-dk); }
 .safe-body-theme { background: var(--thm-lt); }
 
 .card-safe-text {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--text);
-  line-height: 1.55;
+  line-height: 1.6;
   text-align: justify;
-  padding: 5px 0 0;
+  padding: 6px 0 0;
+}
+
+/* ── Card entrance animation ── */
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.card-animate {
+  animation: cardReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.card-animate.is-visible {
+  animation-play-state: running;
 }

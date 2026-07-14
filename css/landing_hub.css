@@ -136,20 +136,23 @@
   align-items: center;
   gap: 20px;
   padding: 36px 28px 30px;
-  border-radius: 28px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  border-radius: 32px;
+  border: 1px solid rgba(255,255,255,0.13);
+  background: rgba(255,255,255,0.07);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
   cursor: pointer;
   overflow: hidden;
-  transition: all 0.5s cubic-bezier(0.25,0.8,0.25,1);
+  transition:
+    transform 0.45s cubic-bezier(0.22,1,0.36,1),
+    box-shadow 0.45s cubic-bezier(0.22,1,0.36,1),
+    border-color 0.3s ease,
+    background 0.3s ease;
   text-align: center;
   font-family: inherit;
   color: #fff;
   outline: none;
   -webkit-tap-highlight-color: transparent;
-  transform-style: preserve-3d;
 }
 
 .landing-card::before {
@@ -167,14 +170,17 @@
 }
 
 .landing-card:hover {
-  transform: translateY(-10px) scale(1.03);
-  border-color: rgba(255,255,255,0.25);
-  box-shadow: 0 30px 70px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(255,255,255,0.05);
-  background: rgba(255,255,255,0.09);
+  transform: translateY(-12px) scale(1.025);
+  border-color: rgba(255,255,255,0.28);
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.42),
+    0 8px 24px rgba(0,0,0,0.18),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.10);
 }
 
 .landing-card:hover::before {
-  background: linear-gradient(160deg, rgba(255,255,255,0.4), rgba(197,160,90,0.3));
+  background: linear-gradient(160deg, rgba(255,255,255,0.45), rgba(255,255,255,0.02), rgba(197,160,90,0.28));
 }
 
 /* Card glow effect */
@@ -259,16 +265,17 @@
 }
 
 .landing-card-title-ar {
-  font-size: 15px;
-  color: rgba(255,255,255,0.5);
+  font-size: 14px;
+  color: rgba(255,255,255,0.55);
   font-weight: 600;
   margin: 0 0 10px;
+  letter-spacing: 0.01em;
 }
 
 .landing-card-desc {
   font-size: 13px;
-  color: rgba(255,255,255,0.55);
-  line-height: 1.7;
+  color: rgba(255,255,255,0.60);
+  line-height: 1.75;
   margin: 0;
   max-width: 280px;
 }
@@ -755,6 +762,11 @@ html[data-scheme="dark"] .landing-card:hover {
 /* Schedule page is temporarily under maintenance — hidden from users */
 .bnav-item[data-section="schedule"],
 .mob-cat-btn[data-nav-section="schedule"] {
+  display: none !important;
+}
+
+/* Chemicals nav pills — temporarily hidden */
+#nav-chemicals-group {
   display: none !important;
 }
 
