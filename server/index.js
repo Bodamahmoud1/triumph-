@@ -9,10 +9,12 @@ const bcrypt = require('bcryptjs');
 const helmet = require('helmet');
 const cron = require('node-cron');
 const crypto = require('crypto');
+const { resolveDatabasePath } = require('./db/config');
 
 // Initialize Express
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.set('trust proxy', 1);
 
 if (!process.env.JWT_SECRET) {
   if (process.env.NODE_ENV === 'production') {
@@ -27,12 +29,14 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      scriptSrcAttr: ["'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      scriptSrcAttr: ["'none'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       connectSrc: ["'self'", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "blob:", "https:"]
+      imgSrc: ["'self'", "data:", "blob:", "https:"],
+      objectSrc: ["'none'"],
+      frameAncestors: ["'self'"]
     }
   }
 }));
@@ -45,21 +49,26 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+const configuredCorsOrigins = (process.env.CORS_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+if (process.env.NODE_ENV === 'production' && configuredCorsOrigins.length === 0) {
+  throw new Error('CORS_ORIGIN must be set in production to the exact frontend/admin origins allowed to call this API.');
+}
+const developmentCorsOrigins = [/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/];
+const allowedCorsOrigins = configuredCorsOrigins.length > 0 ? configuredCorsOrigins : developmentCorsOrigins;
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, file://)
-    if (!origin) return callback(null, true);
-    // In production, restrict to your domain
-    const allowed = [
-      'https://triumph-laundry.vercel.app',
-      /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/
-    ];
-    const isAllowed = allowed.some(o => o instanceof RegExp ? o.test(origin) : o === origin);
-    callback(null, isAllowed || process.env.NODE_ENV !== 'production');
+    if (!origin) return callback(null, process.env.NODE_ENV !== 'production');
+    const isAllowed = allowedCorsOrigins.some((allowed) => allowed instanceof RegExp ? allowed.test(origin) : allowed === origin);
+    return callback(null, isAllowed);
   },
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Authorization', 'Content-Type'],
   credentials: true
 }));
 
@@ -77,7 +86,7 @@ const loginLimiter = rateLimit({
 });
 
 // Initialize Database
-const dbUrl = process.env.TURSO_DATABASE_URL || 'file:./triumph_laundry.db';
+const dbUrl = process.env.TURSO_DATABASE_URL || `file:${resolveDatabasePath()}`;
 const dbAuthToken = process.env.TURSO_AUTH_TOKEN || '';
 
 const db = createClient({

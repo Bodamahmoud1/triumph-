@@ -5,7 +5,9 @@ function normalizePathForCheck(value) {
 }
 
 function isTmpPath(value) {
-  const normalized = normalizePathForCheck(value);
+  const raw = String(value || '').replace(/\\/g, '/');
+  if (raw === '/tmp' || raw.startsWith('/tmp/')) return true;
+  const normalized = normalizePathForCheck(raw);
   return normalized === '/tmp' || normalized.startsWith('/tmp/');
 }
 

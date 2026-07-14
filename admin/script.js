@@ -6,7 +6,6 @@
      ═══════════════════════════════════════════════ */
   const API_BASE = window.ADMIN_API_BASE || '';
   const TOKEN_KEY = 'triumph_admin_token';
-  const REFRESH_TOKEN_KEY = 'triumph_admin_refresh_token';
   const TOKEN_EXPIRY_KEY = 'triumph_admin_expiry';
   const TOKEN_TTL_MS = 55 * 60 * 1000;
 
@@ -88,15 +87,12 @@
      AUTH HELPERS
      ═══════════════════════════════════════════════ */
   function getToken() { return sessionStorage.getItem(TOKEN_KEY); }
-  function getRefreshToken() { return sessionStorage.getItem(REFRESH_TOKEN_KEY); }
-  function setToken(t, refreshToken) {
+  function setToken(t) {
     sessionStorage.setItem(TOKEN_KEY, t);
-    if (refreshToken) sessionStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
     sessionStorage.setItem(TOKEN_EXPIRY_KEY, Date.now() + TOKEN_TTL_MS);
   }
   function clearToken() {
     sessionStorage.removeItem(TOKEN_KEY);
-    sessionStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_EXPIRY_KEY);
   }
   function isTokenExpired() {
@@ -119,7 +115,7 @@
      API FETCH WRAPPER
      ═══════════════════════════════════════════════ */
   async function api(url, opts = {}) {
-    if (isTokenExpired() && getRefreshToken()) {
+    if (isTokenExpired()) {
       await refreshSession();
     }
     return requestWithAuth(url, opts, true);
@@ -133,10 +129,14 @@
     opts.headers['Authorization'] = 'Bearer ' + getToken();
 
     try {
-      const res = await fetch(API_BASE + url, opts);
-      if ((res.status === 401 || res.status === 403) && retryOnAuth && getRefreshToken()) {
-        await refreshSession();
-        return requestWithAuth(url, opts, false);
+      const res = await fetch(API_BASE + url, { ...opts, credentials: 'include' });
+      if ((res.status === 401 || res.status === 403) && retryOnAuth) {
+        try {
+          await refreshSession();
+          return requestWithAuth(url, opts, false);
+        } catch (err) {
+          // Fall through to the standard signed-out experience.
+        }
       }
       if (res.status === 401 || res.status === 403) {
         clearToken();
@@ -157,12 +157,9 @@
   }
 
   async function refreshSession() {
-    const refreshToken = getRefreshToken();
-    if (!refreshToken) throw new Error('No refresh token');
     const res = await fetch(API_BASE + '/api/admin/login/refresh', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken })
+      credentials: 'include'
     });
     if (!res.ok) {
       clearToken();
@@ -170,19 +167,23 @@
       throw new Error('Unauthorized');
     }
     const data = await res.json();
-    setToken(data.token, data.refreshToken);
+    setToken(data.token);
     return data.token;
   }
 
-  async function apiFormData(url, formData) {
-    if (isTokenExpired() && getRefreshToken()) {
+  async function apiFormData(url, formData, retryOnAuth = true) {
+    if (isTokenExpired()) {
       await refreshSession();
     }
     const headers = { 'Authorization': 'Bearer ' + getToken() };
-    const res = await fetch(API_BASE + url, { method: 'POST', headers, body: formData });
-    if ((res.status === 401 || res.status === 403) && getRefreshToken()) {
-      await refreshSession();
-      return apiFormData(url, formData);
+    const res = await fetch(API_BASE + url, { method: 'POST', headers, body: formData, credentials: 'include' });
+    if ((res.status === 401 || res.status === 403) && retryOnAuth) {
+      try {
+        await refreshSession();
+        return apiFormData(url, formData, false);
+      } catch (err) {
+        // Fall through to the standard signed-out experience.
+      }
     }
     if (res.status === 401 || res.status === 403) {
       clearToken(); showLogin();
@@ -227,7 +228,8 @@
       const res = await fetch(API_BASE + '/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: user, password: pass })
+        body: JSON.stringify({ username: user, password: pass }),
+        credentials: 'include'
       });
       if (!res.ok) {
         if (res.status === 401) {
@@ -241,7 +243,7 @@
       }
       const data = await res.json();
       if (data.token) {
-        setToken(data.token, data.refreshToken);
+        setToken(data.token);
         $('#header-username').textContent = user;
         $('#header-avatar').textContent = user.charAt(0).toUpperCase();
         showAdmin();
@@ -258,14 +260,11 @@
   });
 
   async function handleLogout() {
-    const refreshToken = getRefreshToken();
-    if (refreshToken) {
-      await fetch(API_BASE + '/api/admin/login/logout', {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify({ refreshToken })
-      }).catch(() => { });
-    }
+    await fetch(API_BASE + '/api/admin/login/logout', {
+      method: 'POST',
+      headers: authHeaders(),
+      credentials: 'include'
+    }).catch(() => { });
     clearToken();
     setSidebarOpen(false);
     setSidebarAccountOpen(false);
@@ -832,7 +831,7 @@
     } catch (err) { toast('فشل الحذف: ' + err.message, 'error') }
   };
 
-  window._downloadSchedule = async function (id) {
+  window._downloadSchedule = async function(id) {
     try {
       const res = await requestWithAuth(`/api/admin/schedule/download/${id}`);
       if (!res) throw new Error('تعذر تحميل الجدول');
@@ -843,7 +842,7 @@
       downloadBlob(blob, filename);
       toast('تم تحميل الجدول بنجاح', 'success');
     } catch (err) {
-      toast('فشل تحميل الجدول: ' + err.message, 'error');
+      toast('فشل تحميل الجدول: '+err.message,'error');
     }
   };
 
