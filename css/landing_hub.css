@@ -752,6 +752,12 @@ html[data-scheme="dark"] .landing-card:hover {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Schedule page is temporarily under maintenance — hidden from users */
+.bnav-item[data-section="schedule"],
+.mob-cat-btn[data-nav-section="schedule"] {
+  display: none !important;
+}
+
 .bnav-item:hover {
   background: rgba(43, 82, 168, 0.07);
 }
