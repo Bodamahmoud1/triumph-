@@ -13,6 +13,13 @@
     var overlay = document.getElementById('intro-overlay');
     if (!overlay) return;
 
+    try {
+      if (localStorage.getItem(INTRO_KEY) === '1') {
+        closeIntro();
+        return;
+      }
+    } catch (e) {}
+
     setTimeout(closeIntro, 6000);
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape') closeIntro();
