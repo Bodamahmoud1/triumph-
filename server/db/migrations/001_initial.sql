@@ -34,7 +34,6 @@ CREATE TABLE IF NOT EXISTS schedule_shifts (
   employee_id INTEGER NOT NULL,
   day TEXT NOT NULL,
   shift TEXT NOT NULL,
-  shift_group TEXT,
   FOREIGN KEY(schedule_id) REFERENCES schedules(id),
   FOREIGN KEY(employee_id) REFERENCES employees(id)
 );

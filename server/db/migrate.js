@@ -1,47 +1,57 @@
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
+function checksum(sql) {
+  return crypto.createHash('sha256').update(sql).digest('hex');
+}
+
+async function ensureChecksumColumn(db) {
+  try {
+    await db.execute('ALTER TABLE migrations ADD COLUMN checksum TEXT');
+  } catch (error) {
+    if (!/duplicate column name/i.test(String(error.message || error))) throw error;
+  }
+}
+
 async function runMigrations(db) {
+  const migrationsDir = path.join(__dirname, 'migrations');
+  if (!fs.existsSync(migrationsDir)) {
+    throw new Error('Tracked migrations directory is missing; restore server/db/migrations from source control before running migrations.');
+  }
+
   await db.execute(`
     CREATE TABLE IF NOT EXISTS migrations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT UNIQUE NOT NULL,
+      checksum TEXT,
       executed_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
+  await ensureChecksumColumn(db);
 
-  const migrationsDir = path.join(__dirname, 'migrations');
-  if (!fs.existsSync(migrationsDir)) {
-    fs.mkdirSync(migrationsDir);
-    // Copy schema.sql to 001_initial.sql if it exists
-    const schemaPath = path.join(__dirname, 'schema.sql');
-    if (fs.existsSync(schemaPath)) {
-      fs.copyFileSync(schemaPath, path.join(migrationsDir, '001_initial.sql'));
-    }
-  }
-
-  const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
-  
+  const files = fs.readdirSync(migrationsDir).filter((file) => file.endsWith('.sql')).sort();
   for (const file of files) {
-    const isMigrated = await db.execute({ sql: 'SELECT id FROM migrations WHERE name = ?', args: [file] });
-    if (isMigrated.rows.length === 0) {
-      console.log(`Running migration: ${file}`);
-      const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
-      try {
-        await db.executeMultiple(sql);
-        await db.execute({ sql: 'INSERT INTO migrations (name) VALUES (?)', args: [file] });
-      } catch (err) {
-        const msg = String(err.message || err);
-        if (/duplicate column/i.test(msg)) {
-          console.warn(`Migration ${file} skipped (column already exists)`);
-          await db.execute({ sql: 'INSERT INTO migrations (name) VALUES (?)', args: [file] });
-          continue;
-        }
-        console.error(`Migration ${file} failed:`, err);
-        throw err;
+    const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
+    const fileChecksum = checksum(sql);
+    const existingResult = await db.execute({ sql: 'SELECT id, checksum FROM migrations WHERE name = ?', args: [file] });
+    const existing = existingResult.rows[0];
+
+    if (existing) {
+      if (existing.checksum && existing.checksum !== fileChecksum) {
+        throw new Error(`Migration ${file} has changed since it was applied. Create a new migration instead of editing tracked history.`);
       }
+      if (!existing.checksum) {
+        await db.execute({ sql: 'UPDATE migrations SET checksum = ? WHERE id = ?', args: [fileChecksum, existing.id] });
+      }
+      continue;
     }
+
+    console.log(`Running migration: ${file}`);
+    await db.executeMultiple(sql);
+    await db.execute({ sql: 'INSERT INTO migrations (name, checksum) VALUES (?, ?)', args: [file, fileChecksum] });
   }
 }
 
 module.exports = runMigrations;
+module.exports.checksum = checksum;
