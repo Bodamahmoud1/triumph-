@@ -101,6 +101,13 @@ test('runtime databases, uploads, and production office documents are not tracke
   assert.equal(trackedRuntimeFiles.length, 0, `Tracked runtime/binary files: ${trackedRuntimeFiles.join(', ')}`);
 });
 
+test('static hosting excludes server code and local database files', () => {
+  const source = readFileSync('server/index.js', 'utf8');
+  assert.match(source, /privateStaticPath/);
+  assert.match(source, /privateStaticFile/);
+  assert.match(source, /return res\.status\(404\)\.end\(\)/);
+});
+
 test('schedule download route rejects query-string bearer tokens', () => {
   const source = readFileSync('server/routes/schedule.js', 'utf8');
   const downloadRoute = source.match(/router\.get\('\/admin\/schedule\/download\/:id'[\s\S]*?workbook\.xlsx\.write\(res\)\.then\(\(\) => res\.end\(\)\);/);

@@ -156,6 +156,20 @@ app.get('/admin', (req, res) => {
 app.get('/api/content/:section', contentRoutes.readContent);
 app.get('/api/data/:kind', dataFilesRoutes.readCatalogue);
 
+const privateStaticPath = /^\/(?:server|tests|scripts|tools|scratch|output|tmp|\.agents)(?:\/|$)/i;
+const privateStaticFile = /(?:^|\/)(?:\.env(?:\..*)?|package(?:-lock)?\.json|.*\.db(?:-(?:wal|shm))?)$/i;
+app.use((req, res, next) => {
+  let requestPath;
+  try {
+    requestPath = decodeURIComponent(req.path);
+  } catch (error) {
+    return res.status(400).json({ error: 'Invalid request path' });
+  }
+  if (privateStaticPath.test(requestPath) || privateStaticFile.test(requestPath)) {
+    return res.status(404).end();
+  }
+  return next();
+});
 app.use(express.static(path.join(__dirname, '../'), { dotfiles: 'deny' }));
 
 
