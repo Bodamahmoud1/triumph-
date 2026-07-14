@@ -1,6 +1,6 @@
 importScripts('./sw-app-shell.js');
 
-const CACHE_NAME = 'triumph-laundry-guide-v7';
+const CACHE_NAME = 'triumph-laundry-guide-v8';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

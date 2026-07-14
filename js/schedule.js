@@ -111,6 +111,36 @@
     statusLabel.hidden = !visible;
   }
 
+  function setLoading(isLoading) {
+    var table = document.getElementById('schedule-table');
+    if (table) table.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+  }
+
+  function getScheduleCacheKey(week) {
+    return cacheKey + ':' + (week || 'latest');
+  }
+
+  function saveScheduleToCache(week, data) {
+    try {
+      localStorage.setItem(getScheduleCacheKey(week || data.week_key), JSON.stringify({
+        savedAt: new Date().toISOString(),
+        data: data
+      }));
+    } catch (e) {}
+  }
+
+  function getCachedSchedule(week) {
+    try {
+      var cached = JSON.parse(localStorage.getItem(getScheduleCacheKey(week)) || 'null');
+      if (cached && cached.data) return cached;
+      // Support schedules cached by older versions during the upgrade.
+      var legacy = JSON.parse(localStorage.getItem(cacheKey) || 'null');
+      return legacy ? { data: legacy, savedAt: null } : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   if (!tbody || !mobileList) return; // Schedule not in DOM
 
   function getISOWeekString(date) {
@@ -156,12 +186,16 @@
     var url = scheduleApiUrl;
     if (week) url += '?week=' + encodeURIComponent(week);
     setStatus('Loading schedule...', true);
+    setLoading(true);
     
-    return fetch(url)
-      .then(function(res) { return res.json(); })
+    return fetch(url, { cache: 'no-store' })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Schedule request failed: ' + res.status);
+        return res.json();
+      })
       .then(function(res) {
         if (res.data) {
-          localStorage.setItem(cacheKey, JSON.stringify(res.data));
+          saveScheduleToCache(week, res.data);
           renderSchedule(res.data);
         } else {
           renderEmpty(res.message || 'لا يوجد جدول منشور لهذا الأسبوع');
@@ -169,17 +203,18 @@
       })
       .catch(function(err) {
         console.warn('Network failed, checking cache', err);
-        var cached = localStorage.getItem(cacheKey);
-        if (cached) {
-          try {
-            var data = JSON.parse(cached);
-            if (!week || data.week_key === week) {
-              renderSchedule(data);
-              return;
-            }
-          } catch(e) {}
+        var cached = getCachedSchedule(week);
+        if (cached && cached.data && (!week || cached.data.week_key === week)) {
+          renderSchedule(cached.data);
+          setStatus(cached.savedAt
+            ? 'Showing saved schedule from ' + new Date(cached.savedAt).toLocaleString()
+            : 'Showing a saved schedule while offline.', true);
+          return;
         }
         renderEmpty('خطأ في الاتصال بالشبكة ولم يتم العثور على نسخة محفوظة.');
+      })
+      .finally(function() {
+        setLoading(false);
       });
   }
 
@@ -191,6 +226,7 @@
     setStatus(msg, true);
     if (weekLabel && weekLabel.textContent === 'Loading...') weekLabel.textContent = 'No schedule';
     currentScheduleData = null;
+    setLoading(false);
   }
 
   function renderNoMatches(msg) {
@@ -296,8 +332,7 @@
       if (query) {
         var nAr = normaliseText(emp.name_ar);
         var nEn = normaliseText(emp.name_en);
-        var employeeId = normaliseText(emp.employee_id || emp.employeeId);
-        matchName = nAr.indexOf(query) !== -1 || nEn.indexOf(query) !== -1 || employeeId.indexOf(query) !== -1;
+        matchName = nAr.indexOf(query) !== -1 || nEn.indexOf(query) !== -1;
       }
       return matchJob && matchName;
     });

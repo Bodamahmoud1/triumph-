@@ -175,3 +175,11 @@ html[data-scheme="dark"] ::selection {
   background: rgba(96, 165, 250, 0.28);
   color: var(--text);
 }
+/* The schedule is an operational employee tool, not a maintenance-only route. */
+.bnav-item[data-section="schedule"] {
+  display: flex !important;
+}
+
+.mob-cat-btn[data-nav-section="schedule"] {
+  display: flex !important;
+}

@@ -126,6 +126,7 @@ async function cleanupPreviews(db) {
 
 // GET /api/schedule/weeks - PUBLIC list of active published weeks
 router.get('/schedule/weeks', async (req, res) => {
+  res.set('Cache-Control', 'no-store');
   const db = req.app.locals.db;
   try {
     const result = await db.execute(`
@@ -148,6 +149,7 @@ router.get('/schedule', [
   const errors = validationResult(req);
   if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
+  res.set('Cache-Control', 'no-store');
   const db = req.app.locals.db;
   let weekKey = req.query.week;
   
@@ -191,7 +193,6 @@ router.get('/schedule', [
           name_ar: row.name_ar,
           name_en: row.name_en,
           department: row.department,
-          employee_id: row.employee_id,
           shift_group: usesShiftGroups ? shiftGroup : null,
           shifts: {}
         };
