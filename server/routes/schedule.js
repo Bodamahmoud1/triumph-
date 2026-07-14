@@ -351,43 +351,57 @@ router.post('/admin/schedule/publish', authenticateToken, [
           throw new Error('Failed to create schedule record');
         }
 
-        const empsRes = await tx.execute('SELECT id, name_ar, employee_id FROM employees');
-        const empsByCode = new Map();
-        const empsByName = new Map();
-        for (const e of empsRes.rows) {
-          if (e.employee_id) empsByCode.set(String(e.employee_id), e.id);
-          empsByName.set(e.name_ar, e.id);
-        }
-
-        const employeeUpdates = [];
+        const employeeAuditEvents = [];
         const shiftStatements = [];
 
         for (const row of week.rows || []) {
           const employeeCode = row.employeeId || row.employee_id || null;
-          let empId = null;
-          let needsUpdate = false;
-
-          if (employeeCode && empsByCode.has(String(employeeCode))) {
-            empId = empsByCode.get(String(employeeCode));
-            needsUpdate = true;
-          } else if (empsByName.has(row.name)) {
-            empId = empsByName.get(row.name);
-            needsUpdate = true;
+          let existingEmp = null;
+          if (employeeCode) {
+            const existingResult = await tx.execute({
+              sql: 'SELECT id, name_ar, employee_id, department, status, is_deleted FROM employees WHERE employee_id = ?',
+              args: [employeeCode]
+            });
+            existingEmp = existingResult.rows[0] || null;
+          } else {
+            const existingResult = await tx.execute({
+              sql: "SELECT id, name_ar, employee_id, department, status, is_deleted FROM employees WHERE name_ar = ? AND (employee_id IS NULL OR employee_id = '') ORDER BY is_deleted ASC, id ASC",
+              args: [row.name]
+            });
+            existingEmp = existingResult.rows[0] || null;
           }
 
-          if (empId && needsUpdate) {
-             employeeUpdates.push({
-                sql: 'UPDATE employees SET name_ar = ?, department = ?, status = ?, is_deleted = 0 WHERE id = ?',
-                args: [row.name, row.department, 'Active', empId]
-             });
+          let empId;
+          if (existingEmp) {
+            await tx.execute({
+              sql: 'UPDATE employees SET name_ar = ?, department = ?, status = ?, is_deleted = 0 WHERE id = ?',
+              args: [row.name, row.department, 'Active', existingEmp.id]
+            });
+            empId = existingEmp.id;
+            if (existingEmp.is_deleted) {
+              employeeAuditEvents.push({
+                action: 'restored',
+                employeeId: existingEmp.id,
+                previous: {
+                  name_ar: existingEmp.name_ar,
+                  department: existingEmp.department,
+                  status: existingEmp.status,
+                  is_deleted: existingEmp.is_deleted
+                },
+                current: {
+                  name_ar: row.name,
+                  department: row.department,
+                  status: 'Active',
+                  is_deleted: 0
+                }
+              });
+            }
           } else {
              const empResult = await tx.execute({
                 sql: 'INSERT INTO employees (name_ar, employee_id, department, status, is_deleted) VALUES (?, ?, ?, ?, 0)',
                 args: [row.name, employeeCode, row.department, 'Active']
              });
              empId = insertId(empResult);
-             if (employeeCode) empsByCode.set(String(employeeCode), empId);
-             empsByName.set(row.name, empId);
           }
 
           const shiftGroup = normaliseShiftGroup(row.shiftGroup || row.shift_group) || 'Morning';
@@ -397,10 +411,6 @@ router.post('/admin/schedule/publish', authenticateToken, [
                args: [newSchedId, empId, day, shiftVal, shiftGroup]
             });
           }
-        }
-
-        for (let i = 0; i < employeeUpdates.length; i += 50) {
-          await tx.batch(employeeUpdates.slice(i, i + 50));
         }
 
         for (let i = 0; i < shiftStatements.length; i += 50) {
@@ -422,7 +432,11 @@ router.post('/admin/schedule/publish', authenticateToken, [
 
         await tx.execute({
           sql: 'INSERT INTO audit_log (admin_id, action, details) VALUES (?, ?, ?)',
-          args: [adminId, 'Publish Schedule', JSON.stringify({ week: resolvedWeekKey, rows: (week.rows || []).length })]
+          args: [adminId, 'Publish Schedule', JSON.stringify({
+            week: resolvedWeekKey,
+            rows: (week.rows || []).length,
+            employeeEvents: employeeAuditEvents
+          })]
         });
       }
 
