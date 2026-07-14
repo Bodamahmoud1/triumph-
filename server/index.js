@@ -152,6 +152,10 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '../admin/index.html'));
 });
 
+// The employee guide reads only published content/catalogue data. Mutations remain admin-only.
+app.get('/api/content/:section', contentRoutes.readContent);
+app.get('/api/data/:kind', dataFilesRoutes.readCatalogue);
+
 app.use(express.static(path.join(__dirname, '../'), { dotfiles: 'deny' }));
 
 

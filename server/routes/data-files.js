@@ -32,8 +32,7 @@ function getFilePath(kind) {
   return path.join(DATA_DIR, cfg.filename);
 }
 
-// GET /api/admin/data/:kind
-router.get('/:kind', authenticateToken, async (req, res) => {
+async function readCatalogue(req, res) {
   const kind = req.params.kind;
   const cfg = ALLOWED[kind];
   const filePath = getFilePath(kind);
@@ -80,7 +79,10 @@ router.get('/:kind', authenticateToken, async (req, res) => {
     console.error(e);
     return res.status(500).json({ error: 'Failed to read data' });
   }
-});
+}
+
+// GET /api/admin/data/:kind
+router.get('/:kind', authenticateToken, readCatalogue);
 
 // PUT /api/admin/data/:kind  (replace whole file)
 router.put('/:kind', authenticateToken, async (req, res) => {
@@ -138,3 +140,4 @@ router.put('/:kind', authenticateToken, async (req, res) => {
 });
 
 module.exports = router;
+module.exports.readCatalogue = readCatalogue;
