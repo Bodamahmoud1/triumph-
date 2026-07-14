@@ -113,7 +113,7 @@ test('schedule download route rejects query-string bearer tokens', () => {
 
 test('admin schedule downloads use header-authenticated blob fetch with useful failure toast', () => {
   const source = readFileSync('admin/script.js', 'utf8');
-  const downloadHandler = source.match(/window\._downloadSchedule = async function\(id\)[\s\S]*?\n};/);
+  const downloadHandler = source.match(/window\._downloadSchedule = async function\(id\)[\s\S]*?\n\s*};/);
 
   assert.ok(downloadHandler, 'admin download handler should exist');
   assert.match(downloadHandler[0], /requestWithAuth\(`\/api\/admin\/schedule\/download\/\$\{id\}`\)/);
